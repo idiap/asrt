@@ -1,0 +1,22 @@
+#!/bin/bash
+#
+# Copyright 2015 by Idiap Research Institute, http://www.idiap.ch
+#
+# See the file COPYING for the licence associated with this software.
+#
+# Author(s):
+#   Alexandre Nanchen, May 2015
+#
+
+usage="\n
+ Source this script to set environment.
+"
+
+cwd=`pwd`
+scriptDir="$( builtin cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+#Directories to source
+dataPreparationDirectories=$(echo $scriptDir/scripts/data-preparation/{bash,python,java,perl})
+
+#Set-up environment
+export PATH=${dataPreparationDirectories// /:}:$PATH

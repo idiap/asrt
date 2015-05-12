@@ -1,0 +1,15 @@
+audio1;/path/to/audio1.wav
+audio2;/path/to/audio2.wav
+mlf1;/path/to/mlf1
+mlf2;/path/to/mlf2
+mlf3;/path/to/mlf3
+mlf4;/path/to/mlf4
+mlf5;/path/to/mlf5
+mlf6;/path/to/mlf6
+mlf7;/path/to/mlf7
+mlf8;/path/to/mlf8
+model1;/path/to/model1
+segment1;/path/to/segment1.wav
+segment2;/path/to/segment2.wav
+segment3;/path/to/segment3.wav
+segment4;/path/to/segment4.wav

@@ -1,0 +1,6 @@
+[submodule "lib/unicodecsv"]
+	path = lib/unicodecsv
+	url = https://github.com/jdunck/python-unicodecsv.git
+[submodule "lib/nltk"]
+	path = lib/nltk
+	url = https://github.com/nltk/nltk.git
