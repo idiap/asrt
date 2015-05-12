@@ -16,7 +16,7 @@ cwd=`pwd`
 scriptDir="$( builtin cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 #Directories to source
-dataPreparationDirectories=$(echo $scriptDir/scripts/data-preparation/{bash,python,java,perl})
+dataPreparationDirectories=$(echo $scriptDir/scripts/data-preparation/{bash,python})
 
 #Set-up environment
 export PATH=${dataPreparationDirectories// /:}:$PATH
