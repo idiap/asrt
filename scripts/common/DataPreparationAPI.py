@@ -37,6 +37,7 @@ from ClassifierWord import WordClassifier
 from config import SUBSTITUTION_TYPE, VALIDATION_TYPE
 from config import FRENCH_LABEL, GERMAN_LABEL, ENGLISH_LABEL
 from config import ITALIAN_LABEL, UNKNOWN_LABEL
+from AsrtUtility import getErrorMessage
 
 class DataPreparationAPI():
     """Import sentences from one file, classifying
@@ -164,13 +165,11 @@ class DataPreparationAPI():
 
         except Exception, e:
             errorMessage = "An error as occurred when importing sentences: %s\n%s" % (str(e), self.inputFile)
-            errorMessage += "\n" + \
-                "------------ Begin stack ------------\n" + \
-                traceback.format_exc().rstrip() + "\n" + \
-                "------------ End stack --------------"
-            self.logger.info(logging.WARNING, errorMessage)
+            errorMessage = getErrorMessage(e, errorMessage)
+            
+            self.logger.critical(errorMessage)
 
-            raise Exception(errorMessage)
+            raise Exception(e)
 
         return self.doc
 

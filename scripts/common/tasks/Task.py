@@ -153,6 +153,7 @@ class Task(object):
         except Exception, e:
             errorMessage = "An error has occured"
             self._log(logging.CRITICAL, getErrorMessage(e, errorMessage))
+            self.setResult(True, errorMessage)
 
 
     def validateParameters(self, parameters):

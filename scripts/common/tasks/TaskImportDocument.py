@@ -92,6 +92,8 @@ class ImportDocumentTask(Task):
         if len(self.mapLists) > 1:
             self._log(logging.CRITICAL,"Only one map list accepted!")
 
+        documentUrl = None
+
         try:
             #All pdf documents
             textDocumentsList = []
@@ -133,9 +135,8 @@ class ImportDocumentTask(Task):
             self.setResult(False, "Success importing sentences from %s" % self.mapLists[0].getDataMapFile())
 
         except Exception, e:
-            errorMessage = "An error as occurred when importing sentences"
+            errorMessage = "An error as occurred when importing sentences from %s" % documentUrl
             self._log(logging.CRITICAL, getErrorMessage(e, errorMessage))
-            self.setResult(True, errorMessage)
             raise e
 
     def prepareOutputData(self):
