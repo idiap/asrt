@@ -55,7 +55,7 @@ class TextDocument(Document):
         self.classifier = None
 
     ########################
-    # Interface
+    #Getter and setters
     #
     def setClassifier(self, classifier):
         """Set the language classifier.
