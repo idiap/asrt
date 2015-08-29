@@ -77,7 +77,7 @@ class TextDocument(Document):
             textCluster.setLanguage(languageId)
 
     ########################
-    # Interface
+    #Interface
     #
     def loadDocumentAsSentences(self, tempDir):
         """Convert to text, remove new lines and
@@ -154,7 +154,7 @@ class TextDocument(Document):
             print textCluster
 
     ########################
-    # Implementation
+    #Implementation
     #
     def _loadTextDocumentAsSentences(self, filePath):
         """Load a text document and segment
@@ -218,7 +218,7 @@ class TextDocument(Document):
         TextDocument.logger.info("Loaded %d raw sentences!" % len(sentences))
 
     ########################
-    # Static members
+    #Static members
     #
     @staticmethod
     def convertToText(sourcePath, destinationPath, logDir):
