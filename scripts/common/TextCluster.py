@@ -27,6 +27,10 @@ import unicodedata
 from Cluster import Cluster
 from Classifier import LanguageClassifier
 from Punctuation import Punctuation
+from config import FRENCH_LABEL, GERMAN_LABEL, ENGLISH_LABEL
+from config import ITALIAN_LABEL, LANGUAGEID2LABELS
+from config import MAX_SENTENCE_LENGTH, MIN_SENTENCE_LENGTH
+from config import MIN_WORDS_COUNT, MAX_DIGITS_GROUPS
 
 class TextCluster(Cluster):
     """Concrete type representing a text sentence from
@@ -40,10 +44,6 @@ class TextCluster(Cluster):
     LANGUAGE_ATTRIBUTE      = 'language'
     FRENCH_ID               = 1
     ID_COUNTER              = 0
-    MAX_SENTENCE_LENGTH     = 1000
-    MIN_SENTENCE_LENGTH     = 10
-    MIN_WORDS_COUNT         = 4
-    MAX_DIGITS_GROUPS       = 5
     SPACEREGEX              = '[ ]+'
 
     def __init__(self, document, sentenceText):
@@ -59,6 +59,9 @@ class TextCluster(Cluster):
         #Actual data
         self.addElement(sentenceText)
 
+    #####################
+    #Getters and setters
+    #
     def getTextSentence(self, debug=False):
         """Return the associated utf-8 text sentence.
         """
@@ -66,138 +69,45 @@ class TextCluster(Cluster):
             return ""
 
         if debug:
-            return "---\n%s\n" % "\n".join(reversed(self.elementList))
+            return u"---\n%s\n" % u"\n".join(reversed(self.elementList))
 
         return self.elementList[0]
 
     def setTextSentence(self, textSentence):
         """Set the new text.
+
+           param textSentence: an utf-8 encoded string
         """
         self.elementList.insert(0, textSentence)
-        #self.elementList[0] = textSentence
-
-    def prepareClusterText(self, removePunctuation):
-        """Clean and normalize.
-        """
-        #Regex substitution using punctuation symbols
-        self._cleanClusterText()
-
-        #We may still want to remove all punctuation
-        #in case of non verbalization
-        self._normalizeClusterText(removePunctuation)
-
-    def verbaliseTextPunctuation(self):
-        """Transform punctuation symbols to words.
-        """
-        if self.isFrench():
-            p = Punctuation()
-            self.setTextSentence(p.replaceText(self.getTextSentence()))
 
     def setLanguage(self, languageId):
         """Language for sentence.
+
+           language id is:
+                - unknown : 0
+                - french  : 1
+                - german  : 2
+                - english : 3
+                - italian : 4
         """
-        if languageId != TextCluster.FRENCH_ID:
-            self.setAttribute(TextCluster.LANGUAGE_ATTRIBUTE,
-                              LanguageClassifier.GERMAN_LABEL)
-        else:
-            self.setAttribute(TextCluster.LANGUAGE_ATTRIBUTE,
-                              LanguageClassifier.FRENCH_LABEL)
+        if languageId > 4 or languageId < 0:
+            raise Exception("Unknown language")
 
-    def classify(self, classifier):
-        """Classify between french and german.
-        """
-        l, score = classifier.classify(self.getTextSentence())
-        self.setAttribute(TextCluster.LANGUAGE_ATTRIBUTE, l)
+        strLanguage = LANGUAGEID2LABELS[languageId]
+        self.setAttribute(TextCluster.LANGUAGE_ATTRIBUTE, strLanguage)
 
-    def isFrench(self):
-        """Content is French
-        """
-        return self.getAttribute(TextCluster.LANGUAGE_ATTRIBUTE) ==\
-                LanguageClassifier.FRENCH_LABEL
-
-    def isGerman(self):
-        """Content is German
-        """
-        return self.getAttribute(TextCluster.LANGUAGE_ATTRIBUTE) ==\
-                LanguageClassifier.GERMAN_LABEL
-
-
-    def isItalian(self):
-        """Content is Italian
-        """
-        return self.getAttribute(TextCluster.LANGUAGE_ATTRIBUTE) ==\
-                LanguageClassifier.ITALIAN_LABEL
-
-    def isEnglish(self):
-        """Content is English
-        """
-        return self.getAttribute(TextCluster.LANGUAGE_ATTRIBUTE) ==\
-                LanguageClassifier.ENGLISH_LABEL
-
-    def isValid(self):
-        """Check validity of sentence.
-
-           Use:
-            - sentence length
-            - number of digits groups
-        """
-        strText = self.getTextSentence()
-
-        #Nb characters
-        if len(strText) > TextCluster.MAX_SENTENCE_LENGTH or\
-           len(strText) < TextCluster.MIN_SENTENCE_LENGTH:
-            TextCluster.logger.info("Discard sentence: inappropriate length: %d!" % len(strText))
-            return False
-
-        #Nb words
-        if len(strText.split(' ')) < TextCluster.MIN_WORDS_COUNT:
-            TextCluster.logger.info("Discard sentence, not enough words!")
-            return False
-
-        #Nb digit groups
-        if len(re.split("\d+", strText)) > TextCluster.MAX_DIGITS_GROUPS:
-            TextCluster.logger.info("Discard sentence, to manny groups of digits!")
-            return False
-
-        #Try decode
-        #Use some regex
-        if not self._isTextValid(strText):
-            return False
-
-        return True
-
-    def getClusterInfo(self):
-        """Return key.
-        """
-        return "[%s] %s" % (self.key, self.getTextSentence())
-
-    ########################
-    # Implementation
+    #####################
+    #Public interface
     #
-    def _cleanClusterText(self):
-        """Use a set of regex rules to clean sentences.
+    def clean(self):
+        """Perform text cleaning.
 
-           This should be call before normalizing.
+           Heuristic is:
+              - remove control characters
+              - use user defined regexes
+              - normalize spaces to one space
         """
         strText = self.getTextSentence()
-        strText = self._cleanText(strText)
-        self.setTextSentence(strText)
-
-    def _normalizeClusterText(self, removePunctuation):
-        """Normalize text.
-        """
-        strText = self.getTextSentence()
-
-        #Normalize prior to classification.
-        #Do not encode in bytes string!
-        strText =  TextCluster.normalizeText(strText, removePunctuation)
-
-        self.setTextSentence(strText)
-
-    def _cleanText(self, strText):
-        """Use a set of regex rules to clean sentences.
-           Regexes are in utf-8 encoding.
-        """
         strText = TextCluster.removeControlCharacters(strText)
 
         #Spaces are normalized to two spaces for regex matching
@@ -219,7 +129,119 @@ class TextCluster(Cluster):
         #Spaces are normalized to one space
         strText = re.sub(TextCluster.SPACEREGEX,' ', strText)
 
-        return strText
+        self.setTextSentence(strText)
+
+    def normalize(self):
+        """Normalize text.
+        """
+        strText = self.getTextSentence()
+
+        #Normalize prior to classification.
+        #Do not encode in bytes string!
+        strText =  TextCluster.normalizeText(strText)
+
+        self.setTextSentence(strText)
+
+    def prepareNGram(self):
+        """Prepare for language modeling.
+        """
+        raise Exception("Not implemented yet")
+        
+    def classify(self, classifier):
+        """Classify between french and german.
+        """
+        l, score = classifier.classify(self.getTextSentence())
+        self.setAttribute(TextCluster.LANGUAGE_ATTRIBUTE, l)
+
+    def removeTextPunctuation(self):
+        """Remove punctuation symbols.
+        """
+        strText = self.getTextSentence()
+        strText = LanguageClassifier.removePunctuation(strText = strText,
+                                                       removeDots = False)
+        self.setTextSentence(strText)
+
+    def verbalizeTextPunctuation(self):
+        """Transform punctuation symbols to words.
+           Currently only implemented for French.
+        """
+        if self.isFrench():
+            p = Punctuation()
+            self.setTextSentence(p.replaceText(self.getTextSentence()))
+        else:
+            raise Exception("Text verbalization is only implemented for French!")
+
+    #####################
+    #Predicates
+    #
+    def isValid(self):
+        """Check validity of sentence.
+
+           Heuristic is:
+            - sentence length
+            - number of digits groups
+        """
+        strText = self.getTextSentence()
+
+        #Nb characters
+        if len(strText) > MAX_SENTENCE_LENGTH or\
+           len(strText) < MIN_SENTENCE_LENGTH:
+            print strText.encode('utf-8')
+            TextCluster.logger.info("Discard sentence: inappropriate length: %d!" % len(strText))
+            return False
+
+        #Nb words
+        if len(strText.split(' ')) < MIN_WORDS_COUNT:
+            #print strText.encode('utf-8')
+            TextCluster.logger.info("Discard sentence, not enough words!")
+            return False
+
+        #Nb digit groups
+        if len(re.split("\d+", strText)) > MAX_DIGITS_GROUPS:
+            #print strText.encode('utf-8')
+            TextCluster.logger.info("Discard sentence, to many groups of digits!")
+            return False
+
+        #Try decode
+        #Use some regex
+        if not self._isTextValid(strText):
+            return False
+
+        return True
+
+    def isFrench(self):
+        """Content is French
+        """
+        return self.getAttribute(TextCluster.LANGUAGE_ATTRIBUTE) ==\
+                     FRENCH_LABEL
+
+    def isGerman(self):
+        """Content is German
+        """
+        return self.getAttribute(TextCluster.LANGUAGE_ATTRIBUTE) ==\
+                     GERMAN_LABEL
+
+    def isItalian(self):
+        """Content is Italian
+        """
+        return self.getAttribute(TextCluster.LANGUAGE_ATTRIBUTE) ==\
+                     ITALIAN_LABEL
+
+    def isEnglish(self):
+        """Content is English
+        """
+        return self.getAttribute(TextCluster.LANGUAGE_ATTRIBUTE) ==\
+                     ENGLISH_LABEL
+
+    def getClusterInfo(self):
+        """Return key.
+        """
+        return "[%s] %s" % (self.key, self.getTextSentence())
+
+    ########################
+    # Implementation
+    #
+    
 
     def _isTextValid(self, strText):
         """Assess the validity of the text using
@@ -241,16 +263,15 @@ class TextCluster(Cluster):
         """Override built in method.
         """
         key = self.getClusterInfo()
-        return str(key)
+        return str(key.encode('utf-8'))
 
     ########################
     # Implementation
     #
     @staticmethod
-    def normalizeText(textUtterance, removePunctuation, ntext=""):
+    def normalizeText(textUtterance):
         """Normalize text:
 
-           - remove some punctuation
            - remove new line character at the end
            - remove prepended and trailing spaces
 
@@ -259,11 +280,7 @@ class TextCluster(Cluster):
            Do not decode string.
 
         """
-        if removePunctuation :
-            textUtterance = LanguageClassifier.removePunctuation(strText = textUtterance,
-                                                                 removeDots = False)
-        textUtterance = textUtterance.rstrip()
-        textUtterance = textUtterance.strip()
+        textUtterance = textUtterance.rstrip().strip()
 
         return textUtterance
 

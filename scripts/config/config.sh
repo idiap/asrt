@@ -28,3 +28,4 @@ LIBBASE=$ASRTROOT/lib
 #Data preparation
 #
 RUNTASKSCRIPT=$DATAPREPARATIONDIR/python/run_data_preparation_task.py
+RUNDOCUMENTSCRIPT=$DATAPREPARATIONDIR/python/run_data_preparation.py

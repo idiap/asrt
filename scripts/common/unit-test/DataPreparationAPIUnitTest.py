@@ -17,8 +17,8 @@
 
 __author__ = "Alexandre Nanchen"
 __version__ = "Revision: 1.0 "
-__date__ = "Date: 2014/04"
-__copyright__ = "Copyright (c) 2014 Idiap Research Institute"
+__date__ = "Date: 2015/08"
+__copyright__ = "Copyright (c) 2015 Idiap Research Institute"
 __license__ = "BSD 3-Clause"
 
 import sys, os
@@ -29,11 +29,10 @@ sys.path.append(scriptsDir + "/../../config")
 
 import unittest
 
-from tasks.Task import TaskInfo
-from tasks.TaskImportDocument import ImportDocumentTask
+from DataPreparationAPI import DataPreparationAPI
 from config import TEMPDIRUNITTEST
 
-class TestImportDocumentTask(unittest.TestCase):
+class TestDataPreparationAPI(unittest.TestCase):
 	workingDirectory = TEMPDIRUNITTEST 
 	targetDir = scriptsDir + "/resources"
 	targetFolder1 = targetDir + "/target-folder-2"
@@ -46,13 +45,10 @@ class TestImportDocumentTask(unittest.TestCase):
 	#Tests
 	#
 	def testLoadRegexes(self):
-		task = ImportDocumentTask(TaskInfo("",
-			                      TestImportDocumentTask.workingDirectory,
-			                      TestImportDocumentTask.targetFolder1))
+		api = DataPreparationAPI(None,None)
+		api.setRegexFile(self.regexFile)
 
-		task.regexFile = self.regexFile
-
-		substitutionPatternsList, validationPatternsList = task._getRegexes()
+		substitutionPatternsList, validationPatternsList = api._getRegexes()
 
 		self.assertTrue(len(substitutionPatternsList) > 0)
 		self.assertTrue(len(validationPatternsList) > 0)

@@ -28,266 +28,140 @@ sys.path.append(scriptsDir + "/../")
 sys.path.append(scriptsDir + "/../../config")
 
 import logging, shutil
-import traceback
 
-from ioread import Ioread
 from MyFile import MyFile
-from TextDocument import TextDocument
 from tasks.Task import Task
-from config import FRENCH_PICKLE_FOLDER
-from ClassifierWord import WordClassifier
+from DataPreparationAPI import DataPreparationAPI
+from AsrtUtility import getErrorMessage
+from config import LANGUAGE2ID
+from config import UNKNOWN_LABEL, FRENCH_LABEL, GERMAN_LABEL
+from config import ENGLISH_LABEL, ITALIAN_LABEL
 
 class ImportDocumentTask(Task):
-	"""Import sentences from a pdf files, classifying
-	   them into languages.
+    """Import sentences from a pdf files, classifying
+       them into languages.
+    """
+    logger                  = logging.getLogger("task.ImportDocumentTask")
 
-	   Process parameters are:
-		   - pdf file url
-	"""
-	logger                  = logging.getLogger("task.ImportDocumentTask")
-
-	PARAMREGEXFILE			= 'regexfile'
-	PARAMDEBUG				= 'debug'
-	REMOVEPUNCTUATION		= 'removePunctuation'
-	VERBALIZEPUNCTUATION	= 'verbalizePunctuation'
-	PARAMETERS              = [PARAMREGEXFILE,PARAMDEBUG,REMOVEPUNCTUATION,VERBALIZEPUNCTUATION]
-
-	REGEXFILE               = ''
-
-	#Pattern types
-	SUBSTITUTION_TYPE       = 1
-	VALIDATION_TYPE         = 2
-
-	#Language
-	FRENCH                  = 'french'
-	GERMAN                  = 'german'
-	ITALIAN					= 'italian'
-	ENGLISH					= 'english'
-	UNKNOWN                 = 'unknown'
-
-	LANGUAGETOID			= {FRENCH:1,GERMAN:2,ITALIAN:3,ENGLISH:4,UNKNOWN:5}
+    PARAMREGEXFILE          = 'regexfile'
+    PARAMDEBUG              = 'debug'
+    REMOVEPUNCTUATION       = 'removePunctuation'
+    VERBALIZEPUNCTUATION    = 'verbalizePunctuation'
+    PARAMETERS              = [PARAMREGEXFILE,PARAMDEBUG,REMOVEPUNCTUATION,
+                               VERBALIZEPUNCTUATION]
 
 
-	def __init__(self, taskInfo):
-		"""Default constructor."""
+    def __init__(self, taskInfo):
+        """Default constructor.
+        """
+        Task.__init__(self, taskInfo)
 
-		Task.__init__(self, taskInfo)
+        self.count = 0
+        self.debug = False
+        self.removePunctuation = False
+        self.verbalizePunctuation = False
 
-		self.ioread = Ioread()
-		self.count = 0
-		self.document = None
-		self.regexFile = None
-		self.debug = False
-		self.removePunctuation = False
-		self.verbalizePunctuation = False
+    ############
+    #Interface
+    #
+    def validateParameters(self):
+        """Check that language and batch file
+           parameters are specified.
+        """
 
-	#######################################
-	#Interface
-	#
-	def validateParameters(self):
-		"""Check that language and batch file
-		   parameters are specified."""
+        self._log(logging.INFO, "Validate parameters")
 
-		self._log(logging.INFO, "Validate parameters")
+        return Task.validateParameters(self,
+                    ImportDocumentTask.PARAMETERS)
 
-		return Task.validateParameters(self,
-						ImportDocumentTask.PARAMETERS)
+    def setParameters(self):
+        """Set parameters from given values.
+        """
+        self.regexFile = self.taskParameters[ImportDocumentTask.PARAMREGEXFILE]
+        self.debug = self.taskParameters[ImportDocumentTask.PARAMDEBUG] == "True"
+        self.removePunctuation = self.taskParameters[ImportDocumentTask.REMOVEPUNCTUATION] == "True"
+        self.verbalizePunctuation = self.taskParameters[ImportDocumentTask.VERBALIZEPUNCTUATION] == "True"
+        
+        self._log(logging.INFO, "Debug is set to " + str(self.debug))
 
-	def setParameters(self):
-		"""Set parameters from given values.
-		"""
-		self.regexFile = self.taskParameters[ImportDocumentTask.PARAMREGEXFILE]
-		self.debug = self.taskParameters[ImportDocumentTask.PARAMDEBUG] == "True"
-		self.removePunctuation = self.taskParameters[ImportDocumentTask.REMOVEPUNCTUATION] == "True"
-		self.verbalizePunctuation = self.taskParameters[ImportDocumentTask.VERBALIZEPUNCTUATION] == "True"
-		
-		self._log(logging.INFO, "Debug is set to " + str(self.debug))
+    def doWork(self):
+        """The actual upload of sentences.
+        """
+        self._log(logging.INFO, "Do work!")
 
-	def doWork(self):
-		"""The actual upload of sentences."""
+        if len(self.mapLists) > 1:
+            self._log(logging.CRITICAL,"Only one map list accepted!")
 
-		self._log(logging.INFO, "Do work!")
+        try:
+            #All pdf documents
+            textDocumentsList = []
+            dictMap = self.mapLists[0].getDictionaryMap()
 
-		if len(self.mapLists) > 1:
-			self._log(logging.CRITICAL,"Only one map list accepted!")
+            totalCount = len(dictMap.keys())
+            count = 0
 
-		try:
-			self._log(logging.INFO, "Getting regexes ...")
-			substitutionPatternsString, validationPatternsString = self._getRegexes()
+            self._log(logging.INFO, "Temp dir is: %s" % self.getTempDirectory())
+            self._log(logging.INFO, "Output dir is: %s" % self.getOutputDirectory())
+            self._log(logging.INFO, "%d files to process!" % totalCount)
 
-			self._log(logging.INFO, "Using following regexes:\nSubstitution: " +\
-						str(substitutionPatternsString[0:3]) + " ...\nValidation: " +\
-						str(validationPatternsString[0:3])+ " ...")
+            #Setup once for all documents
+            api = DataPreparationAPI(None, self.getOutputDirectory())
+            api.setRegexFile(self.regexFile)
+            api.setDebugMode(self.debug)
+            api.setRemovePunctuation(self.removePunctuation)
+            api.setVerbalizePunctuation(self.verbalizePunctuation)
 
-			self._log(logging.INFO, "Prepare the word classifier ...")
+            #Loop trough map file
+            for documentName in dictMap.keys():
+                for language in dictMap[documentName]:
+                    documentUrl = self.inputList.getPath(documentName)
 
-			#Train classifiero only once
-			wordClassifier = WordClassifier()
-			wordClassifier.train()
+                    #Set the current document information
+                    api.setInputFile(documentUrl)
+                   
+                    #Main processing
+                    api.prepareDocument(LANGUAGE2ID[language])
+                    textDocumentsList.append(api.getDocument())
 
-			#All pdf documents
-			textDocumentsList = []
-			dictMap = self.mapLists[0].getDictionaryMap()
+                count += 1
+                self._log(logging.INFO, "%d remaining files to process!" % (totalCount-count))
 
-			totalCount = len(dictMap.keys())
-			count = 0
+            self._log(logging.INFO, "Output results to language files.")
+            self.outputSentencesToFiles(textDocumentsList)
 
-			self._log(logging.INFO, "%d files to process!" % totalCount)
+            #Outcome of the work to be saved
+            self.setResult(False, "Success importing sentences from %s" % self.mapLists[0].getDataMapFile())
 
-			#Loop trough map file
-			for documentName in dictMap.keys():
-				for language in dictMap[documentName]:
+        except Exception, e:
+            errorMessage = "An error as occurred when importing sentences"
+            self._log(logging.CRITICAL, getErrorMessage(e, errorMessage))
+            self.setResult(True, errorMessage)
+            raise e
 
-					documentUrl = self.inputList.getPath(documentName)
-					self._log(logging.INFO, "Document file: %s" % documentUrl)
+    def prepareOutputData(self):
+        """Copy results, old lists and build new input
+           and map lists.
+        """
+        self._log(logging.INFO, "Copy results files to output folder:%s" %
+                        self.getOutputDirectory())
 
-					try:
-						#The main document
-						doc = TextDocument(documentUrl, FRENCH_PICKLE_FOLDER,
-											  substitutionPatternsString,
-											  validationPatternsString,
-											  self.getLogDirectory())
+        #Data maps
+        dataMapFiles = MyFile.dirContent(self.getTempDirectory(),
+                                         "*sentences_*.txt")
+        for sentenceFile in dataMapFiles:
+            srcFile = self.getTempDirectory() + os.sep + sentenceFile
+            shutil.copy(srcFile,self.getOutputDirectory())
 
-						#Which classifier to use
-						doc.setClassifier(wordClassifier)
+    def outputSentencesToFiles(self, textDocumentsList):
+        """Output the original sentences with language
+           information to the database.
+        """
+        sentencesDict = {FRENCH_LABEL:[], GERMAN_LABEL:[],
+                         ITALIAN_LABEL:[], ENGLISH_LABEL:[],
+                         UNKNOWN_LABEL:[]}
 
-						self._log(logging.INFO, "Load document, convert to text when pdf %s" %
-								  self.getTempDirectory())
+        for textDocument in textDocumentsList:
+            DataPreparationAPI.appendDocumentSentences(textDocument, sentencesDict)
 
-						doc.loadDocumentAsSentences(self.getTempDirectory())
-
-						self._log(logging.INFO, "Preparing data ...")
-						doc.prepareTextSentences(self.removePunctuation)
-						
-						self._log(logging.INFO, "Filtering data ...")
-						doc.filterTextSentences()
-
-						if language == ImportDocumentTask.UNKNOWN:
-							self._log(logging.INFO, "Classifying sentences ...")
-							doc.classifySentences()
-						else:
-							self._log(logging.INFO, "Setting language %s for document %s" % (language,documentName))
-							doc.setSentencesLanguage(ImportDocumentTask.LANGUAGETOID[language])
-
-						if self.verbalizePunctuation:
-							doc.verbalizePunctuation()
-
-						#Only append after success
-						textDocumentsList.append(doc)
-
-					except Exception, e:
-						errorMessage = "An error as occurred when importing sentences: %s\n%s" % (str(e), documentUrl)
-						errorMessage += "\n" + \
-							"------------ Begin stack ------------\n" + \
-							traceback.format_exc().rstrip() + "\n" + \
-							"------------ End stack --------------"
-						self._log(logging.WARNING, errorMessage)
-
-				count += 1
-				self._log(logging.INFO, "%d remaining files to process!" % (totalCount-count))
-
-			self._log(logging.INFO, "Output results to language files.")
-			self._outputSentencesToFile(textDocumentsList)
-
-			#Outcome of the work to be saved
-			self.setResult(False, "Success importing sentences from %s" % self.mapLists[0].getDataMapFile())
-
-		except Exception, e:
-
-			errorMessage = "An error as occurred when importing sentences: " + str(e)
-			errorMessage += "\n" + \
-							"------------ Begin stack ------------\n" + \
-							traceback.format_exc().rstrip() + "\n" + \
-							"------------ End stack --------------"
-			self._log(logging.CRITICAL, errorMessage)
-			self.setResult(True, errorMessage)
-
-			raise e
-
-	def prepareOutputData(self):
-		"""Copy results, old lists and build new
-		   input and map lists.
-		"""
-		self._log(logging.INFO, "Copy results files to ouptut folder")
-
-		#Data maps
-		dataMapFiles = MyFile.dirContent(self.getTempDirectory(),
-										 "*sentences_*.txt")
-
-		for sentenceFile in dataMapFiles:
-			srcFile = self.getTempDirectory() + os.sep + sentenceFile
-			shutil.copy(srcFile,self.getOutputDirectory())
-
-
-	#######################################
-	#Implementation
-	#
-	def _getRegexes(self):
-		"""Fetch from database validation and substitution
-		   regexes.
-		"""
-		substitutionPatternList, validationPatternList = [], []
-
-		io = Ioread()
-		regexList = io.readCSV(self.regexFile,'\t','"')
-
-		#Skip header
-		for row in regexList[1:]:
-			if int(row[4]) == ImportDocumentTask.SUBSTITUTION_TYPE:
-				substitutionPatternList.append((row[1],row[2]))
-			elif int(row[4]) == ImportDocumentTask.VALIDATION_TYPE:
-				validationPatternList.append(row[1])
-			else:
-				raise Exception("Unknown regular expression type!")
-
-		return substitutionPatternList, validationPatternList
-
-	def _outputSentencesToFile(self, textDocumentsList):
-		"""Output the original sentences with language
-		   information to the database.
-		"""
-		sentencesDict = {ImportDocumentTask.FRENCH:[],
-						 ImportDocumentTask.GERMAN:[],
-						 ImportDocumentTask.ITALIAN:[],
-						 ImportDocumentTask.ENGLISH:[],
-						 ImportDocumentTask.UNKNOWN:[]}
-
-		for textDocument in textDocumentsList:
-			self._appendDocumentSentences(textDocument, sentencesDict)
-
-		#Finally output to disk
-		io = Ioread()
-
-		for resultLanguage, results in sentencesDict.items():
-			if len(results) > 0:
-				self._log(logging.INFO, "%d sentences found for: %s" % (len(results), resultLanguage))
-				strContent = "\n".join(results)
-				strContent = strContent.rstrip() + "\n"
-				outputPath = "%s/sentences_%s.txt" % (self.getTempDirectory(),\
-													  resultLanguage)
-				self._log(logging.INFO, "Writing content to: %s" % outputPath)
-				io.writeFileContent(outputPath,strContent)
-			else:
-				self._log(logging.INFO, "No sentences found for: %s" % resultLanguage)
-
-	def _appendDocumentSentences(self, textDocument, sentencesDict):
-		"""Update 'sentencesDict' with the 'textDocument'
-		   content.
-		"""
-		#Save all sentences
-		for textCluster in textDocument.getListContent():
-			 strSentence = textCluster.getTextSentence(self.debug)
-			 currentLanguage = ImportDocumentTask.UNKNOWN
-
-			 if textCluster.isFrench():
-				 currentLanguage = ImportDocumentTask.FRENCH
-			 elif textCluster.isGerman():
-				 currentLanguage = ImportDocumentTask.GERMAN
-			 elif textCluster.isItalian():
-				 currentLanguage = ImportDocumentTask.ITALIAN
-			 elif textCluster.isEnglish():
-				 currentLanguage = ImportDocumentTask.ENGLISH
-
-			 #strOut = u"<" + textDocument.sourceFileName + u">: " + strSentence
-			 strOut = strSentence.rstrip()
-			 sentencesDict[currentLanguage].append(strOut)
+        DataPreparationAPI.outputPerLanguage(sentencesDict, self.getTempDirectory())
+        

@@ -22,7 +22,7 @@ __copyright__ = "Copyright (c) 2008 Alexandre Nanchen"
 __license__ = "BSD 3-Clause"
 
 import string
-import logging
+import logging, re
 
 import nltk.data
 
@@ -33,7 +33,6 @@ from Document import Document
 from TextCluster import TextCluster
 from TextRepresentation import TextRepresentation
 from ClassifierWord import WordClassifier
-
 
 class TextDocument(Document):
     """A text document.
@@ -58,6 +57,28 @@ class TextDocument(Document):
     ########################
     # Interface
     #
+    def setClassifier(self, classifier):
+        """Set the language classifier.
+           It assumes it has been trained.
+        """
+        self.classifier = classifier
+
+    def setSentencesLanguage(self, languageId):
+        """Language is known.
+
+           language id is:
+                - unknown : 0
+                - french  : 1
+                - german  : 2
+                - english : 3
+                - italian : 4
+        """
+        for textCluster in self.listContent:
+            textCluster.setLanguage(languageId)
+
+    ########################
+    # Interface
+    #
     def loadDocumentAsSentences(self, tempDir):
         """Convert to text, remove new lines and
            segment into sentences using NLTK
@@ -72,21 +93,41 @@ class TextDocument(Document):
         #Delete temporary file
         MyFile(tempFileName).removeFile(tempFileName)
 
-    def prepareTextSentences(self, removePunctuation=False):
+    def cleanTextSentences(self):
         """Use a set of regex rules to prepare
            the sentences.
         """
-        for textCluster in self.listContent:
-            textCluster.prepareClusterText(removePunctuation)
+        self._applyAllClusters('clean')
+
+    def normalizeTextSentences(self):
+        """Use a set of regex rules to prepare
+           the sentences.
+        """
+        self._applyAllClusters('normalize')
+
+    def prepareNGram(self):
+        """Prepare text sentences for N-Gram modeling.
+        """
+        self._applyAllClusters("prepareNGram")
+
+    def removeTextPunctuation(self):
+        """Remove punctuation symbols.
+        """
+        self._applyAllClusters("removeTextPunctuation")
+
+    def verbalizeTextPunctuation(self):
+        """Transform punctuation symbols to words.
+           Currently only implemented for French.
+        """
+        self._applyAllClusters("verbalizeTextPunctuation")
 
     def filterTextSentences(self):
-        """Filter sentences after cleaning replacing
-           current content.
+        """Filter sentences after cleaning.
 
            Uses:
             - sentence length
             - number of digit groups
-            ...
+            - user defined rules
         """
         filteredContentList = []
         for textCluster in self.listContent:
@@ -94,19 +135,6 @@ class TextDocument(Document):
                 filteredContentList.append(textCluster)
 
         self.listContent = filteredContentList
-
-    def setClassifier(self, classifier):
-        """Set the language classifier.
-           It assumes it has been trained.
-        """
-        self.classifier = classifier
-
-    def setSentencesLanguage(self, languageId):
-        """Language is known (FRENCH or
-           GERMAN, ITALIAN, ENGLISH).
-        """
-        for textCluster in self.listContent:
-            textCluster.setLanguage(languageId)
 
     def classifySentences(self):
         """Classify sentences by language (FRENCH or
@@ -118,6 +146,12 @@ class TextDocument(Document):
 
         for textCluster in self.listContent:
             textCluster.classify(self.classifier)
+
+    def display(self):
+        """Display document content.
+        """
+        for textCluster in self.listContent:
+            print textCluster
 
     ########################
     # Implementation
@@ -140,15 +174,23 @@ class TextDocument(Document):
         #Sentences view of document
         self._segmentIntoSentences(data)
 
+    def _applyAllClusters(self, method):
+        """Apply 'method' to all clusters.
+        """
+        for textCluster in self.listContent:
+            getattr(textCluster, method)()
+
     def _replaceNewLines(self, data):
         """Replace new lines by spaces.
+
+           param data: an utf-8 encoded string
         """
-        data = string.replace(data,"\t", " ")
+        data = re.sub(ur"\t", u" ", data, flags=re.UNICODE)
 
         #Last sentence word splited into two
-        data = string.replace(data,"-\n", "")
-
-        return string.replace(data,"\n", " ")
+        data = re.sub(ur"-\n", u"", data, flags=re.UNICODE)
+        
+        return re.sub(ur"\n", u" ", data, flags=re.UNICODE)
 
     def _segmentIntoSentences(self, data):
         """Replace current content by sentences.
@@ -156,7 +198,7 @@ class TextDocument(Document):
            The sentences segmentation is done using
            the french pickle of the NLTK toolkit.
 
-           data is in utf-8
+           param data: an utf-8 encoded string
         """
         try:
             #Get the french tokenizer
@@ -183,6 +225,5 @@ class TextDocument(Document):
         """Extract the textual information from a
            pdf.
         """
-
         tr = TextRepresentation(sourcePath,destinationPath,logDir)
         return tr.convertToText()

@@ -30,14 +30,14 @@ sys.path.append(scriptsDir + "/../")
 import unittest
 
 from TaskUnitTest import TestTaskInfo, TestTask
-from TaskImportDocumentUnitTest import TestImportDocumentTask
+from DataPreparationAPIUnitTest import TestDataPreparationAPI
 from TextRepresentationUnitTest import TestTextRepresentation
 from ListUnitTest import TestDataList, TestDataMap
 from PunctuationUnitTest import PunctuationUnitTest
 
 def getCommonTestSuite(unitTestList):
-    """Build the test suite for the common package."""
-
+    """Build the test suite for the common package.
+    """
     suiteList = None
 
     if unitTestList[0] == 'all':
@@ -56,16 +56,15 @@ def getCommonTestSuite(unitTestList):
 def getSuite(strName = None):
     """Get all available suite for the common package.
     """
-
     taskInfoSuite = unittest.TestLoader().loadTestsFromTestCase(TestTaskInfo)
     taskSuite = unittest.TestLoader().loadTestsFromTestCase(TestTask)
-    taskImportDocumentSuite = unittest.TestLoader().loadTestsFromTestCase(TestImportDocumentTask)
+    dataPreparationAPISuite = unittest.TestLoader().loadTestsFromTestCase(TestDataPreparationAPI)
     dataListSuite = unittest.TestLoader().loadTestsFromTestCase(TestDataList)
     dataMapSuite = unittest.TestLoader().loadTestsFromTestCase(TestDataMap)
     textRepresentationSuite = unittest.TestLoader().loadTestsFromTestCase(TestTextRepresentation)
     punctuationSuite = unittest.TestLoader().loadTestsFromTestCase(PunctuationUnitTest)
     
-    testSuiteMap = {'taskInfo': taskInfoSuite, 'task': taskSuite, 'taskImportDocument': taskImportDocumentSuite, 
+    testSuiteMap = {'taskInfo': taskInfoSuite, 'task': taskSuite, 'dataPreparationAPI': dataPreparationAPISuite, 
                     'dataList': dataListSuite, 'dataMap' : dataMapSuite, 
                     'textRepresentation' : textRepresentationSuite, 'punctuation': punctuationSuite}
 
@@ -74,7 +73,7 @@ def getSuite(strName = None):
 
     #All unit tests
     if strName == 'all':
-        return [taskInfoSuite, taskSuite, taskImportDocumentSuite, dataListSuite,
+        return [taskInfoSuite, taskSuite, dataPreparationAPISuite, dataListSuite,
                 dataMapSuite, textRepresentationSuite, punctuationSuite]
 
     if strName not in testSuiteMap:

@@ -30,6 +30,8 @@ sys.path.append(scriptsDir + "/../config")
 import nltk
 from nltk.corpus import europarl_raw
 from nltk.probability import DictionaryProbDist
+from config import FRENCH_LABEL, GERMAN_LABEL, ENGLISH_LABEL
+from config import ITALIAN_LABEL, UNKNOWN_LABEL
 from config import NLTK_DATA
 
 nltk.data.path.append(NLTK_DATA)
@@ -39,11 +41,6 @@ class LanguageClassifier():
     """
     logger = logging.getLogger("Asrt.LanguageClassifier")
 
-    FRENCH_LABEL        = 'french'
-    GERMAN_LABEL        = 'german'
-    ITALIAN_LABEL       = 'italian'
-    ENGLISH_LABEL       = 'english'
-    UNKNOWN_LABEL       = 'unknown'
     SCORE_THRESHOLD     = 0.03
 
     def __init__(self):
@@ -67,10 +64,8 @@ class LanguageClassifier():
         self.scoreDetail = ""
 
         #Hold count results
-        labelCountDict = {LanguageClassifier.FRENCH_LABEL:0,
-                          LanguageClassifier.GERMAN_LABEL:0,
-                          LanguageClassifier.ITALIAN_LABEL:0,
-                          LanguageClassifier.ENGLISH_LABEL:0}
+        labelCountDict = {FRENCH_LABEL:0, GERMAN_LABEL:0,ITALIAN_LABEL:0,
+                          ENGLISH_LABEL:0}
 
         #Label unknown
         for (featuresDict, noLabel) in self.getFeatures(wordsList, None, context):
@@ -84,17 +79,17 @@ class LanguageClassifier():
     def train(self):
         """Train using europarl_raw corpus.
         """
-        LanguageClassifier.logger.info("Getting features...")
+        nltkDataPath =  os.path.dirname(europarl_raw.french.abspath('ep-00-02-16.fr'))
+        LanguageClassifier.logger.info("Getting features from %s ..." % \
+                                        os.path.dirname(nltkDataPath))
         train_set = self.getLabelledFeaturesSet()
 
         LanguageClassifier.logger.info("Starting training...")
         self.classifier = nltk.NaiveBayesClassifier.train(train_set)
 
         #Override trained probabilities
-        dist = DictionaryProbDist({LanguageClassifier.FRENCH_LABEL: 0.25,
-                                   LanguageClassifier.GERMAN_LABEL: 0.25,
-                                   LanguageClassifier.ITALIAN_LABEL: 0.25,
-                                   LanguageClassifier.ENGLISH_LABEL: 0.25})
+        dist = DictionaryProbDist({FRENCH_LABEL: 0.25, GERMAN_LABEL: 0.25, ITALIAN_LABEL: 0.25,
+                                   ENGLISH_LABEL: 0.25})
 
         self.classifier._label_probdist = dist
         LanguageClassifier.logger.info("Training done...")
@@ -119,10 +114,10 @@ class LanguageClassifier():
            ({'feature_name': 'feature 1', 'feature_name': 'feature 2', ...}, label 1),
            ...
         """
-        return self._getLabelRawTextFeatures(europarl_raw.french, LanguageClassifier.FRENCH_LABEL) +\
-               self._getLabelRawTextFeatures(europarl_raw.german, LanguageClassifier.GERMAN_LABEL) +\
-               self._getLabelRawTextFeatures(europarl_raw.italian, LanguageClassifier.ITALIAN_LABEL) +\
-               self._getLabelRawTextFeatures(europarl_raw.english, LanguageClassifier.ENGLISH_LABEL)
+        return self._getLabelRawTextFeatures(europarl_raw.french, FRENCH_LABEL) +\
+               self._getLabelRawTextFeatures(europarl_raw.german, GERMAN_LABEL) +\
+               self._getLabelRawTextFeatures(europarl_raw.italian, ITALIAN_LABEL) +\
+               self._getLabelRawTextFeatures(europarl_raw.english, ENGLISH_LABEL)
 
     def getScoreDetails(self):
         """Detailed information about the score.
@@ -162,15 +157,15 @@ class LanguageClassifier():
         """Return label or unknown.
         """
         #Get counts
-        fCount = labelCountDict[LanguageClassifier.FRENCH_LABEL]
-        gCount = labelCountDict[LanguageClassifier.GERMAN_LABEL]
-        iCount = labelCountDict[LanguageClassifier.ITALIAN_LABEL]
-        eCount = labelCountDict[LanguageClassifier.ENGLISH_LABEL]
+        fCount = labelCountDict[FRENCH_LABEL]
+        gCount = labelCountDict[GERMAN_LABEL]
+        iCount = labelCountDict[ITALIAN_LABEL]
+        eCount = labelCountDict[ENGLISH_LABEL]
 
         totalCount = fCount + gCount + iCount + eCount
 
         if totalCount == 0 :
-            return (LanguageClassifier.UNKNOWN_LABEL, -1)
+            return (UNKNOWN_LABEL, -1)
 
         #Compute scores
         fScore = fCount / float(totalCount)
@@ -180,10 +175,8 @@ class LanguageClassifier():
 
         strScore = "f:%f/g:%f/i:%f/e:%f" % (fScore, gScore, iScore, eScore)
 
-        allScores = [(LanguageClassifier.FRENCH_LABEL,fScore),
-                     (LanguageClassifier.GERMAN_LABEL,gScore),
-                     (LanguageClassifier.ITALIAN_LABEL,iScore),
-                     (LanguageClassifier.ENGLISH_LABEL,eScore)]
+        allScores = [(FRENCH_LABEL,fScore), (GERMAN_LABEL,gScore),
+                     (ITALIAN_LABEL,iScore), (ENGLISH_LABEL,eScore)]
 
         #Get max score
         maxIndice, maxScore = -1, -1
@@ -201,7 +194,7 @@ class LanguageClassifier():
                 break
 
         #Default to unknown
-        result = (LanguageClassifier.UNKNOWN_LABEL, strScore)
+        result = (UNKNOWN_LABEL, strScore)
         if not noMax:
             result = allScores[maxIndice]
 
@@ -254,23 +247,18 @@ class LanguageClassifier():
     @staticmethod
     def decodeString(strText, context=""):
         decodedString = ""
-
         try:
             decodedString = strText.decode('utf-8')
-
         except Exception, e:
             LanguageClassifier.logger.critical("Decoding error: " + strText + context + str(e))
             raise e
-
         return decodedString
 
     @staticmethod
     def encodeUtf8String(strText, context=""):
         encodedString = ""
-
         try:
             encodedString = strText.encode('utf-8')
-
         except Exception, e:
             LanguageClassifier.logger.critical("Encoding error: " + context)
             raise e

@@ -79,5 +79,7 @@ echo "research-01;unknown" > $TARGETFOLDER/data.omap
 echo "Extracting sentences from $(basename $PDF)"
 eval "$RUNTASKSCRIPT -t $TARGETFOLDER -o $OUTPUTFOLDER -r $REGEXFILE" || die "An error has occurred!"
 
-echo "Results files are:"
-ls -l $OUTPUTFOLDER/*/output
+echo "Results files are into $OUTPUTFOLDER/ImportDocumentTask-1/output"
+pushd $OUTPUTFOLDER/ImportDocumentTask-1/output &>/dev/null
+ls -l sentences*
+popd &>/dev/null

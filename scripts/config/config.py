@@ -41,3 +41,32 @@ if not os.path.exists(NLTK_DATA + "/corpora/europarl_raw"):
 if not os.path.exists(FRENCH_PICKLE_FOLDER.split(':')[1]):
     print "Could not find %s !" % FRENCH_PICKLE_FOLDER.split(':')[1]
     sys.exit(1)
+
+#Language
+UNKNOWN_LABEL       = 'unknown'
+FRENCH_LABEL        = 'french'
+GERMAN_LABEL        = 'german'
+ITALIAN_LABEL       = 'italian'
+ENGLISH_LABEL       = 'english'
+
+UNKNOWN             = 0
+FRENCH              = 1
+GERMAN              = 2
+ENGLISH             = 3
+ITALIAN             = 4
+
+LANGUAGEID2LABELS   = {UNKNOWN:UNKNOWN_LABEL, FRENCH:FRENCH_LABEL, GERMAN:GERMAN_LABEL, 
+                       ENGLISH:ENGLISH_LABEL, ITALIAN:ITALIAN_LABEL}
+
+LANGUAGE2ID         = {UNKNOWN_LABEL:UNKNOWN,FRENCH_LABEL:FRENCH,GERMAN_LABEL:GERMAN,
+                       ENGLISH_LABEL:ENGLISH, ITALIAN_LABEL:ITALIAN}
+
+#Filtering rules
+MAX_SENTENCE_LENGTH = 20000 #Number of characters
+MIN_SENTENCE_LENGTH = 0     #Number of characters
+MIN_WORDS_COUNT     = 0
+MAX_DIGITS_GROUPS   = 10000
+
+#Pattern types
+SUBSTITUTION_TYPE   = 1
+VALIDATION_TYPE     = 2
