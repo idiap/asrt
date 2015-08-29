@@ -1,5 +1,11 @@
 README
 ======
+Author
+------
+Alexandre Nanchen
+
+Description
+-----------
 This is the README for the Automatic Speech Recognition Tools.
 
 This project contains various scripts in order to facilitate the preparation of
