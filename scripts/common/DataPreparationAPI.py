@@ -28,7 +28,6 @@ sys.path.append(scriptsDir + "/../")
 sys.path.append(scriptsDir + "/../../config")
 
 import logging
-import traceback
 
 from ioread import Ioread
 from TextDocument import TextDocument
@@ -43,7 +42,7 @@ class DataPreparationAPI():
     """Import sentences from one file, classifying
        sentences into languages.
     """
-    logger                  = logging.getLogger("Asrt.DataPreparationAPI")
+    logger  = logging.getLogger("Asrt.DataPreparationAPI")
 
     def __init__(self, inputFile, outputDir):
         """Default constructor.
