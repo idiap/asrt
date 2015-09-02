@@ -84,3 +84,18 @@ class TestFormulaLMPreparation(unittest.TestCase):
         f.setText(strTest)
         strResult = f.normalizeCharacters()
         self.assertEquals(strGt, strResult)
+
+    def testIsNoise(self):
+        for p in list(string.punctuation):
+            strTest = p*4
+            self.assertTrue(LMPreparationFormula.isNoise(strTest))
+
+    def testFilterNoiseWords(self):
+        strTest = u"!-?- hello how !!!! are you *-+$"
+        strGt = u"hello how are you"
+
+        f = LMPreparationFormula()
+        f.setText(strTest)
+        strTest = f.filterNoiseWords()
+
+        self.assertEquals(strGt, strTest)

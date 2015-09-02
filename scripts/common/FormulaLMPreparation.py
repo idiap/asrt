@@ -28,15 +28,16 @@ sys.path.append(scriptsDir + "/../config")
 
 import logging, re
 from AsrtConstants import UTF8MAP, PUNCTUATIONEXCLUDE
-from AsrtConstants import PUNCTUATIONMAP
+from AsrtConstants import PUNCTUATIONMAP, PUNCTUATIONPATTERN
 
 class LMPreparationFormula():
     """Main formula for language modeling text
        preparation.
     """
-    logger          = logging.getLogger("Asrt.LMPreparationFormula")
-    ordDict         = {}
-    SPACEREGEX      = u"[ ]+"
+    logger              = logging.getLogger("Asrt.LMPreparationFormula")
+    ordDict             = {}
+    SPACEREGEX          = u"[ ]+"
+    PUNCTUATIONREGEX    = re.compile(PUNCTUATIONPATTERN, flags=re.UNICODE)
 
     def __init__(self):
         """Default constructor.
@@ -82,20 +83,36 @@ class LMPreparationFormula():
         """Prepare 'strText' for language modeling.
 
            Heuristic is :
-                Character base normalization
-                Word base normalization 
+                Noise words filtering
+                Character based normalization
+                Word based normalization 
                     
             param strText: an utf-8 encoded string
             return the normalized text in utf-8 encoding
         """
+        self.filterNoiseWords()
         self.normalizeCharacters()
         self.normalizeWords()
+
+    def filterNoiseWords(self):
+        """Do not keep some words considered as noise.
+
+           For example words consisting of 4 or more punctuation 
+           characters. 
+        """
+        wordsList = re.split(self.SPACEREGEX, self.strText, flags=re.UNICODE)
+        newWordsList = []
+        for w in wordsList:
+            if not LMPreparationFormula.isNoise(w):
+                newWordsList.append(w)
+
+        self.strText = u" ".join(newWordsList)
+        return self.strText
 
     def normalizeCharacters(self):
         """Character normalization:
             - UTF8 normalization
             - Punctuation normalization 
-                
         """
         self._normalizeUtf8()
         self._normalizePunctuation()
@@ -107,7 +124,7 @@ class LMPreparationFormula():
 
            This is language dependant.
 
-            - Words consisting of 3 or more punctuation characters --> discard
+            -  --> discard
             - Contraction prefixes, suffixes --> separate
             - Abbreviations --> normalize
             - Acronyms (upper case words) --> split into letters
@@ -117,6 +134,32 @@ class LMPreparationFormula():
             - Case normalization (change to lower case)
         """
         pass
+
+    @staticmethod
+    def getOrdDict():
+        """Utf-8 characters mapping in the form of a
+           code point dictionary.
+        """
+        if len(LMPreparationFormula.ordDict.keys()) > 0:
+            return LMPreparationFormula.ordDict
+
+        #Substitution dictionary, assume one character only
+        ordDict = {}
+        for match, sub, comment, languageId in UTF8MAP:
+            if ord(match) in ordDict:
+                raise Exception("Already in dictionary %s !" % unichr(ord(match)))
+            ordDict[ord(match)] = sub
+
+        LMPreparationFormula.ordDict = ordDict
+        return LMPreparationFormula.ordDict
+
+    @staticmethod
+    def isNoise(strWord):
+        """Check if 'strWord' is a noise word.
+
+           return True or False
+        """
+        return LMPreparationFormula.PUNCTUATIONREGEX.search(strWord) != None
     
     ##################
     #Implementation
@@ -179,21 +222,3 @@ class LMPreparationFormula():
 
         self.strText = u"".join(unicodeList).rstrip().strip()
         self.strText = re.sub(self.SPACEREGEX, u" ", self.strText, flags=re.UNICODE)
-
-    @staticmethod
-    def getOrdDict():
-        """Utf-8 characters mapping in the form of a
-           code point dictionary.
-        """
-        if len(LMPreparationFormula.ordDict.keys()) > 0:
-            return LMPreparationFormula.ordDict
-
-        #Substitution dictionary, assume one character only
-        ordDict = {}
-        for match, sub, comment, languageId in UTF8MAP:
-            if ord(match) in ordDict:
-                raise Exception("Already in dictionary %s !" % unichr(ord(match)))
-            ordDict[ord(match)] = sub
-
-        LMPreparationFormula.ordDict = ordDict
-        return LMPreparationFormula.ordDict

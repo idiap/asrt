@@ -130,3 +130,5 @@ PUNCTUATIONMAP  = {
     "@": (r"@",r"at", u"at", u"at", u"at"),
     '$': (r'$',r"dollars", u"Dollar", u"dollars", u"dollari"),
 }
+
+PUNCTUATIONPATTERN = ur"(\!|\"|#|\$|%|&|'|\(|\)|\*|\+|,|-|\.|/|:|;|<|=|>|\?|@|\[|\\|\]|\^|_|`|\{|\}|~|\|){4,}"
