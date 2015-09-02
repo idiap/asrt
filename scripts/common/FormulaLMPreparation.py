@@ -124,7 +124,6 @@ class LMPreparationFormula():
 
            This is language dependant.
 
-            -  --> discard
             - Contraction prefixes, suffixes --> separate
             - Abbreviations --> normalize
             - Acronyms (upper case words) --> split into letters
