@@ -23,6 +23,9 @@ __license__ = "BSD 3-Clause"
 
 import os, sys, traceback
 
+##############
+#Debug
+#
 def getErrorMessage(e, prefix):
     """Get full error message with stack trace.
     """

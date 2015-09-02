@@ -34,6 +34,7 @@ from DataPreparationAPIUnitTest import TestDataPreparationAPI
 from TextRepresentationUnitTest import TestTextRepresentation
 from ListUnitTest import TestDataList, TestDataMap
 from PunctuationUnitTest import PunctuationUnitTest
+from FormulaLMPreparationUnitTest import TestFormulaLMPreparation
 
 def getCommonTestSuite(unitTestList):
     """Build the test suite for the common package.
@@ -63,10 +64,12 @@ def getSuite(strName = None):
     dataMapSuite = unittest.TestLoader().loadTestsFromTestCase(TestDataMap)
     textRepresentationSuite = unittest.TestLoader().loadTestsFromTestCase(TestTextRepresentation)
     punctuationSuite = unittest.TestLoader().loadTestsFromTestCase(PunctuationUnitTest)
+    lmPreparationSuite = unittest.TestLoader().loadTestsFromTestCase(TestFormulaLMPreparation)
     
     testSuiteMap = {'taskInfo': taskInfoSuite, 'task': taskSuite, 'dataPreparationAPI': dataPreparationAPISuite, 
                     'dataList': dataListSuite, 'dataMap' : dataMapSuite, 
-                    'textRepresentation' : textRepresentationSuite, 'punctuation': punctuationSuite}
+                    'textRepresentation' : textRepresentationSuite, 'punctuation': punctuationSuite,
+                    'lmPreparationFormula':lmPreparationSuite}
 
     if strName == None:
         return ", ".join(sorted(testSuiteMap.keys()))
@@ -74,7 +77,8 @@ def getSuite(strName = None):
     #All unit tests
     if strName == 'all':
         return [taskInfoSuite, taskSuite, dataPreparationAPISuite, dataListSuite,
-                dataMapSuite, textRepresentationSuite, punctuationSuite]
+                dataMapSuite, textRepresentationSuite, punctuationSuite,
+                lmPreparationSuite]
 
     if strName not in testSuiteMap:
         raise Exception("Unknown test %s" % strName)
