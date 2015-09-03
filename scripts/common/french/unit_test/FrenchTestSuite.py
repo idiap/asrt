@@ -33,7 +33,7 @@ def getSuite(strName = None):
     """
     formulaNumberSuite = unittest.TestLoader().loadTestsFromTestCase(FormulaNumberUnitTest)
     
-    testSuiteMap = {'formulaNumberFrench' : formulaNumberSuite}
+    testSuiteMap = {'numberFormulaFrench' : formulaNumberSuite}
 
     if strName == None:
         return ", ".join(sorted(testSuiteMap.keys()))
