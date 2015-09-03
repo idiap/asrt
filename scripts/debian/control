@@ -1,0 +1,10 @@
+Source: asrt
+Section: framework
+Priority: optional
+Maintainer: Alexandre Nanchen <alexandre.nanchen@idiap.ch>
+Build-Depends: debhelper (>= 5)
+
+Package: asrt
+Architecture: all
+Depends: debconf, python
+Description: Python library to extract sententences from multilingual documents

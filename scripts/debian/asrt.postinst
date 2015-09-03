@@ -1,0 +1,11 @@
+#!/bin/sh
+
+set -e
+
+#Configure /etc files
+if [ "configure" = "$1" ]; then
+	# Byte-compile python resources
+	/usr/share/asrt/py2pyc /usr/share/asrt >/dev/null	
+fi
+
+exit 0

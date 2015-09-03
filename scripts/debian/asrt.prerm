@@ -1,0 +1,11 @@
+#!/bin/sh
+
+set -e
+
+#Upgrade
+if [ "upgrade" = "$1"  ]; then
+	if [ -e "/usr/share/asrt" ]
+	then	
+		find /usr/share/asrt -iname "*.pyc" | xargs rm > /dev/null
+	fi
+fi

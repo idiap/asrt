@@ -1,5 +1,7 @@
 INSTALL
 =======
+This install manual is for Debian based systems.
+
 1. Get the libraries:
 
    `git submodule update --init lib/nltk`
@@ -17,3 +19,14 @@ INSTALL
     - `nltk.download()`
       - copora : europarl_raw
       - model  : punkt
+
+5. Build the debian package
+    - Change directory into scripts
+    - Run the command `debuild` (debian build)
+
+6. Install the library
+    - In the scripts directory, run `sudo dpkg -i ../asrt_1.0.0RC1_all.deb`
+
+7. Run the examples to test your installation
+    - `/usr/share/asrt/examples/bash/run_data_preparation.sh`
+    - `/usr/share/asrt/examples/bash/run_data_preparation_task.sh`
