@@ -50,6 +50,7 @@ scriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 #
 source $scriptDir/../../config/config.sh
 
+TEMPDIR=$cwd/temp
 [ -d $TEMPDIR ] || mkdir $TEMPDIR
 
 PDF=$(readlink -m "$scriptDir/../resources/Research.pdf")
