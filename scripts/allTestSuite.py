@@ -25,11 +25,13 @@ import os, sys
 import unittest
 
 scriptsDir = os.path.abspath(os.path.dirname(__file__))
-sys.path.append(scriptsDir + "/common")
-sys.path.append(scriptsDir + "/common/unit-test")
-sys.path.append(scriptsDir + "/config")
+relDir = ["/common", "/config"]
+for r in relDir: sys.path.append(scriptsDir + r)
 
-from CommonTestSuite import getSuite, getCommonTestSuite
+import unit_test.CommonTestSuite as CommonTestSuite
+import french.unit_test.FrenchTestSuite as FrenchTestSuite
+import german.unit_test.GermanTestSuite as GermanTestSuite
+
 from MyFile import MyFile
 from config import TEMPDIRUNITTEST
 
@@ -37,19 +39,36 @@ usage = """
     Run specific unit tests or all.
 
     Available unit tests are: %s
-""" % getSuite()
+"""
+
+def getUsage():
+    strTests = "%s, %s, %s" % (CommonTestSuite.getSuite(), FrenchTestSuite.getSuite(),
+                           GermanTestSuite.getSuite())
+    return usage % strTests
 
 def asrtTestSuite(unitTestList = None):
-    """Build test suite for all test suites in the script folder
+    """Build test suite for all test sui tes in the script folder
     """
-    commonTestSuite = getCommonTestSuite(unitTestList)
-    allTests = unittest.TestSuite([commonTestSuite])
+    #Return test suite objects
+    commonTestSuite = CommonTestSuite.getCommonTestSuite(unitTestList)
+    frenchTestSuite = FrenchTestSuite.getFrenchTestSuite(unitTestList)
+    germanTestSuite = GermanTestSuite.getGermanTestSuite(unitTestList)
+
+    allTestSuite = []
+    if commonTestSuite is not None:
+        allTestSuite.extend(commonTestSuite)
+    if frenchTestSuite is not None:
+        allTestSuite.extend(frenchTestSuite)
+    if germanTestSuite is not None:
+        allTestSuite.extend(germanTestSuite)
+
+    allTests = unittest.TestSuite(allTestSuite)
 
     return allTests
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print usage
+        print getUsage()
         print "    usage: %s 'unit test name 1 or all' 'unit test name 2' " % sys.argv[0]
         print ""
         sys.exit(0)

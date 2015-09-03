@@ -36,7 +36,7 @@ class LMPreparationFormula():
     """
     logger              = logging.getLogger("Asrt.LMPreparationFormula")
     ordDict             = {}
-    SPACEREGEX          = u"[ ]+"
+    SPACEPATTERN          = u"[ ]+"
     PUNCTUATIONREGEX    = re.compile(PUNCTUATIONPATTERN, flags=re.UNICODE)
 
     def __init__(self):
@@ -100,7 +100,7 @@ class LMPreparationFormula():
            For example words consisting of 4 or more punctuation 
            characters. 
         """
-        wordsList = re.split(self.SPACEREGEX, self.strText, flags=re.UNICODE)
+        wordsList = re.split(self.SPACEPATTERN, self.strText, flags=re.UNICODE)
         newWordsList = []
         for w in wordsList:
             if not LMPreparationFormula.isNoise(w):
@@ -181,7 +181,7 @@ class LMPreparationFormula():
                 utf8List.append(c)
 
         self.strText = u"".join(utf8List).rstrip().strip()
-        self.strText = re.sub(self.SPACEREGEX, u" ", self.strText, flags=re.UNICODE)
+        self.strText = re.sub(self.SPACEPATTERN, u" ", self.strText, flags=re.UNICODE)
 
     def _normalizePunctuation(self):
         """Some punctuation characters are 
@@ -220,4 +220,4 @@ class LMPreparationFormula():
                 unicodeList.append(c)
 
         self.strText = u"".join(unicodeList).rstrip().strip()
-        self.strText = re.sub(self.SPACEREGEX, u" ", self.strText, flags=re.UNICODE)
+        self.strText = re.sub(self.SPACEPATTERN, u" ", self.strText, flags=re.UNICODE)

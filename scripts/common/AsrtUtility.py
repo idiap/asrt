@@ -22,6 +22,7 @@ __copyright__ = "Copyright (c) 2015 Idiap Research Institute"
 __license__ = "BSD 3-Clause"
 
 import os, sys, traceback
+import unittest
 
 ##############
 #Debug
@@ -38,3 +39,27 @@ def getErrorMessage(e, prefix):
         (prefix, fname, exc_tb.tb_lineno,str(e),stackMessage)
 
     return strError
+
+##############
+#Test
+#
+def getTestSuite(pGetSuite, unitTestList):
+    """Given a list of test, return the
+       corresponding test suite.
+    """
+    suiteList = None
+
+    if unitTestList[0] == 'all':
+        suiteList = pGetSuite('all')
+    else:
+        #Specific unit tests
+        if unitTestList[0] != 'all':
+            suiteList = []
+            for m in unitTestList:
+                suiteList.extend(pGetSuite(m))
+
+    # No test suites found
+    if len(suiteList) == 0:
+        return None
+
+    return unittest.TestSuite(suiteList)
