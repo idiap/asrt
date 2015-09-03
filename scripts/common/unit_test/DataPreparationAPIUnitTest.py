@@ -21,11 +21,8 @@ __date__ = "Date: 2015/08"
 __copyright__ = "Copyright (c) 2015 Idiap Research Institute"
 __license__ = "BSD 3-Clause"
 
-import sys, os
-
+import os
 scriptsDir = os.path.abspath(os.path.dirname(__file__))
-sys.path.append(scriptsDir + "/../")
-sys.path.append(scriptsDir + "/../../config")
 
 import unittest
 

@@ -15,14 +15,7 @@ configDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ###########################
 #General
 #
-ASRTROOT="$configDir/../../"
-TEMPDIR="$ASRTROOT/temp"
-DATAPREPARATIONDIR="$ASRTROOT/scripts/data-preparation/"
-
-###########################
-#Libraries
-#
-LIBBASE=$ASRTROOT/lib
+DATAPREPARATIONDIR="$configDir/../data-preparation/"
 
 ###########################
 #Data preparation

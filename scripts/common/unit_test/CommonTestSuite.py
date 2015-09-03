@@ -21,38 +21,19 @@ __date__ = "Date: 2015/04"
 __copyright__ = "Copyright (c) 2015 Idiap Research Institute"
 __license__ = "BSD 3-Clause"
 
-import sys 
-import os
+import sys
 
-scriptsDir = os.path.abspath(os.path.dirname(__file__))
-sys.path.append(scriptsDir + "/../")
+thisMod = sys.modules[__name__]
 
 import unittest
+import AsrtUtility
 
-from TaskUnitTest import TestTaskInfo, TestTask
-from DataPreparationAPIUnitTest import TestDataPreparationAPI
-from TextRepresentationUnitTest import TestTextRepresentation
-from ListUnitTest import TestDataList, TestDataMap
-from PunctuationUnitTest import PunctuationUnitTest
-from FormulaLMPreparationUnitTest import TestFormulaLMPreparation
-
-def getCommonTestSuite(unitTestList):
-    """Build the test suite for the common package.
-    """
-    suiteList = None
-
-    if unitTestList[0] == 'all':
-        suiteList = getSuite('all')
-    else:
-        #Specific unit tests
-        if unitTestList[0] != 'all':
-            suiteList = []
-            for m in unitTestList:
-                suiteList.append(getSuite(m))
-
-    allCommonSuites = unittest.TestSuite(suiteList)
-
-    return allCommonSuites
+from unit_test.TaskUnitTest import TestTaskInfo, TestTask
+from unit_test.DataPreparationAPIUnitTest import TestDataPreparationAPI
+from unit_test.TextRepresentationUnitTest import TestTextRepresentation
+from unit_test.ListUnitTest import TestDataList, TestDataMap
+from unit_test.PunctuationUnitTest import PunctuationUnitTest
+from unit_test.FormulaLMPreparationUnitTest import TestFormulaLMPreparation
 
 def getSuite(strName = None):
     """Get all available suite for the common package.
@@ -81,6 +62,12 @@ def getSuite(strName = None):
                 lmPreparationSuite]
 
     if strName not in testSuiteMap:
-        raise Exception("Unknown test %s" % strName)
+        return []
 
     return testSuiteMap[strName]
+
+
+def getCommonTestSuite(unitTestList):
+    """Build the test suite for the french package.
+    """
+    return AsrtUtility.getTestSuite(thisMod.getSuite, unitTestList)

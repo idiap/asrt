@@ -21,11 +21,8 @@ __date__ = "Date: 2015/09"
 __copyright__ = "Copyright (c) 2015 Idiap Research Institute"
 __license__ = "BSD 3-Clause"
 
-import sys, os
-
+import os
 scriptsDir = os.path.abspath(os.path.dirname(__file__))
-sys.path.append(scriptsDir + "/../")
-sys.path.append(scriptsDir + "/../../config")
 
 import unittest, re, string
 
@@ -50,7 +47,7 @@ class TestFormulaLMPreparation(unittest.TestCase):
 
         strGt = u" ".join(gtList)
         strGt = strGt.encode('utf-8').rstrip().strip()
-        strGt = re.sub(LMPreparationFormula.SPACEREGEX, u" ", 
+        strGt = re.sub(LMPreparationFormula.SPACEPATTERN, u" ", 
                         strGt, flags=re.UNICODE)
 
         f = LMPreparationFormula()
