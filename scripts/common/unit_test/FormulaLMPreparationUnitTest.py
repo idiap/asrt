@@ -63,14 +63,14 @@ class TestFormulaLMPreparation(unittest.TestCase):
         f._normalizePunctuation()
         strResult = f.getText()
 
-        gt = "$%&@"
+        gt = "$%&' @"
         self.assertEquals(gt, strResult)
 
         f.setLanguageId(1)
         f._normalizePunctuation()
         strResult = f.getText()
 
-        gt = "dollars pourcent et at"
+        gt = "dollars pourcent et ' at"
         self.assertEquals(gt, strResult)
 
     def testNormalizeCharacters(self):

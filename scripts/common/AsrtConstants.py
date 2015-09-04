@@ -121,9 +121,10 @@ UTF8MAP         = [
 (ur"\u215D",u"5/8",u"Number forms: cinq huitieme",u"0"),
 (ur"\u215E",u"7/8",u"Number forms: sept huitieme",u"0")]
 
-PUNCTUATIONEXCLUDE = ['!', '"', '#', "'", '(', ')', '*', '+', ',', '-',
+#Do not exclude single quote
+PUNCTUATIONEXCLUDE = ['!', '"', '#', '(', ')', '*', '+', ',', '-',
                       '.', '/', ':', ';', '<', '=', '>', '?', '[', '\\',
-                      ']', '^', '_', '`', '{', '|', '}', '~', "'"]
+                      ']', '^', '_', '`', '{', '|', '}', '~']
 PUNCTUATIONMAP  = {
     "%": (r"%",r"pourcent", u"Prozent", u"percent", u"per cento"),
     "&": (r"&",r"et", u"und", u"and", u"e"),

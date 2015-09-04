@@ -212,8 +212,9 @@ class LMPreparationFormula():
         unicodeList = []
         for i, c in enumerate(self.strText):
             strC = c.encode('utf-8')
+            #For date format, i.e. 21-Jul
             if strC in PUNCTUATIONEXCLUDE:
-                continue
+                unicodeList.append(u" ")
             elif self.languageId != 0 and strC in PUNCTUATIONMAP:
                 unicodeList.append(u" " + PUNCTUATIONMAP[strC][self.languageId] + u" ")
             else:

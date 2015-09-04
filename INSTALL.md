@@ -8,7 +8,9 @@ This install manual is for Debian based systems.
 
    `git submodule update --init lib/unicodecsv`
 
-2. Install both libraries using the *setup.py* scripts.
+   `git submodule update --init lib/num2words`
+
+2. Install the three libraries using the *setup.py* scripts.
 
    `setup.py install --prefix=/path/to/local/install`
 

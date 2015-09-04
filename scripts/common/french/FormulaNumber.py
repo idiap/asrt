@@ -28,16 +28,22 @@ sys.path.append(scriptsDir + "/..")
 
 import logging, re
 from FormulaLMPreparation import LMPreparationFormula
+from num2words import num2words
+from roman import fromRoman
 
 class NumberFormula():
     """Various number formats expansion.
     """
     logger                  = logging.getLogger("Asrt.NumberFormula")
 
+    THOUSANDSEPARATOR       = u"'"
+   
+    HASNUMBERREGEX          = re.compile(u"([0-9]|I|V|X|L|C|D|M)+", flags=re.UNICODE)
     CARDINALNUMBERREGEX     = re.compile(u"[0-9]+$", flags=re.UNICODE)
-    ORDINALNUMBERREGEX      = re.compile(u"(1er|1re|[0-9]+e||[0-9]+ème)$", flags=re.UNICODE)
-    DECIMALNUMBERREGEX      = re.compile(u"[0-9]+[,.][0-9]+$", flags=re.UNICODE)
-    ROMANNUMBERREGEX        = re.compile(u"(I|V|X|L|C|D|M)+(er|re|e|eme|ème)$", flags=re.UNICODE)
+    ORDINALNUMBERREGEX      = re.compile(u"(1er|1re|1ère|[0-9]+e|[0-9]+ème|Ier|Ière|[IVXLCDM]+ème)$", flags=re.UNICODE)
+    ORDINALREPLACEREGEX     = re.compile(u"[erèm]", flags=re.UNICODE)
+    DECIMALNUMBERREGEX      = re.compile(u"[0-9,.]+[0-9,.]*$", flags=re.UNICODE)
+    ROMANNUMBERREGEX        = re.compile(u"[IVXLCDM]+(er|re|ère|e|ème)?$", flags=re.UNICODE)
 
     ##################
     #Public interface
@@ -54,19 +60,34 @@ class NumberFormula():
            param strText: an utf-8 encoded string
            return an utf-8 encoded string 
         """
-        wordsList = re.split(LMPreparationFormula.SPACEREGEX, strText, flags=re.UNICODE)
+        wordsList = re.split(LMPreparationFormula.SPACEPATTERN, strText, flags=re.UNICODE)
 
         newWordsList = []
         for w in wordsList:
-            if self._isCardinalNumber(w):
-                pass
-            elif self._isOrdinalNumber(w):
-                pass
-            elif self._isDecimalNumber(w):
-                pass
-            elif self._isRomanNumber(w):
-                pass
-            else:
+            if not self._hasNumber(w):
+                newWordsList.append(w)
+                continue
+            #Numbers may contain alphanumeric
+            #characters
+            wNorm = self._normalizeNumber(w)
+            try:
+                #Now check number type
+                if self._isCardinalNumber(wNorm):
+                    wNorm = self._cardinal2word(wNorm)
+                elif self._isOrdinalNumber(wNorm):
+                    wNorm = self._ordinal2word(wNorm)
+                elif self._isDecimalNumber(wNorm):
+                    wNorm = self._decimal2word(wNorm)
+                elif self._isRomanNumber(wNorm):
+                    wNorm = self._roman2word(wNorm)
+                else:
+                    self.logger.info("Unknown number format: %s" % w.encode('utf-8'))
+                    wNorm = w
+                newWordsList.append(wNorm)
+
+            except Exception, e:
+                self.logger.warning("Error formatting number (%s): %s" % \
+                    (w.encode('utf-8'), str(e)))
                 newWordsList.append(w)
 
         return u" ".join(newWordsList)
@@ -75,6 +96,26 @@ class NumberFormula():
     #Implementation
     #
     @staticmethod
+    def _hasNumber(strWord):
+        """Check if 'strWord' contains numbers.
+
+           param strWord: an utf-8 encoded words
+           return True or False
+        """
+        #Use search instead of match
+        return NumberFormula.HASNUMBERREGEX.search(strWord) != None
+
+    @staticmethod
+    def _normalizeNumber(strWord):
+        """Remove tousand separator.
+
+           param strWord: an utf-8 encoded words
+           return an utf-8 encoded string
+        """
+        strWord = strWord.replace(NumberFormula.THOUSANDSEPARATOR, u"")
+        return strWord
+
+    @staticmethod
     def _cardinal2word(strNumber):
         """Convert a cardinal number to a written
            word.
@@ -82,18 +123,36 @@ class NumberFormula():
            param strNumber: an utf-8 cardinal number
            return a 'written' cardinal number
         """
-        pass
+        strNumber = num2words(int(strNumber), lang='fr')
+        return strNumber.replace(u"-", u" ")
 
     @staticmethod
     def _ordinal2word(strNumber):
         """Convert an ordinal number to a written
            word.
 
+           i.e. 1er --> premier
+
            param strNumber: an utf-8 ordinal number
            return a 'written' ordinal number
         """
-        pass
+        if strNumber.encode('utf-8') == u"1ère".encode('utf-8'):
+            return u"première"
 
+        strNewNumber = re.sub(u"[erèm]", "", strNumber)
+        if NumberFormula._isCardinalNumber(strNewNumber):
+            strNewNumber = num2words(int(strNewNumber), ordinal=True, lang='fr')
+        elif NumberFormula._isRomanNumber(strNewNumber):
+            #Roman to cardinal
+            strNewNumber = strNewNumber.encode('utf-8')
+            cardinalNumber = fromRoman(strNewNumber)
+            #Digits to ordinal
+            strNewNumber = num2words(cardinalNumber, ordinal=True, lang='fr')
+        else:
+            strNewNumber = strNumber
+
+        return strNewNumber
+            
     @staticmethod
     def _decimal2word(strNumber):
         """Convert a decimal number to a written
@@ -102,7 +161,17 @@ class NumberFormula():
            param strNumber: an utf-8 decimal number
            return a 'written' decimal number
         """
-        pass
+        strNumber = u" virgule ".join(re.split("[,]",strNumber))
+        strNumber = u" point ".join(re.split("[.]",strNumber))
+
+        tokenList = []
+        for w in re.split(LMPreparationFormula.SPACEPATTERN, strNumber):
+            w = w.strip()
+            if NumberFormula._isCardinalNumber(w):
+                w = NumberFormula._cardinal2word(w)
+            tokenList.append(w)
+
+        return u" ".join(tokenList)
 
     @staticmethod
     def _roman2word(strNumber):
@@ -112,8 +181,10 @@ class NumberFormula():
            param strNumber: an utf-8 roman number
            return a 'written' roman number
         """
-        pass
-
+        strNumber = strNumber.encode('utf-8')
+        cardinalNumber = fromRoman(strNumber)
+        return NumberFormula._cardinal2word(cardinalNumber)
+        
     @staticmethod
     def _isCardinalNumber(strWord):
         """Check if 'strWord' is a cardinal number.
