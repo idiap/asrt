@@ -32,7 +32,10 @@ class FormulaNumberUnitTest(unittest.TestCase):
                  "decimal" : [(u"2,5",u"deux virgule cinq"), (u"2.5,3",u"deux point cinq virgule trois")],
                  "roman"   : [(u"V",u"cinq"), (u"X",u"dix")],
                  "all"     : [(u"1ab",u"1ab"),(u"ab",u"ab"),
-                              (u"le 25 mars 2015 2.5 Xème",u"le vingt cinq mars deux mille quinze deux point cinq dixième")]
+                              (u"le 25 mars 2015 2.5 Xème",u"le vingt cinq mars deux mille quinze deux point cinq dixième"),
+                              (u"le 25.",u"le vingt cinq"),
+                              (u"le 25.5.",u"le vingt cinq point cinq"),
+                              (u"14 alinéa 1, some text",u"quatorze alinéa un some text")]
     }
 
     #################

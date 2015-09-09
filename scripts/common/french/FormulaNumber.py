@@ -84,6 +84,12 @@ class NumberFormula():
            return an utf-8 encoded string
         """
         strWord = strWord.replace(NumberFormula.THOUSANDSEPARATOR, u"")
+        
+        #Case when there is a full stop, comma
+        #after a number
+        if strWord.endswith((".",",")):
+            strWord = strWord[:-1]
+    
         return strWord
 
     @staticmethod
@@ -132,6 +138,8 @@ class NumberFormula():
            param strNumber: an utf-8 decimal number
            return a 'written' decimal number
         """
+
+
         strNumber = u" virgule ".join(re.split("[,]",strNumber))
         strNumber = u" point ".join(re.split("[.]",strNumber))
 
@@ -143,6 +151,7 @@ class NumberFormula():
             tokenList.append(w)
 
         return u" ".join(tokenList)
+
 
     @staticmethod
     def _roman2word(strNumber):

@@ -33,7 +33,8 @@ class FormulaNumberUnitTest(unittest.TestCase):
                  "roman"   : [(u"V",u"fünf"), (u"X",u"zehn"),(u"II",u"zwei")],
                  "all"     : [(u"1ab",u"1ab"),(u"ab",u"ab"),
                               (u"die 25 März 2015 2.5 X.",u"die fünf und zwanzig März zwei tausend fünfzehn zwei punkt fünf zehnte"),
-                              (u"21. dezember 2011",u"ein und zwanzigste dezember zwei tausend elf")]
+                              (u"21. dezember 2011",u"ein und zwanzigste dezember zwei tausend elf"),
+                              (u"das 21.",u"das ein und zwanzigste")]
     }
 
     #################
