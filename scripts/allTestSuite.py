@@ -31,6 +31,7 @@ for r in relDir: sys.path.append(scriptsDir + r)
 import unit_test.CommonTestSuite as CommonTestSuite
 import french.unit_test.FrenchTestSuite as FrenchTestSuite
 import german.unit_test.GermanTestSuite as GermanTestSuite
+import formula.unit_test.FormulaTestSuite as FormulaTestSuite
 
 from MyFile import MyFile
 from config import TEMPDIRUNITTEST
@@ -42,8 +43,8 @@ usage = """
 """
 
 def getUsage():
-    strTests = "%s, %s, %s" % (CommonTestSuite.getSuite(), FrenchTestSuite.getSuite(),
-                           GermanTestSuite.getSuite())
+    strTests = "%s, %s, %s, %s" % (CommonTestSuite.getSuite(), FormulaTestSuite.getSuite(),
+                               FrenchTestSuite.getSuite(), GermanTestSuite.getSuite())
     return usage % strTests
 
 def asrtTestSuite(unitTestList = None):
@@ -53,10 +54,13 @@ def asrtTestSuite(unitTestList = None):
     commonTestSuite = CommonTestSuite.getCommonTestSuite(unitTestList)
     frenchTestSuite = FrenchTestSuite.getFrenchTestSuite(unitTestList)
     germanTestSuite = GermanTestSuite.getGermanTestSuite(unitTestList)
+    formulaTestSuite = FormulaTestSuite.getFormulaTestSuite(unitTestList)
 
     allTestSuite = []
     if commonTestSuite is not None:
         allTestSuite.extend(commonTestSuite)
+    if formulaTestSuite is not None:
+        allTestSuite.extend(formulaTestSuite)
     if frenchTestSuite is not None:
         allTestSuite.extend(frenchTestSuite)
     if germanTestSuite is not None:

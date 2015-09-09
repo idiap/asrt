@@ -17,41 +17,41 @@
 
 __author__ = "Alexandre Nanchen"
 __version__ = "Revision: 1.0"
-__date__ = "Date: 2015/09"
+__date__ = "Date: 2015/04"
 __copyright__ = "Copyright (c) 2015 Idiap Research Institute"
 __license__ = "BSD 3-Clause"
 
-import sys, unittest
+import sys
 
 thisMod = sys.modules[__name__]
 
+import unittest
 import AsrtUtility
-from german.unit_test.NumberUnitTest import NumberUnitTest
-from german.unit_test.FormulaNumberUnitTest import FormulaNumberUnitTest
+
+from formula.unit_test.FormulaLMPreparationUnitTest import TestFormulaLMPreparation
+from formula.unit_test.FormulaRegexUnitTest import TestFormulaRegex
 
 def getSuite(strName = None):
-    """Get all available suite for the french package.
+    """Get all available suite for the common package.
     """
-    formulaNumberSuite = unittest.TestLoader().loadTestsFromTestCase(FormulaNumberUnitTest)
-    numberSuite = unittest.TestLoader().loadTestsFromTestCase(NumberUnitTest)
+    lmPreparationSuite = unittest.TestLoader().loadTestsFromTestCase(TestFormulaLMPreparation)
+    regexSuite = unittest.TestLoader().loadTestsFromTestCase(TestFormulaRegex)
     
-    testSuiteMap = {'numberFormulaGerman' : formulaNumberSuite,
-                    'numberGerman': numberSuite}
+    testSuiteMap = {'lmPreparationFormula':lmPreparationSuite, 'regexFormula':regexSuite}
 
     if strName == None:
         return ", ".join(sorted(testSuiteMap.keys()))
 
     #All unit tests
     if strName == 'all':
-        return [formulaNumberSuite, numberSuite]
+        return [lmPreparationSuite, regexSuite]
 
     if strName not in testSuiteMap:
         return []
 
     return testSuiteMap[strName]
 
-
-def getGermanTestSuite(unitTestList):
+def getFormulaTestSuite(unitTestList):
     """Build the test suite for the french package.
     """
     return AsrtUtility.getTestSuite(thisMod.getSuite, unitTestList)

@@ -47,10 +47,11 @@ if __name__ == "__main__":
     parser.add_argument("-l", "--language", help="language (0=unk,1=fr,2=ge,3=en,4=it)", nargs=1, 
                                        dest="language", default=[0])
     parser.add_argument("-r", "--regex", help="regex file", nargs=1, dest="regexFile", default=[None])
-    parser.add_argument("-d", "--debug", help="enable debug output", dest="debug",action="store_true")
+    parser.add_argument("-f", "--filter", help="filter sentences", dest="filter",action="store_true")
     parser.add_argument("-n", "--rmpunct", help="remove punctuation", dest="rmpunct",action="store_true")
     parser.add_argument("-p", "--vbpunct", help="verbalize punctuation", dest="vbpunct",action="store_true")
-    parser.add_argument("-m", "--ngram", help="prepare for ngram modeling", dest="ngram",action="store_true")
+    parser.add_argument("-m", "--lm", help="prepare for lm modeling", dest="lm",action="store_true")
+    parser.add_argument("-d", "--debug", help="enable debug output", dest="debug",action="store_true")
     
     #Parse arguments
     args = parser.parse_args()
@@ -61,16 +62,18 @@ if __name__ == "__main__":
 
     #Flags
     debug = args.debug
+    filterSentences = args.filter
     removePunctuation = args.rmpunct
     verbalizePunctuation = args.vbpunct
-    ngramModeling = args.ngram
+    lmModeling = args.lm
 
     setupLogging(logging.INFO, outputDir + "/task_log.txt")
 
     #Api setup
     api = DataPreparationAPI(inputFile, outputDir)
     api.setRegexFile(regexFile)
-    api.setLMModeling(ngramModeling)
+    api.setFilterSentences(filterSentences)
+    api.setLMModeling(lmModeling)
     api.setRemovePunctuation(removePunctuation)
     api.setVerbalizePunctuation(verbalizePunctuation)
 

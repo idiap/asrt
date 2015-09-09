@@ -33,7 +33,9 @@ from ioread import Ioread
 from TextDocument import TextDocument
 from config import FRENCH_PICKLE_FOLDER
 from ClassifierWord import WordClassifier
-from config import SUBSTITUTION_TYPE, VALIDATION_TYPE
+from RegularExpressionList import RegexList
+from formula.FormulaRegularExpression import RegularExpressionFormula
+from config import VALIDATION_TYPE
 from config import FRENCH_LABEL, GERMAN_LABEL, ENGLISH_LABEL
 from config import ITALIAN_LABEL, UNKNOWN_LABEL
 from AsrtUtility import getErrorMessage
@@ -53,11 +55,12 @@ class DataPreparationAPI():
         self.debug = False
         self.regexFile = None
         self.lmModeling = False
+        self.filterSentences = False
         self.removePunctuation = False
         self.verbalizePunctuation = False
         self.doc = None
         self.wordClassifier = None
-        self.substitutionPatternList = []
+        self.substitutionRegexFormula = RegularExpressionFormula(None)
         self.validationPatternList = []
 
     #####################
@@ -80,6 +83,9 @@ class DataPreparationAPI():
 
     def setLMModeling(self, modelNgram):
         self.lmModeling = modelNgram
+
+    def setFilterSentences(self, filterSentences):
+        self.filterSentences = filterSentences
 
     def setRemovePunctuation(self, removePunctuation):
         self.removePunctuation = removePunctuation
@@ -116,51 +122,65 @@ class DataPreparationAPI():
         if language> 4 or language < 0:
             raise Exception("Unknown language")
 
+        #Done at the API level to share resources between
+        #documents
         self.logger.info("Getting regexes")
-        substitutionPatternsString, validationPatternsString = self._getRegexes()
+        self._getRegexes()
 
-        if len(substitutionPatternsString) > 0:
+        if self.substitutionRegexFormula.hasPatterns():
             self.logger.info("Using following regexes substitution:\n" +\
-                    str(substitutionPatternsString[0:3]))
+                    str(self.substitutionRegexFormula.getSubstitutionPatterns()[0:3]))
 
-        if len(validationPatternsString) > 0:
+        if len(self.validationPatternList) > 0:
             self.logger.info("Using following regexes for replacement:\n" +\
-                    str(validationPatternsString[0:3]))
+                    str(self.validationPatternList[0:3]))
 
         try:
             self.logger.info("Document file: %s" % self.inputFile)
 
             #The main document
             self.doc = TextDocument(self.inputFile, FRENCH_PICKLE_FOLDER,
-                                    substitutionPatternsString,
-                                    validationPatternsString,
+                                    self.substitutionRegexFormula,
+                                    self.validationPatternList,
                                     self.outputDir)
 
             self.logger.info("Load file, convert to text when pdf document")
-
             self.doc.loadDocumentAsSentences(self.tempDir)
 
-            self.logger.info("Cleaning and normalizing data ...")
+            #Control character and strip
+            self.logger.info("Cleaning control characters")
             self.doc.cleanTextSentences()
-            self.doc.normalizeTextSentences()
 
-            self.logger.info("Filtering data ...")
-            self.doc.filterTextSentences()
+            #User's supplied regular expression
+            if self.substitutionRegexFormula.hasPatterns():
+                self.logger.info("Applying user regular expressions")
+                self.doc.normalizeTextSentences()
 
-            #Do that before classifying
-            if self.removePunctuation:
+            if self.filterSentences:
+                self.logger.info("Filtering data")
+                self.doc.filterTextSentences()
+
+            #Do that before classifying.
+            #If LM option is selected, it will be done at
+            #the prepareLM stage
+            if self.removePunctuation and not self.lmModeling:
                 self.doc.removeTextPunctuation()
 
             if language == 0:
-                self.logger.info("Classifying sentences ...")
+                self.logger.info("Classifying sentences")
                 self.doc.setClassifier(self.wordClassifier)
                 self.doc.classifySentences()
             else:
                 self.doc.setSentencesLanguage(language)
 
-            if not self.removePunctuation and \
-                self.verbalizePunctuation:
+            if self.verbalizePunctuation and not self.removePunctuation:
                 self.doc.verbalizeTextPunctuation()
+
+            #After language id has been set as it depends of
+            #languages (i.e. numbers expansion)
+            if self.lmModeling:
+                self.logger.info("Preparing for language modeling")
+                self.doc.prepareLM()
 
         except Exception, e:
             errorMessage = "An error as occurred when importing sentences: %s\n%s" % (str(e), self.inputFile)
@@ -230,24 +250,25 @@ class DataPreparationAPI():
     #Implementation
     #
     def _getRegexes(self):
-        """Fetch from database validation and substitution
-           regexes.
+        """Fetch validation and substitution regexes
+           from csv file.
         """
-        if len(self.substitutionPatternList) > 0 or \
-           len(self.validationPatternList) > 0:
-           return self.substitutionPatternList, self.validationPatternList
+        #User did not specified rules
+        if self.regexFile == None:
+            return
 
-        if self.regexFile != None:
-            io = Ioread()
-            regexList = io.readCSV(self.regexFile,'\t','"')
+        #Are regexes already loaded in API
+        if self.substitutionRegexFormula.hasPatterns() or \
+            len(self.validationPatternList) > 0:
+            return
 
-            #Skip header
-            for row in regexList[1:]:
-                if int(row[4]) == SUBSTITUTION_TYPE:
-                    self.substitutionPatternList.append((row[1],row[2]))
-                elif int(row[4]) == VALIDATION_TYPE:
-                    self.validationPatternList.append(row[1])
-                else:
-                    raise Exception("Unknown regular expression type!")
-
-        return self.substitutionPatternList, self.validationPatternList
+        substitutionList = []
+        regexList = RegexList().loadFromFile(self.regexFile)
+        #Skip header
+        for row in regexList[1:]:
+            if int(row[2]) == VALIDATION_TYPE:
+                self.validationPatternList.append(row[0])
+            else:
+                substitutionList.append((row[0],row[1],row[2]))
+            
+        self.substitutionRegexFormula.setSubstitutionPatternList(substitutionList)

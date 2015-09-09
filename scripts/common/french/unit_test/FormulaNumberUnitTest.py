@@ -53,7 +53,8 @@ class FormulaNumberUnitTest(unittest.TestCase):
         	self.assertEquals(NumberFormula._isCardinalNumber(t), gt, t.encode('utf-8'))
     
     def test_isOrdinal(self):
-        testList = [(u"1er",True), (u"1re",True), (u"1ère",True), (u"2e",True), (u"2ème",True), ]
+        testList = [(u"1er",True), (u"1re",True), (u"1ère",True), (u"2e",True), (u"2ème",True), 
+                    (u"Ier",True), (u"XIIème",True)]
 
         for t, gt in testList:
         	self.assertEquals(NumberFormula._isOrdinalNumber(t), gt, t.encode('utf-8'))
@@ -65,7 +66,7 @@ class FormulaNumberUnitTest(unittest.TestCase):
         	self.assertEquals(NumberFormula._isDecimalNumber(t), gt, t.encode('utf-8'))
 
     def test_isRoman(self):
-    	testList = [(u"V",True), (u"Ier",True),(u"XII",True), (u"XIIème",True)]
+    	testList = [(u"V",True), (u"XII",True), (u"La", False)]
 
     	for t, gt in testList:
         	self.assertEquals(NumberFormula._isRomanNumber(t), gt, t.encode('utf-8'))

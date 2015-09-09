@@ -21,7 +21,11 @@ __date__ = "Date: 2011/05/21"
 __copyright__ = "Copyright (c) 2008 Alexandre Nanchen"
 __license__ = "BSD 3-Clause"
 
-import string
+import os, sys
+
+scriptsDir = os.path.abspath(os.path.dirname(__file__))
+sys.path.append(scriptsDir + "/../config")
+
 import logging, re
 
 import nltk.data
@@ -38,18 +42,21 @@ class TextDocument(Document):
     """A text document.
     """
     logger              = logging.getLogger("Asrt.TextDocument")
+
     CONVERT_COMMAND     = ['pdftotext', '-raw', '-layout', '-enc', 'UTF-8', '-eol', 'unix', '-nopgbrk']
+
+    MERGECLUSTERSEP     = u"\n"
 
     ########################
     # Default constructor
     #
     def __init__(self, source, tokenizer_path,
-                 regex_patterns_list, regex_filter_list,
+                 regexSubstitutionFormula, regex_filter_list,
                  logDir):
         Document.__init__(self, source)
 
         self.tokenizer_path = tokenizer_path
-        self.regex_patterns_list = regex_patterns_list
+        self.regexSubstitutionFormula = regexSubstitutionFormula
         self.regex_filter_list = regex_filter_list
         self.logDir = logDir
         self.classifier = None
@@ -103,12 +110,24 @@ class TextDocument(Document):
         """Use a set of regex rules to prepare
            the sentences.
         """
-        self._applyAllClusters('normalize')
+        #Read all text
+        textList = []
+        for textCluster in self.listContent:
+            textList.append(textCluster.getTextSentence())
 
-    def prepareNGram(self):
+        #Join all text
+        allText = self.MERGECLUSTERSEP.join(textList)
+
+        #Normalize text
+        allText = self.regexSubstitutionFormula.apply(allText)
+        
+        sentencesList = allText.split(self.MERGECLUSTERSEP)
+        self._addSentences(sentencesList)
+
+    def prepareLM(self):
         """Prepare text sentences for N-Gram modeling.
         """
-        self._applyAllClusters("prepareNGram")
+        self._applyAllClusters("prepareLM")
 
     def removeTextPunctuation(self):
         """Remove punctuation symbols.
@@ -183,10 +202,11 @@ class TextDocument(Document):
     def _replaceNewLines(self, data):
         """Replace new lines by spaces.
 
+           New lines are not considered at the end
+           of a sentence.
+
            param data: an utf-8 encoded string
         """
-        data = re.sub(ur"\t", u" ", data, flags=re.UNICODE)
-
         #Last sentence word splited into two
         data = re.sub(ur"-\n", u"", data, flags=re.UNICODE)
         
@@ -211,11 +231,25 @@ class TextDocument(Document):
             TextDocument.logger.critical("Tokenizer error: " + str(e))
             raise Exception("Tokenizer error: " + self.tokenizer_path)
 
-        #Add sentences as clusters
-        for line in sentences:
-            self.addDocumentLine(TextCluster(self, line))
-
+        self._addSentences(sentences)
+        
         TextDocument.logger.info("Loaded %d raw sentences!" % len(sentences))
+
+    def _addSentences(self, sentencesList):
+        """Add the given sentences to the document.
+
+           Empty previous sentences before.
+        """
+        #Empty first
+        self.reset()
+
+        #Add sentences as clusters
+        for line in sentencesList:
+            #Further sentence split to avoid long paragraphes
+            for utterance in re.split(ur"\t|;|:|!|\?", line, flags=re.UNICODE):
+                utterance = utterance.strip()
+                if len(utterance) > 0:
+                    self.addDocumentLine(TextCluster(self, utterance))
 
     ########################
     #Static members

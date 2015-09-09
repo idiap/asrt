@@ -27,7 +27,7 @@ scriptsDir = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(scriptsDir + "/..")
 
 import logging, re
-from num2words import num2words
+from german.Number import Number
 from roman import fromRoman
 from AsrtUtility import convertNumber
 from AsrtConstants import SPACEPATTERN
@@ -38,10 +38,10 @@ class NumberFormula():
     logger                  = logging.getLogger("Asrt.NumberFormula")
 
     THOUSANDSEPARATOR       = u"'"
-   
+
     HASNUMBERREGEX          = re.compile(u"([0-9]|I|V|X|L|C|D|M)+", flags=re.UNICODE)
     CARDINALNUMBERREGEX     = re.compile(u"[0-9]+$", flags=re.UNICODE)
-    ORDINALNUMBERREGEX      = re.compile(u"(1er|1re|1ère|[0-9]+e|[0-9]+ème|Ier|Ire|Ière|[IVXLCDM]+ème)$", flags=re.UNICODE)
+    ORDINALNUMBERREGEX      = re.compile(u"([0-9]+[.]|[IVXLCDM]+[.])$", flags=re.UNICODE)
     DECIMALNUMBERREGEX      = re.compile(u"[0-9,.]+[0-9,.]*$", flags=re.UNICODE)
     ROMANNUMBERREGEX        = re.compile(u"[IVXLCDM]+$", flags=re.UNICODE)
 
@@ -51,15 +51,15 @@ class NumberFormula():
     @classmethod
     def apply(cls, strText):
         """Apply formula to numbers.
-           
+
            Numbers cateories are:
              - Decimal numbers
-             - Ordinal numbers 
+             - Ordinal numbers
              - Cardinal numbers
              - Roman numbers
 
            param strText: an utf-8 encoded string
-           return an utf-8 encoded string 
+           return an utf-8 encoded string
         """
         return convertNumber(cls, strText)
 
@@ -94,36 +94,32 @@ class NumberFormula():
            param strNumber: an utf-8 cardinal number
            return a 'written' cardinal number
         """
-        strNumber = num2words(int(strNumber), lang='fr')
-        return strNumber.replace(u"-", u" ")
+        return Number.convertNumberIntoLetters(strNumber)
 
     @staticmethod
     def _ordinal2word(strNumber):
         """Convert an ordinal number to a written
            word.
 
-           i.e. 1er --> premier
+           i.e. 1. --> erste
 
            param strNumber: an utf-8 ordinal number
            return a 'written' ordinal number
         """
-        if strNumber.encode('utf-8') == u"1ère".encode('utf-8'):
-            return u"première"
-
-        strNewNumber = re.sub(u"[erèm]", "", strNumber)
+        strNewNumber = re.sub(u"[.]", "", strNumber)
         if NumberFormula._isCardinalNumber(strNewNumber):
-            strNewNumber = num2words(int(strNewNumber), ordinal=True, lang='fr')
+            strNewNumber =  Number.convertNumberIntoLetters(strNewNumber, ordinal=True)
         elif NumberFormula._isRomanNumber(strNewNumber):
             #Roman to cardinal
             strNewNumber = strNewNumber.encode('utf-8')
             cardinalNumber = fromRoman(strNewNumber)
             #Digits to ordinal
-            strNewNumber = num2words(cardinalNumber, ordinal=True, lang='fr')
+            strNewNumber =  Number.convertNumberIntoLetters(cardinalNumber, ordinal=True)
         else:
             strNewNumber = strNumber
 
         return strNewNumber
-            
+
     @staticmethod
     def _decimal2word(strNumber):
         """Convert a decimal number to a written
@@ -132,8 +128,8 @@ class NumberFormula():
            param strNumber: an utf-8 decimal number
            return a 'written' decimal number
         """
-        strNumber = u" virgule ".join(re.split("[,]",strNumber))
-        strNumber = u" point ".join(re.split("[.]",strNumber))
+        strNumber = u" komma ".join(re.split("[,]",strNumber))
+        strNumber = u" punkt ".join(re.split("[.]",strNumber))
 
         tokenList = []
         for w in re.split(SPACEPATTERN, strNumber):
@@ -155,7 +151,7 @@ class NumberFormula():
         strNumber = strNumber.encode('utf-8')
         cardinalNumber = fromRoman(strNumber)
         return NumberFormula._cardinal2word(cardinalNumber)
-        
+
     @staticmethod
     def _isCardinalNumber(strWord):
         """Check if 'strWord' is a cardinal number.
@@ -169,9 +165,6 @@ class NumberFormula():
     def _isOrdinalNumber(strWord):
         """Check if 'strWord' is an ordinal number.
 
-           i.e. 1er, 2e, 2ème
-           see http://french.about.com/od/vocabulary/a/romannumerals.htm
-               https://francais.lingolia.com/fr/vocabulaire/nombres-date-et-heure/les-nombres-ordinaux
 
            param strWord: an utf-8 encoded words
            return True or False

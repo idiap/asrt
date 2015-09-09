@@ -1,104 +1,104 @@
-id	regexPatternString	regexPatternAlternate	regexPatternComment	regexPatternType_id
-11	TEXTE DEPOSE			2
-12	DRINGLICHE INTERPELLATION			2
-13	^Interpellation			2
-14	^Postulat			2
-15	Développement postulat			2
-16	Développement interpellation			2
-17	^Beschluss			2
-28	^Präsidentin:			2
-29	^Statthalter:			2
-30	^Nr.			2
-31	^Beim Namensaufruf			2
-32	^Entschuldigt:			2
-33	^Nur um			2
-38	[^,]*,[^,]*,[^,]*,			2
-39	Grosser Rat			2
-40	^Nr.			2
-45	^No$			2
-46	^lectures			2
-47	^considération			2
-48	^\(			2
-49	^La séance			2
-51	^Sont absents			2
-53	^Assermentation			2
-54	^>			2
-55	^Rapporteur			2
-56	^Commissaire			2
-57	Ont voté oui			2
-58	Ont voté non			2
-61	TITRE ET CONSIDÉRANTS			2
-62	Le Rapporteur			2
-63	^ARTICLE			2
-69	^ART			2
-71	^Révision partielle			2
-72	Abs\.$			2
-75	^Art.			2
-1	\([^\)]*\)		( some text )	1
-2	^[^\)]*\)		^ some text ) some text	1
-3	\(.*$		some text ( some text $	1
-4	^[ ]*,		^ , some text	1
-5	_*		some text_____some text ___	1
-6	–		– some text	1
-7	 [\d]+.$		 some text 21.$	1
-8	 [Ff][Rr]s?\.$			1
-9	^\d+ 			1
-10	 \d$			1
-19	œ	oe		1
-20	’	'		1
-22	II	deux		1
-23	ß	ss	Double s for german	1
-24	«			1
-25	»			1
-26	‹			1
-27	›			1
-34	§			1
-37	∫			1
-41	\d+\.			1
-42	[^.]*\.[^.]*\.[^.]*\.			1
-43	…			1
-59	^[^—]+: —			1
-66	\([^\)]*\)\.		( some text ).	1
-67	\. –			1
-70	•			1
-74	#			1
-77	--	 		1
-78	—			1
-79	―			1
-80	-e-			1
-81	^© 			1
-82	“			1
-83	”			1
-84	‘			1
-85	^' 			1
-86	^º 			1
-87	 			1
-88	^- 			1
-89	„			1
-90	^· 			1
-91	≤			1
-92	°			1
-93	Ω			1
-95	-\.			1
-96	\.			1
-97	\.\.			1
-98	±			1
-99	⅛			1
-100	¼			1
-101	½			1
-102	¾			1
-103	ρ			1
-104	μ	mu 		1
-105				2
-106				2
-107	‰			1
-108	º			1
-109	‘			1
-110	í			2
-111	ï			2
-112	ò			2
-113	ù			2
-114	ñ			2
-115	ø			2
-116	ã			2
-117	a.'			1
+regexPatternString	regexPatternAlternate	regexPatternType_id	regexPatternComment
+TEXTE DEPOSE		2	
+DRINGLICHE INTERPELLATION		2	
+^Interpellation		2	
+^Postulat		2	
+Développement postulat		2	
+Développement interpellation		2	
+^Beschluss		2	
+^Präsidentin:		2	
+^Statthalter:		2	
+^Nr.		2	
+^Beim Namensaufruf		2	
+^Entschuldigt:		2	
+^Nur um		2	
+[^,]*,[^,]*,[^,]*,		2	
+Grosser Rat		2	
+^Nr.		2	
+^No$		2	
+^lectures		2	
+^considération		2	
+^\(		2	
+^La séance		2	
+^Sont absents		2	
+^Assermentation		2	
+^>		2	
+^Rapporteur		2	
+^Commissaire		2	
+Ont voté oui		2	
+Ont voté non		2	
+TITRE ET CONSIDÉRANTS		2	
+Le Rapporteur		2	
+^ARTICLE		2	
+^ART		2	
+^Révision partielle		2	
+Abs\.$		2	
+^Art.		2	
+\([^\)]*\)		1	( some text )
+^[^\)]*\)		1	^ some text ) some text
+\(.*$		1	some text ( some text $
+^[ ]*,		1	^ , some text
+_*		1	some text_____some text ___
+–		1	– some text
+ [\d]+.$		1	 some text 21.$
+ [Ff][Rr]s?\.$		1	
+^\d+ 		1	
+ \d$		1	
+œ	oe	1	
+’		1	
+II	deux	1	
+ß	ss	1	Double s for german
+«		1	
+»		1	
+‹		1	
+›		1	
+§		1	
+∫		1	
+\d+\.		1	
+[^.]*\.[^.]*\.[^.]*\.		1	
+…		1	
+^[^—]+: —		1	
+\([^\)]*\)\.		-1	( some text ).
+\. –		-1	
+•		1	
+#		1	
+--	 	1	
+—		1	
+―		1	
+-e-		1	
+^© 		1	
+“		1	
+”		1	
+‘		1	
+^' 		1	
+^º 		1	
+ 		1	
+^- 		1	
+„		1	
+^· 		1	
+≤		1	
+°		1	
+Ω		1	
+-\.		1	
+\.		1	
+\.\.		1	
+±		1	
+⅛		1	
+¼		1	
+½		1	
+¾		1	
+ρ		1	
+μ	mu 	1	
+		2	
+		2	
+‰		1	
+º		1	
+‘		1	
+í		2	
+ï		2	
+ò		2	
+ù		2	
+ñ		2	
+ø		2	
+ã		2	
+a.'		1	

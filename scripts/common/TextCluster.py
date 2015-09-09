@@ -27,10 +27,12 @@ import unicodedata
 from Cluster import Cluster
 from Classifier import LanguageClassifier
 from Punctuation import Punctuation
+from formula.FormulaLMPreparation import LMPreparationFormula
 from config import FRENCH_LABEL, GERMAN_LABEL, ENGLISH_LABEL
 from config import ITALIAN_LABEL, LANGUAGEID2LABELS
 from config import MAX_SENTENCE_LENGTH, MIN_SENTENCE_LENGTH
-from config import MIN_WORDS_COUNT, MAX_DIGITS_GROUPS
+from config import MIN_WORDS_COUNT, MAX_WORDS_COUNT
+from config import MAX_DIGITS_GROUPS, LANGUAGE2ID
 
 class TextCluster(Cluster):
     """Concrete type representing a text sentence from
@@ -59,10 +61,13 @@ class TextCluster(Cluster):
         #Actual data
         self.addElement(sentenceText)
 
+        #LM normalization
+        self.lmPreparationFormula = LMPreparationFormula()
+
     #####################
     #Getters and setters
     #
-    def getTextSentence(self, debug=False):
+    def getTextSentence(self, noPunctuation = False, debug=False):
         """Return the associated utf-8 text sentence.
         """
         if len(self.elementList) == 0:
@@ -73,12 +78,25 @@ class TextCluster(Cluster):
 
         return self.elementList[0]
 
+    def getLanguageId(self):
+        """Get the cluster language id.
+
+           language id is:
+                - unknown : 0
+                - french  : 1
+                - german  : 2
+                - english : 3
+                - italian : 4
+        """
+        strLanguage = self.getAttribute(self.LANGUAGE_ATTRIBUTE)
+        return LANGUAGE2ID[strLanguage]
+
     def setTextSentence(self, textSentence):
         """Set the new text.
 
            param textSentence: an utf-8 encoded string
         """
-        self.elementList.insert(0, textSentence)
+        self.elementList[0] = textSentence
 
     def setLanguage(self, languageId):
         """Language for sentence.
@@ -104,49 +122,13 @@ class TextCluster(Cluster):
 
            Heuristic is:
               - remove control characters
-              - use user defined regexes
               - normalize spaces to one space
+              - strip spaces from beginning and end of string
         """
         strText = self.getTextSentence()
         strText = TextCluster.removeControlCharacters(strText)
-
-        #Spaces are normalized to two spaces for regex matching
-        strText = re.sub(TextCluster.SPACEREGEX,'  ', strText)
-
-        #print "Before", unicode(strText).encode('utf-8')
-
-        #Regex from database
-        for regex, alternate in self.document.regex_patterns_list:
-            if alternate == None:
-                alternate = ''
-                
-            #print regex.encode('utf-8'), unicode(strText).encode('utf-8')
-            #No ignore case available
-            strText = re.sub(regex, alternate, strText)
-
-        #print "After", unicode(strText).encode('utf-8')
-
-        #Spaces are normalized to one space
-        strText = re.sub(TextCluster.SPACEREGEX,' ', strText)
-
-        self.setTextSentence(strText)
-
-    def normalize(self):
-        """Normalize text.
-        """
-        strText = self.getTextSentence()
-
-        #Normalize prior to classification.
-        #Do not encode in bytes string!
-        strText =  TextCluster.normalizeText(strText)
-
-        self.setTextSentence(strText)
-
-    def prepareNGram(self):
-        """Prepare for language modeling.
-        """
-        raise Exception("Not implemented yet")
-        
+        self.setTextSentence(strText.rstrip().strip())
+    
     def classify(self, classifier):
         """Classify between french and german.
         """
@@ -171,6 +153,18 @@ class TextCluster(Cluster):
         else:
             raise Exception("Text verbalization is only implemented for French!")
 
+    def prepareLM(self):
+        """Prepare for language modeling.
+        """
+        strText = self.getTextSentence()
+        languageId = self.getLanguageId()
+
+        self.lmPreparationFormula.setText(strText)
+        self.lmPreparationFormula.setLanguageId(languageId)
+        strText = self.lmPreparationFormula.prepareText()
+        
+        self.setTextSentence(strText)
+
     #####################
     #Predicates
     #
@@ -186,14 +180,16 @@ class TextCluster(Cluster):
         #Nb characters
         if len(strText) > MAX_SENTENCE_LENGTH or\
            len(strText) < MIN_SENTENCE_LENGTH:
-            print strText.encode('utf-8')
+            #print strText.encode('utf-8')
             TextCluster.logger.info("Discard sentence: inappropriate length: %d!" % len(strText))
             return False
 
         #Nb words
-        if len(strText.split(' ')) < MIN_WORDS_COUNT:
+        nbWords = len(strText.split(' '))
+        if nbWords < MIN_WORDS_COUNT or \
+           nbWords > MAX_WORDS_COUNT:
             #print strText.encode('utf-8')
-            TextCluster.logger.info("Discard sentence, not enough words!")
+            TextCluster.logger.info("Discard sentence, not enough or to many words!")
             return False
 
         #Nb digit groups
@@ -241,8 +237,6 @@ class TextCluster(Cluster):
     ########################
     # Implementation
     #
-    
-
     def _isTextValid(self, strText):
         """Assess the validity of the text using
            a set of regex rules.
@@ -275,13 +269,9 @@ class TextCluster(Cluster):
            - remove new line character at the end
            - remove prepended and trailing spaces
 
-           It keep case for acronyms detection.
-           Keep dots for acronyms detection.
-           Do not decode string.
-
+           
         """
         textUtterance = textUtterance.rstrip().strip()
-
         return textUtterance
 
     @staticmethod
@@ -290,7 +280,6 @@ class TextCluster(Cluster):
            by spaces.
         """
         lineList = []
-
         for ch in str:
             if unicodedata.category(ch)[0] != "C":
                 lineList.append(ch)

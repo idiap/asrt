@@ -33,7 +33,6 @@ from unit_test.DataPreparationAPIUnitTest import TestDataPreparationAPI
 from unit_test.TextRepresentationUnitTest import TestTextRepresentation
 from unit_test.ListUnitTest import TestDataList, TestDataMap
 from unit_test.PunctuationUnitTest import PunctuationUnitTest
-from unit_test.FormulaLMPreparationUnitTest import TestFormulaLMPreparation
 
 def getSuite(strName = None):
     """Get all available suite for the common package.
@@ -45,12 +44,10 @@ def getSuite(strName = None):
     dataMapSuite = unittest.TestLoader().loadTestsFromTestCase(TestDataMap)
     textRepresentationSuite = unittest.TestLoader().loadTestsFromTestCase(TestTextRepresentation)
     punctuationSuite = unittest.TestLoader().loadTestsFromTestCase(PunctuationUnitTest)
-    lmPreparationSuite = unittest.TestLoader().loadTestsFromTestCase(TestFormulaLMPreparation)
     
     testSuiteMap = {'taskInfo': taskInfoSuite, 'task': taskSuite, 'dataPreparationAPI': dataPreparationAPISuite, 
                     'dataList': dataListSuite, 'dataMap' : dataMapSuite, 
-                    'textRepresentation' : textRepresentationSuite, 'punctuation': punctuationSuite,
-                    'lmPreparationFormula':lmPreparationSuite}
+                    'textRepresentation' : textRepresentationSuite, 'punctuation': punctuationSuite}
 
     if strName == None:
         return ", ".join(sorted(testSuiteMap.keys()))
@@ -58,8 +55,7 @@ def getSuite(strName = None):
     #All unit tests
     if strName == 'all':
         return [taskInfoSuite, taskSuite, dataPreparationAPISuite, dataListSuite,
-                dataMapSuite, textRepresentationSuite, punctuationSuite,
-                lmPreparationSuite]
+                dataMapSuite, textRepresentationSuite, punctuationSuite]
 
     if strName not in testSuiteMap:
         return []

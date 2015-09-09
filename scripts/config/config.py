@@ -62,11 +62,11 @@ LANGUAGE2ID         = {UNKNOWN_LABEL:UNKNOWN,FRENCH_LABEL:FRENCH,GERMAN_LABEL:GE
                        ENGLISH_LABEL:ENGLISH, ITALIAN_LABEL:ITALIAN}
 
 #Filtering rules
-MAX_SENTENCE_LENGTH = 20000 #Number of characters
-MIN_SENTENCE_LENGTH = 0     #Number of characters
-MIN_WORDS_COUNT     = 0
-MAX_DIGITS_GROUPS   = 10000
+MAX_SENTENCE_LENGTH = 1000 #Number of characters
+MIN_SENTENCE_LENGTH = 5    #Number of characters
+MIN_WORDS_COUNT     = 2
+MAX_WORDS_COUNT     = 100
+MAX_DIGITS_GROUPS   = 5    #Filter lines with too many groups of digits
 
 #Pattern types
-SUBSTITUTION_TYPE   = 1
-VALIDATION_TYPE     = 2
+VALIDATION_TYPE     = -1

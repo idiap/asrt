@@ -26,10 +26,13 @@ scriptsDir = os.path.abspath(os.path.dirname(__file__))
 
 import unittest, re, string
 
-from FormulaLMPreparation import LMPreparationFormula
-from AsrtConstants import UTF8MAP
+from formula.FormulaLMPreparation import LMPreparationFormula
+from AsrtConstants import UTF8MAP, SPACEPATTERN, DOTCOMMAEXCLUDE, PUNCTUATIONEXCLUDE
+from AsrtConstants import CONTRACTIONPREFIXELIST
 
 class TestFormulaLMPreparation(unittest.TestCase):
+    allPunctList = DOTCOMMAEXCLUDE + PUNCTUATIONEXCLUDE
+
     def setUp(self):
         print ""
 
@@ -47,7 +50,7 @@ class TestFormulaLMPreparation(unittest.TestCase):
 
         strGt = u" ".join(gtList)
         strGt = strGt.encode('utf-8').rstrip().strip()
-        strGt = re.sub(LMPreparationFormula.SPACEPATTERN, u" ", 
+        strGt = re.sub(SPACEPATTERN, u" ", 
                         strGt, flags=re.UNICODE)
 
         f = LMPreparationFormula()
@@ -60,14 +63,14 @@ class TestFormulaLMPreparation(unittest.TestCase):
     def testNormalizePunctuation(self):
         f = LMPreparationFormula()
         f.setText(u"".join(string.punctuation))
-        f._normalizePunctuation()
+        f._normalizePunctuation(self.allPunctList)
         strResult = f.getText()
 
         gt = "$%&' @"
         self.assertEquals(gt, strResult)
 
         f.setLanguageId(1)
-        f._normalizePunctuation()
+        f._normalizePunctuation(self.allPunctList)
         strResult = f.getText()
 
         gt = "dollars pourcent et ' at"
@@ -79,13 +82,14 @@ class TestFormulaLMPreparation(unittest.TestCase):
 
         f = LMPreparationFormula()
         f.setText(strTest)
-        strResult = f.normalizeCharacters()
-        self.assertEquals(strGt, strResult)
+        f._normalizeUtf8()
+        f._normalizePunctuation(self.allPunctList)
+        self.assertEquals(strGt, f.getText())
 
     def testIsNoise(self):
         for p in list(string.punctuation):
             strTest = p*4
-            self.assertTrue(LMPreparationFormula.isNoise(strTest))
+            self.assertTrue(LMPreparationFormula._isNoise(strTest))
 
     def testFilterNoiseWords(self):
         strTest = u"!-?- hello how !!!! are you *-+$"
@@ -93,6 +97,6 @@ class TestFormulaLMPreparation(unittest.TestCase):
 
         f = LMPreparationFormula()
         f.setText(strTest)
-        strTest = f.filterNoiseWords()
+        strTest = f._filterNoiseWords()
 
         self.assertEquals(strGt, strTest)

@@ -22,9 +22,12 @@ __copyright__ = "Copyright (c) 2015 Idiap Research Institute"
 __license__ = "BSD 3-Clause"
 
 import os, sys, traceback
-import unittest
+import unittest, logging, re
+from AsrtConstants import SPACEPATTERN
 
-##############
+logger  = logging.getLogger("Asrt.AsrtUtility")
+
+##################
 #Debug
 #
 def getErrorMessage(e, prefix):
@@ -40,7 +43,7 @@ def getErrorMessage(e, prefix):
 
     return strError
 
-##############
+##################
 #Test
 #
 def getTestSuite(pGetSuite, unitTestList):
@@ -63,3 +66,41 @@ def getTestSuite(pGetSuite, unitTestList):
         return None
 
     return unittest.TestSuite(suiteList)
+
+##################
+#Number expansion
+#
+def convertNumber(cls, strText):
+    """Multilingual algorithm to convert a number
+       into a written form.
+    """
+    wordsList = re.split(SPACEPATTERN, strText, flags=re.UNICODE)
+
+    newWordsList = []
+    for w in wordsList:
+        if not cls._hasNumber(w):
+            newWordsList.append(w)
+            continue
+        #Numbers may contain alphanumeric
+        #characters
+        wNorm = cls._normalizeNumber(w)
+        try:
+            #Now check number type
+            if cls._isCardinalNumber(wNorm):
+                wNorm = cls._cardinal2word(wNorm)
+            elif cls._isOrdinalNumber(wNorm):
+                wNorm = cls._ordinal2word(wNorm)
+            elif cls._isDecimalNumber(wNorm):
+                wNorm = cls._decimal2word(wNorm)
+            elif cls._isRomanNumber(wNorm):
+                wNorm = cls._roman2word(wNorm)
+            else:
+                wNorm = w
+            newWordsList.append(wNorm)
+
+        except Exception, e:
+            logger.warning("Error formatting number (%s): %s" % \
+                (w.encode('utf-8'), str(e)))
+            newWordsList.append(w)
+
+    return u" ".join(newWordsList)

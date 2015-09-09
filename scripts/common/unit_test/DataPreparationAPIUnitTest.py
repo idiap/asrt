@@ -45,8 +45,8 @@ class TestDataPreparationAPI(unittest.TestCase):
 		api = DataPreparationAPI(None,None)
 		api.setRegexFile(self.regexFile)
 
-		substitutionPatternsList, validationPatternsList = api._getRegexes()
+		api._getRegexes()
 
-		self.assertTrue(len(substitutionPatternsList) > 0)
-		self.assertTrue(len(validationPatternsList) > 0)
-		self.assertTrue(len(substitutionPatternsList[0]) > 1)
+		self.assertTrue(api.substitutionRegexFormula.hasPatterns())
+		self.assertTrue(len(api.validationPatternList) > 0)
+		self.assertTrue(len(api.substitutionRegexFormula.substitutionPatternList[0]) > 1)
