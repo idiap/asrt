@@ -35,7 +35,8 @@ class FormulaNumberUnitTest(unittest.TestCase):
                               (u"le 25 mars 2015 2.5 Xème",u"le vingt cinq mars deux mille quinze deux point cinq dixième"),
                               (u"le 25.",u"le vingt cinq"),
                               (u"le 25.5.",u"le vingt cinq point cinq"),
-                              (u"14 alinéa 1, some text",u"quatorze alinéa un some text")]
+                              (u"14 alinéa 1, some text",u"quatorze alinéa un some text"),
+                              (u"l'article 12,",u"l'article douze")]
     }
 
     #################

@@ -77,8 +77,8 @@ class TestFormulaLMPreparation(unittest.TestCase):
         self.assertEquals(gt, strResult)
 
     def testNormalizeCharacters(self):
-        strTest = u"a b c \uff1b , %"
-        strGt = u"a b c %"
+        strTest = ur"a b c \uff1b , % œ"
+        strGt = ur"a b c % oe"
 
         f = LMPreparationFormula()
         f.setText(strTest)

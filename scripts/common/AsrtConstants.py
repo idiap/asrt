@@ -138,7 +138,9 @@ UTF8MAP         	= [
 (ur"\u215B",u"1/8",u"Number forms: un huitieme",u"0"),
 (ur"\u215C",u"3/8",u"Number forms: trois huitieme",u"0"),
 (ur"\u215D",u"5/8",u"Number forms: cinq huitieme",u"0"),
-(ur"\u215E",u"7/8",u"Number forms: sept huitieme",u"0")]
+(ur"\u215E",u"7/8",u"Number forms: sept huitieme",u"0"),
+(ur"\u0152",u"oe",u"Ligatures: lattin small ligature oe",u"0"),
+(ur"\u0153",u"oe",u"Ligatures: lattin small ligature oe",u"0")]
 
 #Do not exclude single quote
 PUNCTUATIONEXCLUDE 	= ['!', '"', '#', '(', ')', '*', '+', '-',
