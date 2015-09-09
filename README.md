@@ -2,7 +2,7 @@ README
 ======
 Author
 ------
-Alexandre Nanchen
+Alexandre Nanchen, Christine Marcel
 
 Description
 -----------
