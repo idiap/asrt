@@ -38,7 +38,7 @@ class TextCluster(Cluster):
     """Concrete type representing a text sentence from
        a bilingual pdf document.
 
-       Sentences are stored as utf-8 encoding.
+       Sentences are stored in utf-8 encoding.
     """
     
     logger = logging.getLogger("Asrt.TextCluster")
@@ -46,8 +46,7 @@ class TextCluster(Cluster):
     LANGUAGE_ATTRIBUTE      = 'language'
     FRENCH_ID               = 1
     ID_COUNTER              = 0
-    SPACEREGEX              = '[ ]+'
-
+    
     def __init__(self, document, sentenceText):
         """Constructor.
         """

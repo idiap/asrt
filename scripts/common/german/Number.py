@@ -31,7 +31,7 @@ import re
 from AsrtConstants import UNITD2W, DECADED2W
 
 class Number():
-    """Numbers expansion.
+    """A number written with digits.
     """
     logger  = logging.getLogger("Asrt.german.Number")
 

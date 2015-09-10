@@ -33,8 +33,9 @@ from AsrtUtility import convertNumber
 from AsrtConstants import SPACEPATTERN
 
 class NumberFormula():
-    """Various number formats expansion.
+    """A set of rules to 'unformat' formatted numbers.
     """
+
     logger                  = logging.getLogger("Asrt.NumberFormula")
 
     THOUSANDSEPARATOR       = u"'"

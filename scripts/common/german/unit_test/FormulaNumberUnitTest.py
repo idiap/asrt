@@ -25,7 +25,7 @@ import unittest
 from german.FormulaNumber import NumberFormula
 
 class FormulaNumberUnitTest(unittest.TestCase):
-
+    
     testDict = { "cardinal": [(u"10",u"zehn"),(u"25",u"fünf und zwanzig")],
                  "ordinal" : [(u"1.",u"erste"),(u"2.",u"zweite"),
                               (u"V.",u"fünfte"), (u"X.",u"zehnte")],

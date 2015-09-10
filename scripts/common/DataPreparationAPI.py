@@ -112,7 +112,7 @@ class DataPreparationAPI():
     def prepareDocument(self, language = 0):
         """Segment the document into sentences and prepare them.
 
-           param language:
+           param language: an int between 0-4
                 - unknown : 0
                 - french  : 1
                 - german  : 2

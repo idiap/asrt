@@ -21,18 +21,15 @@ __date__ = "Date: 2015/04"
 __copyright__ = "Copyright (c) 2015 Idiap Research Institute"
 __license__ = "BSD 3-Clause"
 
-import sys
-import os
+import os, sys
+
+scriptsDir = os.path.abspath(os.path.dirname(__file__))
+sys.path.append(scriptsDir + "/../config")
+
 import logging
 import logging.handlers
 
 from MyFile import MyFile
-
-########################
-#Some constants
-#
-LOGMESSAGE_LEFT_OFFSET=10
-LOGMESSAGE_LINE_LENGTH=40
 
 ########################
 #Formatter that align output

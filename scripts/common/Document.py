@@ -24,10 +24,6 @@ __license__ = "BSD 3-Clause"
 import codecs
 import types, logging
 
-separator = ";"
-
-class NoSourceError(Exception): pass
-
 class Document:
     """Base document class
     """
