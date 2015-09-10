@@ -196,7 +196,7 @@ CONTRACTIONPREFIXELIST = [
 	(ur"(?P<gr1>[cdjlmnst])' en",ur"\g<gr1>'en",u"2",ur"1",u""),
 	(ur"(?P<gr1>qu)' y",ur"\g<gr1>'y",u"2",ur"1",u""),
 	(ur"(?P<gr1>qu)' en",ur"\g<gr1>'en",u"2",ur"1",u""),
-	(ur" t (?P<gr1>il|elle|on)",ur" -t-\g<gr1>",u"1",ur"1",u"")]
+	(ur"[ -]t[ -](?P<gr1>il|elle|on)",ur" -t-\g<gr1>",u"1",ur"1",u"")]
 
 ABBREVIATIONS = {
 	FRENCH:{ u'A/R':u'accusé de réception',u'A. R.':u'avis de réception',u'adj.':u'adjectif',u'admin':u'administration',u'ann.':u'annexe',u'art.':u'article',
