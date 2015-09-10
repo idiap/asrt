@@ -39,7 +39,8 @@ from tasks.TaskImportDocument import ImportDocumentTask
 from LoggingSetup import setupLogging
 
 
-STRPARAMETERS = "regexfile=%s;debug=%s;removePunctuation=%s;verbalizePunctuation=%s"
+STRPARAMETERS = "regexfile=%s;debug=%s;removePunctuation=%s;verbalizePunctuation=%s;" + \
+                "textFiltering=%s;lmModeling=%s"
 
 
 ####################
@@ -52,9 +53,12 @@ if __name__ == "__main__":
                          nargs=1, dest="targetDir", required=True)
     parser.add_argument("-o", "--output", help="output directory", nargs=1, dest="outputDir", required=True)
     parser.add_argument("-r", "--regex", help="regex file", nargs=1, dest="regexFile", required=True)
+    parser.add_argument("-f", "--filter", help="filter sentences", dest="filter",action="store_true")
     parser.add_argument("-d", "--debug", help="enable debug output", action="store_true")
     parser.add_argument("-n", "--rmpunctuation", help="remove punctuation", action="store_true")
     parser.add_argument("-p", "--vbpunctuation", help="verbalize punctuation", action="store_true")
+    parser.add_argument("-m", "--lm", help="prepare for lm modeling", dest="lm",action="store_true")
+
     
     #Parse arguments
     args = parser.parse_args()
@@ -65,6 +69,7 @@ if __name__ == "__main__":
     setupLogging(logging.INFO, outputDir + "/task_log.txt")
 
     task = ImportDocumentTask(TaskInfo(STRPARAMETERS % (regexFile, str(args.debug), 
-                                                        args.rmpunctuation, args.vbpunctuation), 
+                                                        args.rmpunctuation, args.vbpunctuation,
+                                                        args.filter, args.lm), 
                                        outputDir, targetDir))
     task.execute()

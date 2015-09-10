@@ -45,10 +45,12 @@ class ImportDocumentTask(Task):
 
     PARAMREGEXFILE          = 'regexfile'
     PARAMDEBUG              = 'debug'
+    TEXTFILTERING           = 'textFiltering'
     REMOVEPUNCTUATION       = 'removePunctuation'
     VERBALIZEPUNCTUATION    = 'verbalizePunctuation'
-    PARAMETERS              = [PARAMREGEXFILE,PARAMDEBUG,REMOVEPUNCTUATION,
-                               VERBALIZEPUNCTUATION]
+    LMMODELING              = 'lmModeling'
+    PARAMETERS              = [PARAMREGEXFILE,TEXTFILTERING,PARAMDEBUG,REMOVEPUNCTUATION,
+                               VERBALIZEPUNCTUATION, LMMODELING]
 
 
     def __init__(self, taskInfo):
@@ -58,8 +60,10 @@ class ImportDocumentTask(Task):
 
         self.count = 0
         self.debug = False
+        self.textFiltering = False
         self.removePunctuation = False
         self.verbalizePunctuation = False
+        self.lmModeling = False
 
     ############
     #Interface
@@ -79,8 +83,10 @@ class ImportDocumentTask(Task):
         """
         self.regexFile = self.taskParameters[ImportDocumentTask.PARAMREGEXFILE]
         self.debug = self.taskParameters[ImportDocumentTask.PARAMDEBUG] == "True"
+        self.textFiltering = self.taskParameters[ImportDocumentTask.TEXTFILTERING] == "True"
         self.removePunctuation = self.taskParameters[ImportDocumentTask.REMOVEPUNCTUATION] == "True"
         self.verbalizePunctuation = self.taskParameters[ImportDocumentTask.VERBALIZEPUNCTUATION] == "True"
+        self.lmModeling = self.taskParameters[ImportDocumentTask.LMMODELING] == "True"
         
         self._log(logging.INFO, "Debug is set to " + str(self.debug))
 
@@ -108,10 +114,14 @@ class ImportDocumentTask(Task):
 
             #Setup once for all documents
             api = DataPreparationAPI(None, self.getOutputDirectory())
-            api.setRegexFile(self.regexFile)
+            if self.regexFile != None and len(self.regexFile) > 0:
+                api.setRegexFile(self.regexFile)
+
+            api.setFilterSentences(self.textFiltering)
             api.setDebugMode(self.debug)
             api.setRemovePunctuation(self.removePunctuation)
             api.setVerbalizePunctuation(self.verbalizePunctuation)
+            api.setLMModeling(self.lmModeling)
 
             #Loop trough map file
             for documentName in dictMap.keys():
