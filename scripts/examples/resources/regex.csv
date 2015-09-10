@@ -1,8 +1,8 @@
-Matching pattern	Substitution pattern	Regex type id	Comment
-←		2	Delete sentence pattern
-[|]		2	Delete sentence pattern
-•	- 	1	Substitution rule
-ß	ss	1	Substitution rule
-»		1	Substitution rule
-[(]([^)(]*)[)]	 \g<1> 	1	Group substitution exemple
-[)]	 	1	Remainding parentheses
+Matching pattern	Substitution pattern	Regex type id	Language Id	Comment
+←		2	0	Delete sentence pattern
+[|]		2	0	Delete sentence pattern
+•	- 	1	0	Substitution rule
+ß	ss	1	0	Substitution rule
+»		1	0	Substitution rule
+[(]([^)(]*)[)]	 \g<1> 	1	0	Group substitution exemple
+[)]	 	1	0	Remainding parentheses

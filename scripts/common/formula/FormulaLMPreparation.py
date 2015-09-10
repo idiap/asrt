@@ -91,7 +91,7 @@ class LMPreparationFormula():
     def setLanguageId(self, languageId):
         """Set the language id.
 
-           A value between 0 and 4:
+           param 'languageId': a value between 0 and 4:
 
            0:'unknown', 1:'French', 2:'German', 
            3:'English', 4:'Italian'
@@ -113,8 +113,7 @@ class LMPreparationFormula():
                 Acronyms normalization
                 Contraction prefixes separation
                 Lowercase normalization
-                    
-            param strText: an utf-8 encoded string
+
             return the normalized text in utf-8 encoding
         """
         #Some preprocessing
@@ -161,9 +160,6 @@ class LMPreparationFormula():
 
     def _normalizeUtf8(self):
         """Some punctuation characters are normalized.
-
-           param 'strText': utf-8 encoded string
-           return an utf-8 encoded string
         """
         #Mapping dictionary
         ordDict = LMPreparationFormula._getOrdDict()
@@ -182,7 +178,7 @@ class LMPreparationFormula():
     def _normalizeDates(self):
         """Normalize dates.
         """
-        self.strText = self.dateFormula.apply(self.strText)
+        self.strText = self.dateFormula.apply(self.strText, self.languageId)
         
     def _expandAbbreviations(self):
         """Expand language abbreviations.
@@ -207,7 +203,7 @@ class LMPreparationFormula():
 
            i.e. PDC --> p. d. c.
         """
-        self.strText = self.acronymFormula.apply(self.strText)
+        self.strText = self.acronymFormula.apply(self.strText, self.languageId)
         
     def _normalizePunctuation(self, excludeList):
         """Some punctuation characters are 
@@ -232,8 +228,7 @@ class LMPreparationFormula():
                     - At sign @ --> at
                     - Dollars symbol $ --> dollars
 
-            param 'strText': utf-8 encoded string
-            return an utf-8 encoded string
+            param 'excludeList' : a list of exclude punctuation symbols
         """
         unicodeList = []
         for i, c in enumerate(self.strText):
@@ -247,6 +242,7 @@ class LMPreparationFormula():
                 unicodeList.append(c)
 
         self.strText = u"".join(unicodeList).rstrip().strip()
+        self.strText = re.sub(u"(^- *| - |- |-$)", u"", self.strText, flags=re.UNICODE)
         self.strText = re.sub(SPACEPATTERN, u" ", self.strText, flags=re.UNICODE)
 
     def _normalizeWords(self):
@@ -273,8 +269,8 @@ class LMPreparationFormula():
         """Contraction prefixes are separated and
            acronyms are normalized.
         """
-        self.strText = self.apostropheFormula.apply(self.strText)
-        self.strText = self.contractionPrefixFormula.apply(self.strText, False)
+        self.strText = self.apostropheFormula.apply(self.strText, self.languageId)
+        self.strText = self.contractionPrefixFormula.apply(self.strText, self.languageId, False)
     
     def _normalizeCase(self):
         """Case normalization (change to lower case)

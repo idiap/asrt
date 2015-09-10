@@ -35,9 +35,9 @@ class TestFormulaRegex(unittest.TestCase):
     def setUp(self):
         print ""
 
-    def verifyEqual(self, testList, f):
+    def verifyEqual(self, testList, f, languageId):
         for t, gt in testList:
-            resultString = f.apply(t, False)
+            resultString = f.apply(t, languageId, False)
             self.assertEquals(gt.encode('utf-8'), resultString.encode('utf-8'))
 
     ############
@@ -47,9 +47,9 @@ class TestFormulaRegex(unittest.TestCase):
         f = RegularExpressionFormula(None,
                 RegexList.removeComments(CONTRACTIONPREFIXELIST))
         
-        for p, s, t, c in CONTRACTIONPREFIXELIST:
+        for p, s, t, i, c in CONTRACTIONPREFIXELIST:
             if not p.find("gr1"):
-                resultString = f.apply(p, False)
+                resultString = f.apply(p, 1, False)
                 self.assertEquals(s.encode('utf-8'), 
                               resultString.encode('utf-8'))
 
@@ -59,7 +59,7 @@ class TestFormulaRegex(unittest.TestCase):
                     (ur"qu' en",ur"qu'en"), (ur"-t-on",ur" -t-on")]
 
         for p, gt in testList:
-            resultString = f.apply(p, False)
+            resultString = f.apply(p, 1, False)
             self.assertEquals(gt.encode('utf-8'), 
                               resultString.encode('utf-8'))
 
@@ -71,7 +71,7 @@ class TestFormulaRegex(unittest.TestCase):
                     (u"ADG SPO PS PDCC",u"a. d. g. s. p. o. p. s. p. d. c. c."),
                     (u"A ADG SPO PS PDCCC",u"a. a. d. g. s. p. o. p. s. p. d. c. c. c."),]
 
-        self.verifyEqual(testList, f)
+        self.verifyEqual(testList, f, 0)
 
     def testDates(self):
         f = RegularExpressionFormula(None,
@@ -81,7 +81,7 @@ class TestFormulaRegex(unittest.TestCase):
                     (u"01/01/2015",u"01 01 2015"),
                     (u"01.01.15",u"01 01 15"),]
 
-        self.verifyEqual(testList, f)
+        self.verifyEqual(testList, f, 0)
 
 
     def testApostrophe(self):
@@ -90,4 +90,4 @@ class TestFormulaRegex(unittest.TestCase):
 
         testList = [(u"d'avant",u"d' avant")]
 
-        self.verifyEqual(testList, f)
+        self.verifyEqual(testList, f, 1)

@@ -73,12 +73,12 @@ class TextDocument(Document):
     def setSentencesLanguage(self, languageId):
         """Language is known.
 
-           language id is:
-                - unknown : 0
-                - french  : 1
-                - german  : 2
-                - english : 3
-                - italian : 4
+           param 'languageId': a value beetween 0-4
+             unknown : 0
+             french  : 1
+             german  : 2
+             english : 3
+             italian : 4
         """
         for textCluster in self.listContent:
             textCluster.setLanguage(languageId)
@@ -109,20 +109,34 @@ class TextDocument(Document):
     def normalizeTextSentences(self):
         """Use a set of regex rules to prepare
            the sentences.
+
+           First group clusters per languages and then
+           apply language based normalization.
         """
-        #Read all text
-        textList = []
-        for textCluster in self.listContent:
-            textList.append(textCluster.getTextSentence())
+        #Get cluster per language
+        lang2clusterDict = self._getLanguage2ClustersDict()
 
-        #Join all text
-        allText = self.MERGECLUSTERSEP.join(textList)
+        bEmpty = True
 
-        #Normalize text
-        allText = self.regexSubstitutionFormula.apply(allText)
-        
-        sentencesList = allText.split(self.MERGECLUSTERSEP)
-        self._addSentences(sentencesList)
+        #Normalize text per language
+        for languageId, clusterList in lang2clusterDict.items():
+            #Read all cluster texts
+            textList = []
+            for textCluster in clusterList:
+                textList.append(textCluster.getTextSentence())
+
+            #Join all text
+            allText = self.MERGECLUSTERSEP.join(textList)
+
+            #Normalize text
+            allText = self.regexSubstitutionFormula.apply(allText, languageId)
+            sentencesList = allText.split(self.MERGECLUSTERSEP)
+
+            #Add and set language id
+            self._addSentences(sentencesList, languageId, bEmpty)
+
+            if bEmpty:
+                bEmpty = False
 
     def prepareLM(self):
         """Prepare text sentences for N-Gram modeling.
@@ -235,13 +249,16 @@ class TextDocument(Document):
         
         TextDocument.logger.info("Loaded %d raw sentences!" % len(sentences))
 
-    def _addSentences(self, sentencesList):
+    def _addSentences(self, sentencesList, languageId=0, bEmpty = True):
         """Add the given sentences to the document.
 
-           Empty previous sentences before.
+           param 'sentencesList': a list of text sentences
+           param 'languageId'   : the language id for the sentences list
+           param 'bEmpty'       : empty current document is set otherwise
+                                  add to existing clusters 
         """
-        #Empty first
-        self.reset()
+        if bEmpty:
+            self.reset()
 
         #Add sentences as clusters
         for line in sentencesList:
@@ -249,7 +266,24 @@ class TextDocument(Document):
             for utterance in re.split(ur"\t|;|:|!|\?", line, flags=re.UNICODE):
                 utterance = utterance.strip()
                 if len(utterance) > 0:
-                    self.addDocumentLine(TextCluster(self, utterance))
+                    c = TextCluster(self, utterance)
+                    c.setLanguage(languageId)
+                    self.addDocumentLine(c)
+
+    def _getLanguage2ClustersDict(self):
+        """Map languages with a list of clusters.
+
+           return a dictionary with one entry per
+                  language.
+        """
+        languageDict = {}
+        for textCluster in self.listContent:
+            clusterLanguageId = textCluster.getLanguageId()
+            #First cluster
+            if clusterLanguageId not in languageDict:
+                languageDict[clusterLanguageId] = []
+            languageDict[clusterLanguageId].append(textCluster)
+        return languageDict
 
     ########################
     #Static members

@@ -132,7 +132,7 @@ class DataPreparationAPI():
                     str(self.substitutionRegexFormula.getSubstitutionPatterns()[0:3]))
 
         if len(self.validationPatternList) > 0:
-            self.logger.info("Using following regexes for replacement:\n" +\
+            self.logger.info("Using following regexes for sentence validation:\n" +\
                     str(self.validationPatternList[0:3]))
 
         try:
@@ -151,21 +151,6 @@ class DataPreparationAPI():
             self.logger.info("Cleaning control characters")
             self.doc.cleanTextSentences()
 
-            #User's supplied regular expression
-            if self.substitutionRegexFormula.hasPatterns():
-                self.logger.info("Applying user regular expressions")
-                self.doc.normalizeTextSentences()
-
-            if self.filterSentences:
-                self.logger.info("Filtering data")
-                self.doc.filterTextSentences()
-
-            #Do that before classifying.
-            #If LM option is selected, it will be done at
-            #the prepareLM stage
-            if self.removePunctuation and not self.lmModeling:
-                self.doc.removeTextPunctuation()
-
             if language == 0:
                 self.logger.info("Classifying sentences")
                 self.doc.setClassifier(self.wordClassifier)
@@ -173,6 +158,20 @@ class DataPreparationAPI():
             else:
                 self.doc.setSentencesLanguage(language)
 
+            #User's supplied regular expression
+            if self.substitutionRegexFormula.hasPatterns():
+                self.logger.info("Applying user regular expressions per language")
+                self.doc.normalizeTextSentences()
+
+            if self.filterSentences:
+                self.logger.info("Filtering data")
+                self.doc.filterTextSentences()
+
+            #If LM option is selected, it will be done at
+            #the prepareLM stage
+            if self.removePunctuation and not self.lmModeling:
+                self.doc.removeTextPunctuation()
+            
             if self.verbalizePunctuation and not self.removePunctuation:
                 self.doc.verbalizeTextPunctuation()
 
@@ -267,8 +266,8 @@ class DataPreparationAPI():
         #Skip header
         for row in regexList[1:]:
             if int(row[2]) == VALIDATION_TYPE:
-                self.validationPatternList.append(row[0])
+                self.validationPatternList.append((row[0],row[3]))
             else:
-                substitutionList.append((row[0],row[1],row[2]))
+                substitutionList.append((row[0],row[1],row[2],row[3]))
             
         self.substitutionRegexFormula.setSubstitutionPatternList(substitutionList)

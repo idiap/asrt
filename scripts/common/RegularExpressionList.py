@@ -33,6 +33,7 @@ class RegexList():
     MATCHINGINDICE    = 0
     SUBINDICE         = 1
     TYPEINDICE        = 2
+    LANGUAGEINDICE    = 3
 
     @staticmethod
     def loadFromFile(regexFile):
@@ -54,7 +55,7 @@ class RegexList():
         
         io = Ioread()
         regexList = io.readCSV(regexFile,'\t')
-        substitutionPatternList = RegexList.removeComments(regexList[1:])
+        substitutionPatternList = RegexList.removeComments(regexList)
         RegexList.logger.info("Done loading regular expressions")
 
         return substitutionPatternList
@@ -71,6 +72,7 @@ class RegexList():
                 matchPattern = re.compile(row[RegexList.MATCHINGINDICE], flags=re.UNICODE)
 
             substitutionPatternList.append((matchPattern,
-                row[RegexList.SUBINDICE],row[RegexList.TYPEINDICE]))
+                row[RegexList.SUBINDICE],row[RegexList.TYPEINDICE],
+                row[RegexList.LANGUAGEINDICE]))
 
         return substitutionPatternList

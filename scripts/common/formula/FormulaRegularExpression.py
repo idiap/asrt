@@ -131,7 +131,7 @@ class RegularExpressionFormula():
     ####################
     #Public methods
     #
-    def apply(self, strText, debug=False):
+    def apply(self, strText, languageId, debug=False):
         """Apply regular expressions to 'strText'.
 
              return an utf-8 formatted string.
@@ -145,7 +145,7 @@ class RegularExpressionFormula():
                     RegexList.loadFromFile(self.rulesFile)
         
         return RegularExpressionFormula.applyRegularExpressions(strText,
-                        self.substitutionPatternList, debug)
+                        self.substitutionPatternList, languageId, debug)
 
     def hasPatterns(self):
         return len(self.substitutionPatternList) != 0
@@ -164,7 +164,7 @@ class RegularExpressionFormula():
         print "\n"
 
     @staticmethod
-    def applyRegularExpressions(strText, substitutionPatternList, debug=False):
+    def applyRegularExpressions(strText, substitutionPatternList, languageId, debug=False):
         """Apply the regular expressions in function of there type.
              Type is related to the specificity of the context.
 
@@ -181,7 +181,15 @@ class RegularExpressionFormula():
             RegularExpressionFormula.logger.info("Initial transcript: " + strText.encode('utf-8'))
 
         #For each known regular expression
-        for regex, alternate, regexType in substitutionPatternList:
+        for regex, alternate, regexType, regexLanguageId in substitutionPatternList:
+            regexLanguageId = int(regexLanguageId)
+
+            #Does it match the text language
+            if regexLanguageId != languageId and \
+               regexLanguageId != 0:
+                continue
+
+            #Convert from type
             regexListForType = \
                 RegexType.typeToRegularExpressions(regex, alternate, int(regexType))
             

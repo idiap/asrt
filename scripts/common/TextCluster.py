@@ -49,9 +49,13 @@ class TextCluster(Cluster):
     SPACEREGEX              = '[ ]+'
 
     def __init__(self, document, sentenceText):
-        #Some meta data
+        """Constructor.
+        """
+        #Give a unique id to cluster
         TextCluster.ID_COUNTER += 1
-        attributesList = [TextCluster.LANGUAGE_ATTRIBUTE]
+
+        #Unknown language
+        attributesList = [(TextCluster.LANGUAGE_ATTRIBUTE, 0)]
 
         #Key is mlf pattern
         Cluster.__init__(self, str(TextCluster.ID_COUNTER), attributesList)
@@ -81,12 +85,12 @@ class TextCluster(Cluster):
     def getLanguageId(self):
         """Get the cluster language id.
 
-           language id is:
-                - unknown : 0
-                - french  : 1
-                - german  : 2
-                - english : 3
-                - italian : 4
+           Return an integer between 0-4
+             unknown : 0
+             french  : 1
+             german  : 2
+             english : 3
+             italian : 4
         """
         strLanguage = self.getAttribute(self.LANGUAGE_ATTRIBUTE)
         return LANGUAGE2ID[strLanguage]
@@ -101,12 +105,12 @@ class TextCluster(Cluster):
     def setLanguage(self, languageId):
         """Language for sentence.
 
-           language id is:
-                - unknown : 0
-                - french  : 1
-                - german  : 2
-                - english : 3
-                - italian : 4
+           param 'languageId' : a value between 0 and 4
+            unknown : 0
+            french  : 1
+            german  : 2
+            english : 3
+            italian : 4
         """
         if languageId > 4 or languageId < 0:
             raise Exception("Unknown language")
@@ -243,8 +247,15 @@ class TextCluster(Cluster):
 
            'strText' is in utf-8 encoding
         """
+        clusterLanguageId = self.getLanguageId()
+
         #Some regex
-        for regex in self.document.regex_filter_list:
+        for regex, regexLanguageId in self.document.regex_filter_list:
+            regexLanguageId = int(regexLanguageId)
+            #Does it match the text language
+            if regexLanguageId != clusterLanguageId and \
+               regexLanguageId != 0:
+                continue
             #Ignore case available
             #if re.search(regex, strText, re.IGNORECASE) != None:
             if re.search(regex, strText, flags=re.UNICODE) != None:
