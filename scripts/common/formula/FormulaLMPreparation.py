@@ -133,7 +133,7 @@ class LMPreparationFormula():
         self._normalizeContractionPrefixes()
 
         #Make sure no punctuation is remaining
-        self._normalizePunctuation(DOTCOMMAEXCLUDE)
+        self._normalizePunctuation(DOTCOMMAEXCLUDE + PUNCTUATIONEXCLUDE)
 
         self._expandAcronyms()
         self._normalizeCase()
