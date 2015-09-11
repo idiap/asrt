@@ -78,7 +78,7 @@ def convertNumber(cls, strText):
 
     newWordsList = []
     for w in wordsList:
-        if not cls._hasNumber(w):
+        if not hasNumber(cls, w):
             newWordsList.append(w)
             continue
         #Numbers may contain alphanumeric
@@ -104,3 +104,12 @@ def convertNumber(cls, strText):
             newWordsList.append(w)
 
     return u" ".join(newWordsList)
+
+def hasNumber(cls, strWord):
+    """Check if 'strWord' contains numbers.
+
+       param strWord: an utf-8 encoded words
+       return True or False
+    """
+    #Use search instead of match
+    return cls.HASNUMBERREGEX.search(strWord) != None

@@ -42,7 +42,7 @@ class NumberFormula():
    
     HASNUMBERREGEX          = re.compile(u"([0-9]|I|V|X|L|C|D|M)+", flags=re.UNICODE)
     CARDINALNUMBERREGEX     = re.compile(u"[0-9]+$", flags=re.UNICODE)
-    ORDINALNUMBERREGEX      = re.compile(u"(1er|1re|1ère|[0-9]+e|[0-9]+ème|Ier|Ire|Ière|[IVXLCDM]+ème)$", flags=re.UNICODE)
+    ORDINALNUMBERREGEX      = re.compile(u"(1er|1re|1ère|[0-9]+e|[0-9]+ème|Ier|Ire|Ière|[IVXLCDM]+ème|[IVXLCDM]+e)$", flags=re.UNICODE)
     DECIMALNUMBERREGEX      = re.compile(u"[0-9,.]+[0-9,.]*$", flags=re.UNICODE)
     ROMANNUMBERREGEX        = re.compile(u"[IVXLCDM]+$", flags=re.UNICODE)
 
@@ -67,16 +67,6 @@ class NumberFormula():
     ##################
     #Implementation
     #
-    @staticmethod
-    def _hasNumber(strWord):
-        """Check if 'strWord' contains numbers.
-
-           param strWord: an utf-8 encoded words
-           return True or False
-        """
-        #Use search instead of match
-        return NumberFormula.HASNUMBERREGEX.search(strWord) != None
-
     @staticmethod
     def _normalizeNumber(strWord):
         """Remove tousand separator.
@@ -139,8 +129,6 @@ class NumberFormula():
            param strNumber: an utf-8 decimal number
            return a 'written' decimal number
         """
-
-
         strNumber = u" virgule ".join(re.split("[,]",strNumber))
         strNumber = u" point ".join(re.split("[.]",strNumber))
 

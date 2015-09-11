@@ -68,16 +68,6 @@ class NumberFormula():
     #Implementation
     #
     @staticmethod
-    def _hasNumber(strWord):
-        """Check if 'strWord' contains numbers.
-
-           param strWord: an utf-8 encoded words
-           return True or False
-        """
-        #Use search instead of match
-        return NumberFormula.HASNUMBERREGEX.search(strWord) != None
-
-    @staticmethod
     def _normalizeNumber(strWord):
         """Remove tousand separator.
 
@@ -85,6 +75,12 @@ class NumberFormula():
            return an utf-8 encoded string
         """
         strWord = strWord.replace(NumberFormula.THOUSANDSEPARATOR, u"")
+
+        #Case when there are two full stops, or one comma
+        #after a number
+        if strWord.endswith(("..",",")):
+            strWord = strWord[:-1]
+    
         return strWord
 
     @staticmethod

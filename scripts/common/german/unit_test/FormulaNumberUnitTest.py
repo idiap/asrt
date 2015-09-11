@@ -23,6 +23,7 @@ __license__ = "BSD 3-Clause"
 
 import unittest
 from german.FormulaNumber import NumberFormula
+from AsrtUtility import hasNumber
 
 class FormulaNumberUnitTest(unittest.TestCase):
     
@@ -34,7 +35,9 @@ class FormulaNumberUnitTest(unittest.TestCase):
                  "all"     : [(u"1ab",u"1ab"),(u"ab",u"ab"),
                               (u"die 25 März 2015 2.5 X.",u"die fünf und zwanzig März zwei tausend fünfzehn zwei punkt fünf zehnte"),
                               (u"21. dezember 2011",u"ein und zwanzigste dezember zwei tausend elf"),
-                              (u"das 21.",u"das ein und zwanzigste")]
+                              (u"das 21.",u"das ein und zwanzigste"),(u"2,", u"zwei"),
+                              (u"das 2.,", u"das zweite"),(u"das 2..", u"das zweite"),
+                              (u"2,", u"zwei")]
     }
 
     #################
@@ -78,7 +81,7 @@ class FormulaNumberUnitTest(unittest.TestCase):
                     (u"xab",False), (u"a1ab",True)]
 
         for t, gt in testList:
-            self.assertEquals(NumberFormula._hasNumber(t), gt, t.encode('utf-8'))
+            self.assertEquals(hasNumber(NumberFormula, t), gt, t.encode('utf-8'))
 
     def test_normalizeNumber(self):
         testList = [(u"50'000",u"50000"),(u"550'000'000",u"550000000")]

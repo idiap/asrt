@@ -23,12 +23,14 @@ __license__ = "BSD 3-Clause"
 
 import unittest
 from french.FormulaNumber import NumberFormula
+from AsrtUtility import hasNumber
 
 class FormulaNumberUnitTest(unittest.TestCase):
 
     testDict = { "cardinal": [(u"10",u"dix"),(u"25",u"vingt cinq")],
                  "ordinal" : [(u"1er",u"premier"),(u"1ère",u"première"),(u"2ème",u"deuxième"),
-                              (u"Vème",u"cinquième"), (u"Xème",u"dixième")],
+                              (u"Vème",u"cinquième"), (u"Xème",u"dixième"),
+                              (u"XXIIIe",u"vingt-troisième")],
                  "decimal" : [(u"2,5",u"deux virgule cinq"), (u"2.5,3",u"deux point cinq virgule trois")],
                  "roman"   : [(u"V",u"cinq"), (u"X",u"dix")],
                  "all"     : [(u"1ab",u"1ab"),(u"ab",u"ab"),
@@ -36,7 +38,8 @@ class FormulaNumberUnitTest(unittest.TestCase):
                               (u"le 25.",u"le vingt cinq"),
                               (u"le 25.5.",u"le vingt cinq point cinq"),
                               (u"14 alinéa 1, some text",u"quatorze alinéa un some text"),
-                              (u"l'article 12,",u"l'article douze")]
+                              (u"l'article 12,",u"l'article douze"),
+                              (u"dans le XXIIIe siècle", u"dans le vingt-troisième siècle")]
     }
 
     #################
@@ -80,7 +83,7 @@ class FormulaNumberUnitTest(unittest.TestCase):
                     (u"xab",False), (u"a1ab",True)]
 
         for t, gt in testList:
-            self.assertEquals(NumberFormula._hasNumber(t), gt, t.encode('utf-8'))
+            self.assertEquals(hasNumber(NumberFormula,t), gt, t.encode('utf-8'))
 
     def test_normalizeNumber(self):
         testList = [(u"50'000",u"50000"),(u"550'000'000",u"550000000")]
