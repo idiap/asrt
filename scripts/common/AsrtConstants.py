@@ -28,20 +28,22 @@ sys.path.append(scriptsDir + "/../config")
 
 from config import FRENCH, GERMAN
 
-SPACEPATTERN      	= u"[ ]+"
+SPACEPATTERN      			= u"[ ]+"
+CAPTURINGDIGITPATTERN		= u"([0-9\.,]+)"
+GROUPINGDOTCOMMAPATTERN		= u"( |$)([.,])( |$)"
 
-UNITD2W             = {1:'ein', 2:'zwei', 3:'drei', 4:'vier', 5:'fünf', 6:'sechs', 7:'sieben', 8:'acht', 9:'neun',
-                       10:'zehn', 11:'elf', 12:'zwölf', 13:'dreizehn', 14:'vierzehn', 15:'fünfzehn', 16:'sechszehn',
-                       17:'siebzehn', 18:'achtzehn', 19:'neunzehn'}
+UNITD2W             		= {1:'ein', 2:'zwei', 3:'drei', 4:'vier', 5:'fünf', 6:'sechs', 7:'sieben', 8:'acht', 9:'neun',
+                               10:'zehn', 11:'elf', 12:'zwölf', 13:'dreizehn', 14:'vierzehn', 15:'fünfzehn', 16:'sechszehn',
+                       		   17:'siebzehn', 18:'achtzehn', 19:'neunzehn'}
 
-DECADED2W           = {1:'zehn', 2:'zwanzig', 3:'dreissig', 4:'vierzig', 5:'fünfzig', 6:'sechzig', 7:'siebzig',
-                       8:'achtzig', 9:'neunzig'}
+DECADED2W           		= {1:'zehn', 2:'zwanzig', 3:'dreissig', 4:'vierzig', 5:'fünfzig', 6:'sechzig', 7:'siebzig',
+                               8:'achtzig', 9:'neunzig'}
 
 #See https://en.wikipedia.org/wiki/List_of_Unicode_characters
 #http://www.cloford.com/resources/charcodes/utf-8_punctuation.htm
 #http://xahlee.info/comp/unicode_matching_brackets.html
 #Format is matching pattern, substitution, comment, language id
-UTF8MAP         	= [
+UTF8MAP         			= [
 (ur"\u00A0",u" ",u"Spaces: non-breaking space",u"0"),
 (ur"\ufeff",u" ",u"Spaces: invisible",u"0"),
 (ur"\u200B",u" ",u"Spaces: zero-width space",u"0"),
@@ -143,39 +145,37 @@ UTF8MAP         	= [
 (ur"\u0153",u"oe",u"Ligatures: lattin small ligature oe",u"0")]
 
 #Do not exclude single quote
-PUNCTUATIONEXCLUDE 	= ['!', '"', '#', '(', ')', '*', '+', '-',
-                      '/', ':', ';', '<', '=', '>', '?', '[', '\\',
-                      ']', '^', '_', '`', '{', '|', '}', '~']
-DOTCOMMAEXCLUDE 	= ['.',',']
-PUNCTUATIONMAP  	= {
+PUNCTUATIONEXCLUDE 				= ['!', '"', '#', '(', ')', '*', '+', '-',
+                                   '/', ':', ';', '<', '=', '>', '?', '[', '\\',
+                                   ']', '^', '_', '`', '{', '|', '}', '~']
+DOTCOMMAEXCLUDE 				= ['.',',']
+PUNCTUATIONMAP  				= {
     "%": (r"%",r"pourcent", u"Prozent", u"percent", u"per cento"),
     "&": (r"&",r"et", u"und", u"and", u"e"),
     "@": (r"@",r"at", u"at", u"at", u"at"),
     '$': (r'$',r"dollars", u"Dollar", u"dollars", u"dollari"),
 }
 
-PUNCTUATIONPATTERN 	= ur"(\!|\"|#|\$|%|&|'|\(|\)|\*|\+|,|-|\.|/|:|;|<|=|>|\?|@|\[|\\|\]|\^|_|`|\{|\}|~|\|){4,}"
+PUNCTUATIONPATTERN 				= ur"(\!|\"|#|\$|%|&|'|\(|\)|\*|\+|,|-|\.|/|:|;|<|=|>|\?|@|\[|\\|\]|\^|_|`|\{|\}|~|\|){4,}"
 
-ACRONYMREGEXLIST = [(ur"( |^)([A-Z])([A-Z])([A-Z])([A-Z])([A-Z])( |$)",
-		              ur"lambda p: p.group(1)+p.group(2).lower()+'. '+p.group(3).lower()+'. '+p.group(4).lower()+'. '+p.group(5).lower()+'. '+p.group(6).lower()+'.'+p.group(7)",ur"1",ur"0",ur"Acronyms"),
-		            (ur"( |^)([A-Z])([A-Z])([A-Z])([A-Z])( |$)",
-		              ur"lambda p: p.group(1)+p.group(2).lower()+'. '+p.group(3).lower()+'. '+p.group(4).lower()+'. '+p.group(5).lower()+'.'+p.group(6)",ur"1",ur"0",ur"Acronyms"),
-		            (ur"( |^)([A-Z])([A-Z])([A-Z])( |$)",
-		              ur"lambda p: p.group(1)+p.group(2).lower()+'. '+p.group(3).lower()+'. '+p.group(4).lower()+'.'+p.group(5)",ur"1",ur"0",ur"Acronyms"),
-		            (ur"( |^)([A-Z])([A-Z])( |$)",
-		              ur"lambda p: p.group(1)+p.group(2).lower()+'. '+p.group(3).lower()+'.'+p.group(4)",ur"1",ur"0",ur"Acronyms"),
-		            (ur"( |^)([A-Z])( |$)",
-		              ur"lambda p: p.group(1)+p.group(2).lower()+'.'+p.group(3)",ur"1",ur"0",ur"Acronyms")]
+ACRONYMREGEXLIST 				= [(ur"( |^)([A-Z])([A-Z])([A-Z])([A-Z])([A-Z])[.,:;]?( |$)",
+						              ur"lambda p: p.group(1)+p.group(2).lower()+'. '+p.group(3).lower()+'. '+p.group(4).lower()+'. '+p.group(5).lower()+'. '+p.group(6).lower()+'.'+p.group(7)",ur"1",ur"0",ur"Acronyms"),
+						           (ur"( |^)([A-Z])([A-Z])([A-Z])([A-Z])[.,:;]?( |$)",
+						              ur"lambda p: p.group(1)+p.group(2).lower()+'. '+p.group(3).lower()+'. '+p.group(4).lower()+'. '+p.group(5).lower()+'.'+p.group(6)",ur"1",ur"0",ur"Acronyms"),
+						           (ur"( |^)([A-Z])([A-Z])([A-Z])[.,:;]?( |$)",
+						              ur"lambda p: p.group(1)+p.group(2).lower()+'. '+p.group(3).lower()+'. '+p.group(4).lower()+'.'+p.group(5)",ur"1",ur"0",ur"Acronyms"),
+						           (ur"( |^)([A-Z])([A-Z])[.,:;]?( |$)",
+						              ur"lambda p: p.group(1)+p.group(2).lower()+'. '+p.group(3).lower()+'.'+p.group(4)",ur"1",ur"0",ur"Acronyms")]
 
-DATEREGEXLIST = [(ur"([0-9][0-9])[./]([0-9][0-9])[./]([0-9][0-9][0-9]?[0-9]?)", 
-                  ur"\g<1> \g<2> \g<3>",ur"1",ur"0",ur"Dates")]
+DATEREGEXLIST 					= [(ur"([0-9][0-9])[./]([0-9][0-9])[./]([0-9][0-9][0-9]?[0-9]?)", 
+                  					ur"\g<1> \g<2> \g<3>",ur"1",ur"0",ur"Dates")]
 
-APOSTHROPHELIST = [(ur"[']", ur"' ",ur"1",ur"0",ur"Spaces after apostrophes")]
+APOSTHROPHELIST 				= [(ur"[']", ur"' ",ur"1",ur"0",ur"Spaces after apostrophes")]
 
-CONTRACTIONPREFIXELIST = [
+CONTRACTIONPREFIXELIST 			= [
 	(ur"á",ur"à",u"2",ur"1",u""),
 	(ur"-á-",ur"-à-",u"2",ur"1",u""),
-	(ur"^a",ur"à",u"1",ur"1",u""),
+	(ur"^[aA] ",ur"à ",u"1",ur"1",u""),
 	(ur"quelqu' un",ur"quelqu'un",u"2",ur"1",u""),
 	(ur"c' qu",ur"ce qu",u"2",ur"1",u""),
 	(ur"c' ",ur"c'",u"2",ur"1",u""),
@@ -198,19 +198,26 @@ CONTRACTIONPREFIXELIST = [
 	(ur"(?P<gr1>qu)' en",ur"\g<gr1>'en",u"2",ur"1",u""),
 	(ur"[ -]t[ -](?P<gr1>il|elle|on)",ur" -t-\g<gr1>",u"1",ur"1",u"")]
 
-ABBREVIATIONS = {
-	FRENCH:{ u'A/R':u'accusé de réception',u'A. R.':u'avis de réception',u'adj.':u'adjectif',u'admin':u'administration',u'ann.':u'annexe',u'art.':u'article',
+
+TRANSITIONNUMBERS					= {
+	FRENCH:{'1.':u'premièrement','2.':u'deuxièmement','3.':u'troisièmement','4.':u'quatrièmement',
+	        '5.':u'cinquièmement','6.':u'sixièmement', '7.':u'septièmement','8.':u'huitièmement',
+	        '9.':u'neuvièmement', '10.':u'dixièmement'}
+}
+
+ABBREVIATIONS 					= {
+	FRENCH:{ u'A/R':u'accusé de réception',u'adj.':u'adjectif',u'admin':u'administration',u'ann.':u'annexe',u'art.':u'article',
 	u'assoc.':u'association',u'av.':u'avenue',u'bibliogr.':u'bibliographie',u'bibl.':u'bibliothèque',u'biogr.':u'biographie',u'bd.':u'boulevard ',
 	u'cad':u'c’est-à-dire',u'cap.':u'capitale',u'C.Q.F.D.':u'ce qu’il fallait démontrer',u'chap.':u'chapitre',u'ch.':u'chemin',u'circ.':u'circonscription',
 	u'col.':u'colonne',u'Cie':u'compagnie',u'c/c':u'compte courant',u'concl.':u'conclusion',u'cf.':u'confer',u'conj.':u'conjonction',u'coop.':u'coopération',
 	u'c.c.':u'copie conforme',u'c':u'copyright',u'©':u'copyright',u'c.v.':u'curriculum vitae',u'dest.':u'destinataire',u'disp.':u'disponible',
 	u'Dr.':u'docteur',u'Drs.':u'docteurs',u'Dre.':u'doctoresse',u'Dres.':u'doctoresses',u'doc.':u'document',u'env.':u'environ',u'err.':u'erratum, errata',
-	u'et al.':u'et alii',u'etc.':u'et cetera',u'ex.':u'exemple',u'e.g.':u'exempli gratia',u'ext.':u'externe',u'féd.':u'fédéral',u'fém.':u'féminin',
-	u'fig.':u'figure',u'id.':u'idem',u'i. e.':u'c’est-à-dire',u'in ext.':u'in extenso',u'intro':u'introduction',u'M.':u'monsieur',u'MM.':u'messieurs',
+	u'etc.':u'et cetera',u'ex.':u'exemple',u'e.g.':u'exempli gratia',u'ext.':u'externe',u'féd.':u'fédéral',u'fém.':u'féminin',
+	u'fig.':u'figure',u'id.':u'idem',u'intro':u'introduction',u'M.':u'monsieur',u'MM.':u'messieurs',
 	u'maj.':u'majuscule',u'Me':u'maître',u'Mes':u'maîtres',u'méd.':u'médecine',u'mer.':u'mercredi',u'Mgr':u'monseigneur',u'Mgrs':u'messeigneurs ',
 	u'Mlle':u'mademoiselle ',u'Mlles':u'mesdemoiselles',u'Mme':u'madame',u'Mmes':u'mesdames',u'Mo':u'mégaoctet',u'N.B.':u'nota bene',u'nbre':u'nombre',
-	u'nbx':u'nombreux',u'N/Réf.':u'notre référence',u'obs.':u'observation',u'P.-D. G.':u'président-directeur général',u'pcq':u'parce que',u'pers.':u'personne',
-	u'p. ex.':u'par exemple',u'p. ext.':u'par extension',u'plur.':u'pluriel',u'Prof.':u'professeur',u'P.-S.':u'post-scriptum',u'qté':u'quantité',
+	u'nbx':u'nombreux',u'N/Réf.':u'notre référence',u'obs.':u'observation',u'pcq':u'parce que',u'pers.':u'personne',
+	u'plur.':u'pluriel',u'Prof.':u'professeur',u'P.-S.':u'post-scriptum',u'qté':u'quantité',
 	u'qqn':u'quelqu’un',u'tps':u'temps',u'qqch':u'quelque chose',u'qqf.':u'quelquefois',u'qqn':u'quelqu’un',u'quant.':u'quantité',u'RDV':u'rendez-vous',
 	u'réf.':u'référence',u'rte':u'route',u'sing.':u'singulier',u'St':u'saint',u'stat.':u'statistique',u'Ste':u'sainte',u'Sté':u'société',u'Stes':u'saintes',
 	u'Sts':u'saints',u'suiv.':u'suivant',u'sup.':u'supra',u'suppl.':u'supplément',u'S.V.P.':u's’il vous plaît',u'tél.':u'téléphone',u'téléc.':u'télécopieur',
@@ -224,7 +231,7 @@ ABBREVIATIONS = {
     u'beisp.':u'beispielweise',u'Ber.':u'Bericht',u'bes.':u'besonders',u'Betr.':u'Betreff',u'betr.':u'betreffend',u'Bez.':u'Bezirk',u'bez.':u'Bezeichnung',
     u'BH':u'Bustenhalter',u'Bhf.':u'Bahnhof',u'Bl.':u'Blatt',u'Br.':u'Bruder',u'b.w.':u'bitte wenden',u'bz.':u'bezahlt',u'bzw.':u'beziehungsweise',
     u'cal.':u'Kalorie',u'cand.':u'Kandidat',u'cbm':u'Kubikmeter',u'ccm':u'Kubiczentimeter',u'dag.':u'dagegen',u'dam.':u'damals',u'Dat.':u'Dativ',
-    u'dazw.':u'dazwischen',u'db':u'Dezibel',u'desgl.':u'desgleichen',u'dgl.':u'dergleichen',u'd. Gr.':u'Der Grosse',u'd.h.':u'das heisst',u'Di':u'Dienstag',
+    u'dazw.':u'dazwischen',u'db':u'Dezibel',u'desgl.':u'desgleichen',u'dgl.':u'dergleichen',u'd.h.':u'das heisst',u'Di':u'Dienstag',
     u'Dipl.':u'Diplom',u'Dipl.-Chem.':u'Diplomchemiker',u'Dipl.-Ing.':u'Diplomingenieur',u'Dipl.-Kfm.':u'Diplomkaufmann',u'Dir.':u'Direktor',u'Dir.':u'Dirigent',
     u'd.M.':u'Dieses Monats',u'Do.':u'Donnerstag',u'do.':u'dito',u'Doz.':u'Dozent',u'Dr.':u'Doktor',u'Dr.h.c.':u'Doktor honoris causa',
     u'Dr.-Ing.':u'Doktor der Ingenieurwissenschaft',u'Dr.jur.':u'Doktor juris',u'Dr.med.':u'Doktor der Medizin',u'Dr.phil.':u'Doktor der Philosophie',
@@ -237,7 +244,7 @@ ABBREVIATIONS = {
     u'gez.':u'gezeichnet',u'GG':u'Grundgesetz',u'GmbH':u'Gesellschaft mit beschränkter Haftung',u'gzj.':u'ganzjährig',u'h':u'Stunde',u'ha.':u'Hektar',
     u'habil.':u'habilitiert',u'Hbf.':u'Hauptbahnhof',u'hdt.':u'hundert',u'hj.':u'halbjährlich',u'höfl.':u'höflichst',u'Hptst.':u'Hauptstadt',u'Hr.':u'Herr',
     u'i.A.':u'im Auftrag',u'i.allg.':u'im allgemeinen',u'i.D.':u'im Durchschnitt',u'i.d.R':u'in der Regel',u'i.F':u'in der Fassung',u'i.J.':u'im Jahre',
-    u'ill.':u'illustriert',u'in B.':u'in Bearbeitung',u'inbegr.':u'inbegriffen',u'Ind.':u'Indikativ',u'Ing.':u'Ingenieur',u'Inh.':u'Inhaber',
+    u'ill.':u'illustriert',u'inbegr.':u'inbegriffen',u'Ind.':u'Indikativ',u'Ing.':u'Ingenieur',u'Inh.':u'Inhaber',
     u'inkl.':u'inklusive',u'Insp.':u'Inspektor',u'Inst.':u'Instanz',u'Inst.':u'Institut',u'int.':u'international',u'inzw.':u'inzwischen',u'i.R.':u'im Ruhestand',
     u'iV.':u'in Vertretung',u'iV.':u'in Vorbereitung',u'iZm.':u'in Zusammenhang mit',u'jew.':u'jewelig',u'Jg.':u'Jahrgang',u'Jh.':u'Jahrhundert',
     u'jun.':u'junior',u'jur.':u'juristisch',u'kath.':u'katholisch',u'Kfm.':u'Kaufmann',u'kg.':u'Kilogramm',u'kgl.':u'königlich',u'Kl.':u'Klasse',
@@ -267,7 +274,7 @@ ABBREVIATIONS = {
     u'u.E.':u'unseres Erachtens',u'U/min.':u'Umdrehungen in der Minute',u'Univ.':u'Universität',u'unverk.':u'unverkäuflich',u'urspr.':u'ursprünglich',
     u'usw.':u'und so weiter',u'u.U.':u'unter Ümständen',u'u.ü.V.':u'unter üblichem Vorbehalt',u'u.v.a.':u'und veil andere',u'u.W.':u'unseres Wissens',
     u'u.zw.':u'und zwar',u'v.':u'von',u'V':u'Volt',u'V':u'Volumen',u'V.':u'Vers',u'v.a.':u'vor allem',u'var.':u'variabel',u'v.A.w.':u'von Amts wegen',
-    u'v.D.':u'vom Dienst',u'verb.':u'verbessert',u'Verf. or Vf.':u'Verfasser',u'verh.':u'verheiratet',u'Verl.':u'Verlag',u'Verm.':u'Vermerk',
+    u'v.D.':u'vom Dienst',u'verb.':u'verbessert',u'verh.':u'verheiratet',u'Verl.':u'Verlag',u'Verm.':u'Vermerk',
     u'versch.':u'verschieden',u'versch.':u'verschollen',u'verst.':u'verstorben',u'vgl.':u'vergleiche',u'v.H.':u'vom Hundert',u'v.J.':u'vorigen Jahres',
     u'v.M.':u'vorigen Monats',u'v.o.':u'von oben',u'Vollm.':u'Vollmacht',u'vollst.':u'vollständig',u'vorl.':u'vorläufig',u'vorm.':u'vormittags',
     u'Vors.':u'Vorsitzender',u'v.T.':u'vom Tausend',u'W':u'West',u'Wb.':u'Wörterbuch',u'WEZ':u'Westeuropäische Zeit',u'Whg.':u'Wohnung',

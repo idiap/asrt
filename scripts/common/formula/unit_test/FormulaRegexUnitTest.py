@@ -69,7 +69,7 @@ class TestFormulaRegex(unittest.TestCase):
 
         testList = [(u"ADG SPO PS",u"a. d. g. s. p. o. p. s."),
                     (u"ADG SPO PS PDCC",u"a. d. g. s. p. o. p. s. p. d. c. c."),
-                    (u"A ADG SPO PS PDCCC",u"a. a. d. g. s. p. o. p. s. p. d. c. c. c."),]
+                    (u"A ADG SPO PS PDCCC",u"A a. d. g. s. p. o. p. s. p. d. c. c. c."),]
 
         self.verifyEqual(testList, f, 0)
 

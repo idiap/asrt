@@ -30,7 +30,8 @@ import logging, re
 from num2words import num2words
 from roman import fromRoman
 from AsrtUtility import convertNumber
-from AsrtConstants import SPACEPATTERN
+from AsrtConstants import SPACEPATTERN, TRANSITIONNUMBERS
+from config import FRENCH
 
 class NumberFormula():
     """A set of rules to 'unformat' formatted numbers.
@@ -42,9 +43,10 @@ class NumberFormula():
    
     HASNUMBERREGEX          = re.compile(u"([0-9]|I|V|X|L|C|D|M)+", flags=re.UNICODE)
     CARDINALNUMBERREGEX     = re.compile(u"[0-9]+$", flags=re.UNICODE)
-    ORDINALNUMBERREGEX      = re.compile(u"(1er|1re|1ère|[0-9]+e|[0-9]+ème|Ier|Ire|Ière|[IVXLCDM]+ème|[IVXLCDM]+e)$", flags=re.UNICODE)
+    TRANSITIONNUMBERREGEX   = re.compile(u"([0-9]|10)[.]( |$)", flags=re.UNICODE)
+    ORDINALNUMBERREGEX      = re.compile(u"(1er|1re|1ère|[0-9]+e|[0-9]+ème|Ier|Ire|Ière|[IVXLCDM]+ème|[IVXLCDM]{2,}e)$", flags=re.UNICODE)
     DECIMALNUMBERREGEX      = re.compile(u"[0-9,.]+[0-9,.]*$", flags=re.UNICODE)
-    ROMANNUMBERREGEX        = re.compile(u"[IVXLCDM]+$", flags=re.UNICODE)
+    ROMANNUMBERREGEX        = re.compile(u"[IVXLCDM]{2,}$", flags=re.UNICODE)
 
     ##################
     #Public interface
@@ -95,6 +97,20 @@ class NumberFormula():
         return strNumber.replace(u"-", u" ")
 
     @staticmethod
+    def _transition2word(strNumber):
+        """Convert an transition number to a written
+           word.
+
+           param strNumber: an utf-8 transition number
+           return a 'written' transition number
+        """
+        #Only number from 1-10
+        if strNumber.encode('utf-8') not in TRANSITIONNUMBERS[FRENCH]:
+            return strNumber
+
+        return TRANSITIONNUMBERS[FRENCH][strNumber]
+
+    @staticmethod
     def _ordinal2word(strNumber):
         """Convert an ordinal number to a written
            word.
@@ -141,7 +157,6 @@ class NumberFormula():
 
         return u" ".join(tokenList)
 
-
     @staticmethod
     def _roman2word(strNumber):
         """Convert a roman number to a written
@@ -162,6 +177,18 @@ class NumberFormula():
            return True or False
         """
         return NumberFormula.CARDINALNUMBERREGEX.match(strWord) != None
+
+    @staticmethod
+    def _isTransitionNumber(strWord):
+        """Check if 'strWord' is an transition number.
+
+           Adverb numbers are:
+              premièrement
+              deuxièmement
+              ...
+              neuvièmement
+        """
+        return NumberFormula.TRANSITIONNUMBERREGEX.match(strWord) != None
 
     @staticmethod
     def _isOrdinalNumber(strWord):

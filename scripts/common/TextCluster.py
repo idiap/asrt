@@ -278,8 +278,6 @@ class TextCluster(Cluster):
 
            - remove new line character at the end
            - remove prepended and trailing spaces
-
-           
         """
         textUtterance = textUtterance.rstrip().strip()
         return textUtterance

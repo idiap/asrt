@@ -27,19 +27,22 @@ from AsrtUtility import hasNumber
 
 class FormulaNumberUnitTest(unittest.TestCase):
 
-    testDict = { "cardinal": [(u"10",u"dix"),(u"25",u"vingt cinq")],
-                 "ordinal" : [(u"1er",u"premier"),(u"1ère",u"première"),(u"2ème",u"deuxième"),
-                              (u"Vème",u"cinquième"), (u"Xème",u"dixième"),
-                              (u"XXIIIe",u"vingt-troisième")],
-                 "decimal" : [(u"2,5",u"deux virgule cinq"), (u"2.5,3",u"deux point cinq virgule trois")],
-                 "roman"   : [(u"V",u"cinq"), (u"X",u"dix")],
-                 "all"     : [(u"1ab",u"1ab"),(u"ab",u"ab"),
-                              (u"le 25 mars 2015 2.5 Xème",u"le vingt cinq mars deux mille quinze deux point cinq dixième"),
-                              (u"le 25.",u"le vingt cinq"),
-                              (u"le 25.5.",u"le vingt cinq point cinq"),
-                              (u"14 alinéa 1, some text",u"quatorze alinéa un some text"),
-                              (u"l'article 12,",u"l'article douze"),
-                              (u"dans le XXIIIe siècle", u"dans le vingt-troisième siècle")]
+    testDict = { "cardinal"   : [(u"10",u"dix"),(u"25",u"vingt cinq")],
+                 "transition" : [(u"1.",u"premièrement"),(u"10.",u"dixièmement")],
+                 "ordinal"    : [(u"1er",u"premier"),(u"1ère",u"première"),(u"2ème",u"deuxième"),
+                                 (u"XXVème",u"vingt-cinquième"), (u"XXème",u"vingtième"),
+                                 (u"XXIIIe",u"vingt-troisième")],
+                 "decimal"    : [(u"2,5",u"deux virgule cinq"), (u"2.5,3",u"deux point cinq virgule trois")],
+                 "roman"      : [(u"XXIII",u"vingt trois"), (u"XX",u"vingt")],
+                 "all"        : [(u"1ab",u"1ab"),(u"ab",u"ab"),
+                                 (u"le 25 mars 2015 2.5 XXème",u"le vingt cinq mars deux mille quinze deux point cinq vingtième"),
+                                 (u"le 25.",u"le vingt cinq"),
+                                 (u"le 25.5.",u"le vingt cinq point cinq"),
+                                 (u"14 alinéa 1, some text",u"quatorze alinéa un some text"),
+                                 (u"l'article 12,",u"l'article douze"),
+                                 (u"dans le XXIIIe siècle", u"dans le vingt-troisième siècle"),
+                                 (u"Ce matin", u"Ce matin"),
+                                 (u"Le matin", u"Le matin")]
     }
 
     #################
@@ -48,7 +51,7 @@ class FormulaNumberUnitTest(unittest.TestCase):
     def evaluateListValues(self, testList, callback):
         for t, gt in testList:
             r = callback(t).encode('utf-8')
-            self.assertEquals(gt.encode('utf-8'), r, r)
+            self.assertEquals(gt.encode('utf-8'), r)
 
     #################
     # Unit tests
@@ -58,6 +61,12 @@ class FormulaNumberUnitTest(unittest.TestCase):
 
         for t, gt in testList:
         	self.assertEquals(NumberFormula._isCardinalNumber(t), gt, t.encode('utf-8'))
+
+    def test_isTransition(self):
+        testList = [(u"1.",True),(u"10.",True), (u"11.",False)]
+
+        for t, gt in testList:
+          self.assertEquals(NumberFormula._isTransitionNumber(t), gt, t.encode('utf-8'))
     
     def test_isOrdinal(self):
         testList = [(u"1er",True), (u"1re",True), (u"1ère",True), (u"2e",True), (u"2ème",True), 
@@ -73,7 +82,7 @@ class FormulaNumberUnitTest(unittest.TestCase):
         	self.assertEquals(NumberFormula._isDecimalNumber(t), gt, t.encode('utf-8'))
 
     def test_isRoman(self):
-    	testList = [(u"V",True), (u"XII",True), (u"La", False)]
+    	testList = [(u"V",False), (u"XII",True), (u"La", False)]
 
     	for t, gt in testList:
         	self.assertEquals(NumberFormula._isRomanNumber(t), gt, t.encode('utf-8'))
@@ -92,6 +101,10 @@ class FormulaNumberUnitTest(unittest.TestCase):
     def test_cardinal2word(self):
         testList = self.testDict["cardinal"]
         self.evaluateListValues(testList, NumberFormula._cardinal2word)
+
+    def test_transition2word(self):
+        testList = self.testDict["transition"]
+        self.evaluateListValues(testList, NumberFormula._transition2word)
         
     def test_ordinal2word(self):
         testList = self.testDict["ordinal"]

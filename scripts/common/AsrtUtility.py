@@ -81,21 +81,24 @@ def convertNumber(cls, strText):
         if not hasNumber(cls, w):
             newWordsList.append(w)
             continue
-        #Numbers may contain alphanumeric
-        #characters
-        wNorm = cls._normalizeNumber(w)
         try:
             #Now check number type
-            if cls._isCardinalNumber(wNorm):
-                wNorm = cls._cardinal2word(wNorm)
-            elif cls._isOrdinalNumber(wNorm):
-                wNorm = cls._ordinal2word(wNorm)
-            elif cls._isDecimalNumber(wNorm):
-                wNorm = cls._decimal2word(wNorm)
-            elif cls._isRomanNumber(wNorm):
-                wNorm = cls._roman2word(wNorm)
+            if cls._isTransitionNumber(w):
+                wNorm = cls._transition2word(w)
             else:
-                wNorm = w
+                #Numbers may contain alphanumeric
+                #characters
+                wNorm = cls._normalizeNumber(w)
+                if cls._isCardinalNumber(wNorm):
+                    wNorm = cls._cardinal2word(wNorm)
+                elif cls._isOrdinalNumber(wNorm):
+                    wNorm = cls._ordinal2word(wNorm)
+                elif cls._isDecimalNumber(wNorm):
+                    wNorm = cls._decimal2word(wNorm)
+                elif cls._isRomanNumber(wNorm):
+                    wNorm = cls._roman2word(wNorm)
+                else:
+                    wNorm = w
             newWordsList.append(wNorm)
 
         except Exception, e:

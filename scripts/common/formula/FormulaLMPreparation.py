@@ -34,7 +34,8 @@ from RegularExpressionList import RegexList
 from AsrtConstants import UTF8MAP, PUNCTUATIONEXCLUDE, DOTCOMMAEXCLUDE
 from AsrtConstants import PUNCTUATIONMAP, PUNCTUATIONPATTERN, SPACEPATTERN
 from AsrtConstants import DATEREGEXLIST, CONTRACTIONPREFIXELIST, ACRONYMREGEXLIST
-from AsrtConstants import ABBREVIATIONS, APOSTHROPHELIST
+from AsrtConstants import ABBREVIATIONS, APOSTHROPHELIST, CAPTURINGDIGITPATTERN
+from AsrtConstants import GROUPINGDOTCOMMAPATTERN
 from config import FRENCH, GERMAN
 
 class LMPreparationFormula():
@@ -44,6 +45,7 @@ class LMPreparationFormula():
     logger                      = logging.getLogger("Asrt.LMPreparationFormula")
     
     ordDict                     = {}
+    abbreviationsDict           = {}
 
     #Regular expressions formulas
     dateFormula                 = RegularExpressionFormula(None, 
@@ -124,16 +126,23 @@ class LMPreparationFormula():
         #are applied
         self._normalizeDates()
         self._expandAbbreviations()
+        self._expandNumberInWords()
+        #print self.strText
 
         #Removal of some of punctuation symbols
         self._normalizePunctuation(PUNCTUATIONEXCLUDE)
+        #print self.strText
 
         #Dot and comman punctuation symbols are still needed
         self._normalizeWords()
+        #print self.strText
+
         self._normalizeContractionPrefixes()
+        #print self.strText
 
         #Make sure no punctuation is remaining
         self._normalizePunctuation(DOTCOMMAEXCLUDE + PUNCTUATIONEXCLUDE)
+        #print self.strText
 
         self._expandAcronyms()
         self._normalizeCase()
@@ -178,21 +187,50 @@ class LMPreparationFormula():
     def _normalizeDates(self):
         """Normalize dates.
         """
-        self.strText = self.dateFormula.apply(self.strText, self.languageId)
-        
+        self.strText = self.dateFormula.apply(self.strText, self.languageId)    
+    
     def _expandAbbreviations(self):
         """Expand language abbreviations.
         """
-        #Should not happen, as filtered before
-        if self.languageId not in ABBREVIATIONS:
+        aDict = self._getAbbreviationsDict()
+        if self.languageId not in aDict:
             return
 
         wordsList = re.split(SPACEPATTERN, self.strText, flags=re.UNICODE)
         newWordsList = []
         for w in wordsList:
             wByte = w.encode('utf-8')
-            if wByte in ABBREVIATIONS[self.languageId]:
-                newWordsList.append(ABBREVIATIONS[self.languageId][wByte])
+            if wByte in aDict[self.languageId]:
+                newWordsList.append(aDict[self.languageId][wByte])
+            else:
+                newWordsList.append(w)
+
+        self.strText = u" ".join(newWordsList)
+
+    def _expandNumberInWords(self):
+        """If there are numbers in words, split them.
+
+           i.e. A1   --> A. 1
+                P3B  --> P. 3 B.
+                P5B4 --> P. 5 B. 4
+                PPB5 --> PPB 5 (acronyms are expanded later on)
+        """
+        wordsList = re.split(SPACEPATTERN, self.strText, flags=re.UNICODE)
+
+        newWordsList = []
+        for w in wordsList:
+            tokenList = re.split(CAPTURINGDIGITPATTERN, w, flags=re.UNICODE)
+            #We have a match
+            if len(tokenList) > 1:
+                #Single letter acronyms
+                for i, t in enumerate(tokenList):
+                    #Digit return false
+                    if len(t) == 1 and t.isupper():
+                        tokenList[i] = tokenList[i] + u"."
+                newWord = u" ".join(tokenList).strip()
+                #Group P . 5 into P. 5
+                newWord = re.sub(GROUPINGDOTCOMMAPATTERN,u"\g<2> ",newWord)
+                newWordsList.append(newWord)
             else:
                 newWordsList.append(w)
 
@@ -230,16 +268,20 @@ class LMPreparationFormula():
 
             param 'excludeList' : a list of exclude punctuation symbols
         """
-        unicodeList = []
+        unicodeList, prevC = [], ""
         for i, c in enumerate(self.strText):
             strC = c.encode('utf-8')
             #For date format, i.e. 21-Jul
             if strC in excludeList:
+                #Keep dots after uppercase letters
+                if prevC.isupper() and strC == ".":
+                    unicodeList.append(c)
                 unicodeList.append(u" ")
             elif self.languageId != 0 and strC in PUNCTUATIONMAP:
                 unicodeList.append(u" " + PUNCTUATIONMAP[strC][self.languageId] + u" ")
             else:
                 unicodeList.append(c)
+            prevC = strC
 
         self.strText = u"".join(unicodeList).rstrip().strip()
         self.strText = re.sub(u"(^- *| - |- |-$)", u"", self.strText, flags=re.UNICODE)
@@ -294,6 +336,24 @@ class LMPreparationFormula():
 
         LMPreparationFormula.ordDict = ordDict
         return LMPreparationFormula.ordDict
+
+    @staticmethod
+    def _getAbbreviationsDict():
+        """Get the abbreviations dictionary with keys
+           encoded in byte string for comparison.
+        """
+        if len(LMPreparationFormula.abbreviationsDict.keys()) > 0:
+            return LMPreparationFormula.abbreviationsDict
+
+        aDict = {}
+        for lang in ABBREVIATIONS.keys():
+            if lang not in aDict:
+                aDict[lang] = {}
+            for k,v in ABBREVIATIONS[lang].items():
+                aDict[lang][k.encode('utf-8')] = v
+
+        LMPreparationFormula.abbreviationsDict = aDict
+        return LMPreparationFormula.abbreviationsDict
 
     @staticmethod
     def _isNoise(strWord):

@@ -24,17 +24,24 @@ __license__ = "BSD 3-Clause"
 import os
 scriptsDir = os.path.abspath(os.path.dirname(__file__))
 
-import unittest, re, string
+import unittest, re, string, logging
 
 from formula.FormulaLMPreparation import LMPreparationFormula
 from AsrtConstants import UTF8MAP, SPACEPATTERN, DOTCOMMAEXCLUDE, PUNCTUATIONEXCLUDE
-from AsrtConstants import CONTRACTIONPREFIXELIST
+from AsrtConstants import CONTRACTIONPREFIXELIST, ABBREVIATIONS
+from LoggingSetup import setupLogging
+from config import FRENCH, GERMAN
+
+setupLogging(logging.INFO, "./output.log")
 
 class TestFormulaLMPreparation(unittest.TestCase):
     allPunctList = DOTCOMMAEXCLUDE + PUNCTUATIONEXCLUDE
 
-    def setUp(self):
-        print ""
+    def verifyEqual(self, testList, f, callback):
+        for t, gt in testList:
+            f.strText = t
+            callback()
+            self.assertEquals(gt.encode('utf-8'), f.strText.encode('utf-8'))
 
     ############
     #Tests
@@ -100,3 +107,42 @@ class TestFormulaLMPreparation(unittest.TestCase):
         strTest = f._filterNoiseWords()
 
         self.assertEquals(strGt, strTest)
+
+    def testExpandAcronyms(self):
+        testList = [(u"PDCB.",u"p. d. c. b."),
+                    (u"PDC:",u"p. d. c.")]
+
+        f = LMPreparationFormula()
+        self.verifyEqual(testList, f, f._expandAcronyms)
+
+    def testExpandNumberInWords(self):
+        testList = [(ur"A1", ur"A. 1"),(ur"P3B", ur"P. 3 B."), (ur"P5B4", ur"P. 5 B. 4"),
+                     (ur"PPB5",ur"PPB 5")]
+        
+        f = LMPreparationFormula()
+        self.verifyEqual(testList, f, f._expandNumberInWords)
+
+    def testExpandAbbreviations(self):
+        f = LMPreparationFormula()
+        for languageId, v in ABBREVIATIONS.items():
+            f.setLanguageId(languageId)
+            for abbr, gt in v.items():
+                f.strText = abbr
+                f._expandAbbreviations()
+                self.assertEquals(gt.encode('utf-8'), f.strText.encode('utf-8'))
+
+    def testAll(self):
+        testList =[(u"A dix heures", u"à dix heures"),
+                   (u"1.Election",u"premièrement election"),
+                   (u"R1",u"r. un"), (ur"A1", ur"a. un"),(ur"P3B", ur"p. trois b."),
+                   (ur"P5B4", ur"p. cinq b. quatre"), 
+                   (ur"PPB5",ur"p. p. b. cinq"),
+                   (ur"rte",ur"route")]
+
+        f = LMPreparationFormula()
+        f.setLanguageId(1)
+        
+        for t, gt in testList:
+            f.setText(t)
+            r = f.prepareText()
+            self.assertEquals(gt.encode('utf-8'), r.encode('utf-8'))

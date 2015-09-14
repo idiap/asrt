@@ -42,9 +42,9 @@ class NumberFormula():
 
     HASNUMBERREGEX          = re.compile(u"([0-9]|I|V|X|L|C|D|M)+", flags=re.UNICODE)
     CARDINALNUMBERREGEX     = re.compile(u"[0-9]+$", flags=re.UNICODE)
-    ORDINALNUMBERREGEX      = re.compile(u"([0-9]+[.]|[IVXLCDM]+[.])$", flags=re.UNICODE)
+    ORDINALNUMBERREGEX      = re.compile(u"([0-9]+[.]|[IVXLCDM]{2,}[.])$", flags=re.UNICODE)
     DECIMALNUMBERREGEX      = re.compile(u"[0-9,.]+[0-9,.]*$", flags=re.UNICODE)
-    ROMANNUMBERREGEX        = re.compile(u"[IVXLCDM]+$", flags=re.UNICODE)
+    ROMANNUMBERREGEX        = re.compile(u"[IVXLCDM]{2,}$", flags=re.UNICODE)
 
     ##################
     #Public interface
@@ -157,6 +157,15 @@ class NumberFormula():
            return True or False
         """
         return NumberFormula.CARDINALNUMBERREGEX.match(strWord) != None
+
+    @staticmethod
+    def _isTransitionNumber(strWord):
+        """Check if 'strWord' is a transition number.
+
+           param strWord: an utf-8 encoded words
+           currently return False only
+        """
+        return False
 
     @staticmethod
     def _isOrdinalNumber(strWord):

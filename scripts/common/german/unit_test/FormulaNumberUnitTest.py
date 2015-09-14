@@ -29,11 +29,11 @@ class FormulaNumberUnitTest(unittest.TestCase):
     
     testDict = { "cardinal": [(u"10",u"zehn"),(u"25",u"fünf und zwanzig")],
                  "ordinal" : [(u"1.",u"erste"),(u"2.",u"zweite"),
-                              (u"V.",u"fünfte"), (u"X.",u"zehnte")],
+                              (u"XXV.",u"fünf und zwanzigste"), (u"XX.",u"zwanzigste")],
                  "decimal" : [(u"2,5",u"zwei komma fünf"), (u"2.5,3",u"zwei punkt fünf komma drei")],
-                 "roman"   : [(u"V",u"fünf"), (u"X",u"zehn"),(u"II",u"zwei")],
+                 "roman"   : [(u"XX",u"zwanzig"),(u"II",u"zwei")],
                  "all"     : [(u"1ab",u"1ab"),(u"ab",u"ab"),
-                              (u"die 25 März 2015 2.5 X.",u"die fünf und zwanzig März zwei tausend fünfzehn zwei punkt fünf zehnte"),
+                              (u"die 25 März 2015 2.5 XX.",u"die fünf und zwanzig März zwei tausend fünfzehn zwei punkt fünf zwanzigste"),
                               (u"21. dezember 2011",u"ein und zwanzigste dezember zwei tausend elf"),
                               (u"das 21.",u"das ein und zwanzigste"),(u"2,", u"zwei"),
                               (u"das 2.,", u"das zweite"),(u"das 2..", u"das zweite"),
@@ -59,7 +59,7 @@ class FormulaNumberUnitTest(unittest.TestCase):
 
     def test_isOrdinal(self):
         testList = [(u"1.",True), (u"3.",True), (u"8.",True), (u"2.",True), (u"10.",True), 
-                    (u"I.",True),(u"XII.",True)]
+                    (u"I.",False),(u"XII.",True)]
 
         for t, gt in testList:
             self.assertEquals(NumberFormula._isOrdinalNumber(t), gt, t.encode('utf-8'))
@@ -71,7 +71,7 @@ class FormulaNumberUnitTest(unittest.TestCase):
             self.assertEquals(NumberFormula._isDecimalNumber(t), gt, t.encode('utf-8'))
 
     def test_isRoman(self):
-        testList = [(u"V",True), (u"XII",True)]
+        testList = [(u"V",False), (u"XII",True)]
 
         for t, gt in testList:
             self.assertEquals(NumberFormula._isRomanNumber(t), gt, t.encode('utf-8'))
