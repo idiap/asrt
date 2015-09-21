@@ -52,6 +52,7 @@ class DataPreparationAPI():
         self.inputFile = inputFile
         self.outputDir = outputDir
         self.tempDir = outputDir
+        self.formattedText = None
         self.debug = False
         self.regexFile = None
         self.lmModeling = False
@@ -74,6 +75,14 @@ class DataPreparationAPI():
 
     def setTempDir(self, tempDir):
         self.tempDir = tempDir
+
+    def setFormattedText(self, formattedText):
+        self.formattedText = formattedText
+
+    def getCleanedText(self):
+        if self.doc != None:
+            return self.doc.getCleanedText()
+        return ""
 
     def setDebugMode(self, debug):
         self.debug = debug
@@ -143,9 +152,15 @@ class DataPreparationAPI():
                                     self.substitutionRegexFormula,
                                     self.validationPatternList,
                                     self.outputDir)
-
-            self.logger.info("Load file, convert to text when pdf document")
-            self.doc.loadDocumentAsSentences(self.tempDir)
+            
+            if self.inputFile != None:
+                self.logger.info("Load file, convert to text when pdf document")
+                self.doc.loadDocumentAsSentences(self.tempDir)
+            elif self.formattedText != None:
+                self.logger.info("Load text string as sentences")
+                self.doc.loadAsSentences(self.formattedText)
+            else:
+                raise Exception("No input file or text string provided!")
 
             #Control character and strip
             self.logger.info("Cleaning control characters")
@@ -264,7 +279,7 @@ class DataPreparationAPI():
         substitutionList = []
         regexList = RegexList().loadFromFile(self.regexFile)
         #Skip header
-        for row in regexList[1:]:
+        for row in regexList:
             if int(row[2]) == VALIDATION_TYPE:
                 self.validationPatternList.append((row[0],row[3]))
             else:

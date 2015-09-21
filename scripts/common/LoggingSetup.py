@@ -43,7 +43,7 @@ class MultiLineFormatter(logging.Formatter):
     
         return str
     
-def setupLogging(logLevel, fileName, logToStd = True):
+def setupLogging(logLevel, fileName = None, logToStd = True):
     """Logging for the server module. Default
        level is INFO.
     """
@@ -54,16 +54,17 @@ def setupLogging(logLevel, fileName, logToStd = True):
        
     #Rendering engines
     mediaparlFormatter = MultiLineFormatter("%(lineno)-4d : %(levelname)-10s %(name)-30s %(asctime)-25s %(message)s")    
-       
-    #Check and make directory
-    MyFile.checkDirExists(MyFile(fileName).getFileDir())
-        
-    fileHandler = logging.handlers.RotatingFileHandler(filename=fileName,maxBytes=1024000, backupCount=5)
-    fileHandler.setLevel(logLevel)
-    fileHandler.setFormatter(mediaparlFormatter)
-
-    taskLogger.addHandler(fileHandler)
     
+    if fileName != None:
+        #Check and make directory
+        MyFile.checkDirExists(MyFile(fileName).getFileDir())
+            
+        fileHandler = logging.handlers.RotatingFileHandler(filename=fileName,maxBytes=1024000, backupCount=5)
+        fileHandler.setLevel(logLevel)
+        fileHandler.setFormatter(mediaparlFormatter)
+
+        taskLogger.addHandler(fileHandler)
+        
     if logToStd:        
         streamHandler = logging.StreamHandler(sys.stdout)
         streamHandler.setLevel(logLevel)

@@ -55,7 +55,7 @@ class RegexList():
         
         io = Ioread()
         regexList = io.readCSV(regexFile,'\t')
-        substitutionPatternList = RegexList.removeComments(regexList)
+        substitutionPatternList = RegexList.removeComments(regexList[1:])
         RegexList.logger.info("Done loading regular expressions")
 
         return substitutionPatternList

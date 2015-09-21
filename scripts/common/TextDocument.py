@@ -100,6 +100,22 @@ class TextDocument(Document):
         #Delete temporary file
         MyFile(tempFileName).removeFile(tempFileName)
 
+    def loadAsSentences(self, strText):
+        """Load the given text string as sentences.
+
+           param strText: an utf-8 encoded string
+        """
+        self._loadAsSentences(strText)
+
+    def getCleanedText(self):
+        """Get the cleaned text.
+        """
+        textList = []
+        for textCluster in self.listContent:
+            textList.append(textCluster.getTextSentence())
+
+        return self.MERGECLUSTERSEP.join(textList)
+
     def cleanTextSentences(self):
         """Use a set of regex rules to prepare
            the sentences.
@@ -200,12 +216,18 @@ class TextDocument(Document):
         #One string for the whole
         #text file as utf-8 string
         data = io.nltkRead(filePath)
+        self._loadAsSentences(self, data)
 
+    def _loadAsSentences(self, strText):
+        """Load the given text as sentences.
+
+           param strText: an utf-8 encoded string
+        """
         #Trim new lines
-        data = self._replaceNewLines(data)
+        strText = self._replaceNewLines(strText)
 
         #Sentences view of document
-        self._segmentIntoSentences(data)
+        self._segmentIntoSentences(strText)
 
     def _applyAllClusters(self, method):
         """Apply 'method' to all clusters.

@@ -24,29 +24,58 @@ __license__ = "BSD 3-Clause"
 import os
 scriptsDir = os.path.abspath(os.path.dirname(__file__))
 
-import unittest
+import unittest, logging
 
+from ioread import Ioread
 from DataPreparationAPI import DataPreparationAPI
 from config import TEMPDIRUNITTEST
 
 class TestDataPreparationAPI(unittest.TestCase):
-	workingDirectory = TEMPDIRUNITTEST 
-	targetDir = scriptsDir + "/resources"
-	targetFolder1 = targetDir + "/target-folder-2"
-	regexFile = targetDir + "/regexpattern.csv"
+    logger  = logging.getLogger("Asrt.TestDataPreparationAPI")
 
-	def setUp(self):
-		print ""
+    workingDirectory    = TEMPDIRUNITTEST 
+    targetDir           = scriptsDir + "/resources"
+    targetFolder1       = targetDir + "/target-folder-2"
+    regexFile           = targetDir + "/regexpattern.csv"
 
-	############
-	#Tests
-	#
-	def testLoadRegexes(self):
-		api = DataPreparationAPI(None,None)
-		api.setRegexFile(self.regexFile)
+    testFileList = [(1, scriptsDir + "/resources/test-strings-datapreparationapi-french.csv"),
+                    (2, scriptsDir + "/resources/test-strings-datapreparationapi-german.csv")]
 
-		api._getRegexes()
+    def setUp(self):
+        print ""
 
-		self.assertTrue(api.substitutionRegexFormula.hasPatterns())
-		self.assertTrue(len(api.validationPatternList) > 0)
-		self.assertTrue(len(api.substitutionRegexFormula.substitutionPatternList[0]) > 1)
+    def getTestList(self, strFileName):
+        """Get CSV content of 'strFileName'.
+        """
+        io = Ioread()
+        return io.readCSV(strFileName, delim='\t')
+
+    ############
+    #Tests
+    #
+    def testLoadRegexes(self):
+        api = DataPreparationAPI(None,None)
+        api.setRegexFile(self.regexFile)
+
+        api._getRegexes()
+
+        self.assertTrue(api.substitutionRegexFormula.hasPatterns())
+        self.assertTrue(len(api.validationPatternList) > 0)
+        self.assertTrue(len(api.substitutionRegexFormula.substitutionPatternList[0]) > 1)
+    
+    def testPrepareDocument(self):
+        api = DataPreparationAPI(None, None)
+        api.setLMModeling(True)
+        for languageId, strFileName in self.testFileList:
+            self.logger.info("Testing %s" % strFileName)
+            testList = self.getTestList(strFileName)
+            for test, gt, bDiscard in testList:
+                if int(bDiscard): 
+                    continue
+                #Main call
+                api.setFormattedText(test)
+                api.prepareDocument(languageId)
+                formattedText = api.getCleanedText()
+                self.assertEquals(formattedText.encode('utf-8'), gt.encode('utf-8'),
+                    "'%s' is not '%s':%s" % (formattedText.encode('utf-8'), 
+                                    gt.encode('utf-8'), strFileName))

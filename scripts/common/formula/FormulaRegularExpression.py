@@ -150,11 +150,16 @@ class RegularExpressionFormula():
     def hasPatterns(self):
         return len(self.substitutionPatternList) != 0
 
-    def displayPatterns(self):
+    def displayPatterns(self, languageId):
         """Display the final patterns.
         """
-        regexList = RegexList.loadFromFile(self.rulesFile)
-        for regex, alternate, regexType in regexList:
+        if len(self.substitutionPatternList) == 0:
+            return
+        for regex, alternate, regexType, regexLanguageId in self.substitutionPatternList:
+            #Does it match the text language
+            if int(regexLanguageId) != languageId:
+                continue
+
             regexListForType = \
                 RegexType.typeToRegularExpressions(regex, alternate, int(regexType))
             for regexForType in regexListForType:
