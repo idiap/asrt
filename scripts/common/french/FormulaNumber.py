@@ -124,13 +124,9 @@ class NumberFormula():
         if strNumber.encode('utf-8') == u"1ère".encode('utf-8'):
             return u"première"
 
-        print "Ordinal", strNumber
-
         strNewNumber = re.sub(u"[erèm]", "", strNumber)
         if NumberFormula._isCardinalNumber(strNewNumber):
-            print strNewNumber
             strNewNumber = num2words(int(strNewNumber), ordinal=True, lang='fr')
-            print strNewNumber
         elif NumberFormula._isRomanNumber(strNewNumber):
             #Roman to cardinal
             strNewNumber = strNewNumber.encode('utf-8')
