@@ -44,7 +44,6 @@ class TextCluster(Cluster):
     logger = logging.getLogger("Asrt.TextCluster")
 
     LANGUAGE_ATTRIBUTE      = 'language'
-    FRENCH_ID               = 1
     ID_COUNTER              = 0
     
     def __init__(self, document, sentenceText):
@@ -130,7 +129,7 @@ class TextCluster(Cluster):
         """
         strText = self.getTextSentence()
         strText = TextCluster.removeControlCharacters(strText)
-        self.setTextSentence(strText.rstrip().strip())
+        self.setTextSentence(strText)
     
     def classify(self, classifier):
         """Classify between french and german.

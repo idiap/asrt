@@ -29,6 +29,7 @@ sys.path.append(scriptsDir + "/..")
 import logging, re
 from german.Number import Number
 from roman import fromRoman
+from Rule import Rule, Pattern
 from AsrtUtility import convertNumber
 from AsrtConstants import SPACEPATTERN
 
@@ -42,7 +43,7 @@ class NumberFormula():
 
     HASNUMBERREGEX          = re.compile(u"([0-9]|I|V|X|L|C|D|M)+", flags=re.UNICODE)
     CARDINALNUMBERREGEX     = re.compile(u"[0-9]+$", flags=re.UNICODE)
-    ORDINALNUMBERREGEX      = re.compile(u"([0-9]+[.]|[IVXLCDM]{2,}[.])$", flags=re.UNICODE)
+    ORDINALNUMBERREGEX      = re.compile(u"([0-9]+er|[0-9]+[.]|[IVXLCDM]{2,}[.])$", flags=re.UNICODE)
     DECIMALNUMBERREGEX      = re.compile(u"[0-9,.]+[0-9,.]*$", flags=re.UNICODE)
     ROMANNUMBERREGEX        = re.compile(u"[IVXLCDM]{2,}$", flags=re.UNICODE)
 
@@ -94,7 +95,7 @@ class NumberFormula():
         return Number.convertNumberIntoLetters(strNumber)
 
     @staticmethod
-    def _ordinal2word(strNumber):
+    def _ordinal2word(wordsList, indice):
         """Convert an ordinal number to a written
            word.
 
@@ -103,19 +104,69 @@ class NumberFormula():
            param strNumber: an utf-8 ordinal number
            return a 'written' ordinal number
         """
-        strNewNumber = re.sub(u"[.]", "", strNumber)
+        strNumber = NumberFormula._normalizeNumber(wordsList[indice])
+
+        #Update with correct form
+        wordsList[indice] = strNumber
+
+        #Check for specific ordinal ending with dates
+        ending = NumberFormula._getOrdinalEnding(strNumber, wordsList, indice)
+        bOrdinal = len(ending) > 0
+
+        #ending = u""
+        strNewNumber = re.sub(u"([.]|er)", "", strNumber)
+
         if NumberFormula._isCardinalNumber(strNewNumber):
-            strNewNumber =  Number.convertNumberIntoLetters(strNewNumber, ordinal=True)
+            strNewNumber =  Number.convertNumberIntoLetters(strNewNumber, ordinal=bOrdinal)
         elif NumberFormula._isRomanNumber(strNewNumber):
             #Roman to cardinal
             strNewNumber = strNewNumber.encode('utf-8')
             cardinalNumber = fromRoman(strNewNumber)
             #Digits to ordinal
-            strNewNumber =  Number.convertNumberIntoLetters(cardinalNumber, ordinal=True)
+            strNewNumber =  Number.convertNumberIntoLetters(cardinalNumber, ordinal=bOrdinal)
         else:
+            #Original word is kept
             strNewNumber = strNumber
+            ending = u""
 
-        return strNewNumber
+        #Already included in convertNumberIntLetters        
+        if ending == u"e":
+          ending = u""
+
+        return strNewNumber + ending
+
+    @staticmethod
+    def _getOrdinalEnding(strNumber, wordsList, indice):
+        """Given a cardinal number and its context,
+           determine ending.
+
+           This only fix part of all the cases.
+
+           i.e. das zeite Dezember
+                am zweiten Dezember
+        """
+        #Default to nothing
+        ending = u""
+
+        #Check for am 2. December
+        enRule = Rule(Pattern(NumberFormula.ORDINALNUMBERREGEX.pattern, 
+                       u"(an|am|im|de[nmrs]|vo[nm]|ein[nmrs]|jede[nmrs]"+\
+                       u"|solche[nmrs]|jene[nmrs]|welche[nmrs])", None,-1,1))
+
+        if enRule.doesApply(wordsList, indice) and \
+            enRule.match(wordsList, indice):
+            ending = u"n"
+
+        #Check for am 2. December
+        eRule = Rule(Pattern(NumberFormula.ORDINALNUMBERREGEX.pattern, 
+                       u"(der|die|das|jede"+\
+                       u"|solche|jene|welche)", None,-1,1))
+
+        if eRule.doesApply(wordsList, indice) and \
+            eRule.match(wordsList, indice):
+            ending = u"e"
+
+        return ending
 
     @staticmethod
     def _decimal2word(strNumber):

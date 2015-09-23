@@ -28,13 +28,13 @@ from AsrtUtility import hasNumber
 class FormulaNumberUnitTest(unittest.TestCase):
     
     testDict = { "cardinal": [(u"10",u"zehn"),(u"25",u"fünf und zwanzig")],
-                 "ordinal" : [(u"1.",u"erste"),(u"2.",u"zweite"),
-                              (u"XXV.",u"fünf und zwanzigste"), (u"XX.",u"zwanzigste")],
+                 "ordinal" : [(u"der 1.",u"der erste"),(u"der 2.",u"der zweite"),
+                              (u"der XXV.",u"der fünf und zwanzigste"), (u"der XX.",u"der zwanzigste")],
                  "decimal" : [(u"2,5",u"zwei komma fünf"), (u"2.5,3",u"zwei punkt fünf komma drei")],
                  "roman"   : [(u"XX",u"zwanzig"),(u"II",u"zwei")],
                  "all"     : [(u"1ab",u"1ab"),(u"ab",u"ab"),
-                              (u"die 25 März 2015 2.5 XX.",u"die fünf und zwanzig März zwei tausend fünfzehn zwei punkt fünf zwanzigste"),
-                              (u"21. dezember 2011",u"ein und zwanzigste dezember zwei tausend elf"),
+                              (u"die 25 März 2015 2.5 die XX.",u"die fünf und zwanzig März zwei tausend fünfzehn zwei punkt fünf die zwanzigste"),
+                              (u"am 21. dezember 2011",u"am ein und zwanzigsten dezember zwei tausend elf"),
                               (u"das 21.",u"das ein und zwanzigste"),(u"2,", u"zwei"),
                               (u"das 2.,", u"das zweite"),(u"das 2..", u"das zweite"),
                               (u"2,", u"zwei")]
@@ -46,7 +46,8 @@ class FormulaNumberUnitTest(unittest.TestCase):
     def evaluateListValues(self, testList, callback):
        for t, gt in testList:
             r = callback(t).encode('utf-8')
-            self.assertEquals(gt.encode('utf-8'), r, r)
+            self.assertEquals(gt.encode('utf-8'), r, 
+                 "%s is not %s" % (r, gt.encode('utf-8')))
 
     #################
     # Unit tests
@@ -91,9 +92,14 @@ class FormulaNumberUnitTest(unittest.TestCase):
         testList = self.testDict["cardinal"]
         self.evaluateListValues(testList, NumberFormula._cardinal2word)
 
-    def test_ordinal2word(self):
+    def testOrdinal2word(self):
         testList = self.testDict["ordinal"]
-        self.evaluateListValues(testList, NumberFormula._ordinal2word)
+        for i, (t, gt) in enumerate(testList):
+            tList = t.split(" ")
+            gt = u" ".join(gt.split(" ")[1:])
+            r = NumberFormula._ordinal2word(tList, 1)
+            self.assertEquals(gt.encode('utf-8'), r.encode('utf-8'), 
+                              "%s is not %s" % (r.encode('utf-8'), gt.encode('utf-8')))
 
     def test_decimal2word(self):
         testList = self.testDict["decimal"]

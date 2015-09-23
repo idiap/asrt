@@ -35,7 +35,7 @@ from AsrtConstants import UTF8MAP, PUNCTUATIONEXCLUDE, DOTCOMMAEXCLUDE
 from AsrtConstants import PUNCTUATIONMAP, PUNCTUATIONPATTERN, SPACEPATTERN
 from AsrtConstants import DATEREGEXLIST, CONTRACTIONPREFIXELIST, ACRONYMREGEXLIST
 from AsrtConstants import ABBREVIATIONS, APOSTHROPHELIST, CAPTURINGDIGITPATTERN
-from AsrtConstants import GROUPINGDOTCOMMAPATTERN
+from AsrtConstants import GROUPINGDOTCOMMAPATTERN, EXPANDEXCEPTIONS
 from config import FRENCH, GERMAN
 
 class LMPreparationFormula():
@@ -58,7 +58,8 @@ class LMPreparationFormula():
                                     RegexList.removeComments(ACRONYMREGEXLIST))
 
     PUNCTUATIONREGEX            = re.compile(PUNCTUATIONPATTERN, flags=re.UNICODE)
-
+    ALLPUNCTUATIONSYMBOLS       = "".join(PUNCTUATIONEXCLUDE + DOTCOMMAEXCLUDE)
+    
     def __init__(self):
         """Default constructor.
         """
@@ -118,10 +119,10 @@ class LMPreparationFormula():
 
             return the normalized text in utf-8 encoding
         """
+        #print self.strText
         #Some preprocessing
         self._filterNoiseWords()
         self._normalizeUtf8()
-
         #Before punctuation removal, some rules
         #are applied
         self._normalizeDates()
@@ -141,11 +142,14 @@ class LMPreparationFormula():
         #print self.strText
 
         #Make sure no punctuation is remaining
-        self._normalizePunctuation(DOTCOMMAEXCLUDE + PUNCTUATIONEXCLUDE)
+        self._normalizePunctuation(self.ALLPUNCTUATIONSYMBOLS)
         #print self.strText
 
         self._expandAcronyms()
+        #print self.strText
+        
         self._normalizeCase()
+        #print self.strText
 
         return self.strText
 
@@ -182,6 +186,11 @@ class LMPreparationFormula():
                 utf8List.append(c)
 
         self.strText = u"".join(utf8List).rstrip().strip()
+
+        if self.strText[-1] in self.ALLPUNCTUATIONSYMBOLS and \
+           self.strText[-2].isdigit():
+           self.strText = self.strText.rstrip(self.ALLPUNCTUATIONSYMBOLS)
+        
         self.strText = re.sub(SPACEPATTERN, u" ", self.strText, flags=re.UNICODE)
 
     def _normalizeDates(self):
@@ -220,8 +229,11 @@ class LMPreparationFormula():
         newWordsList = []
         for w in wordsList:
             tokenList = re.split(CAPTURINGDIGITPATTERN, w, flags=re.UNICODE)
+            #Ordinal numbers are not expanded
+            if w.endswith(EXPANDEXCEPTIONS):
+                newWordsList.append(w)
             #We have a match
-            if len(tokenList) > 1:
+            elif len(tokenList) > 1:
                 #Single letter acronyms
                 for i, t in enumerate(tokenList):
                     #Digit return false
@@ -268,19 +280,21 @@ class LMPreparationFormula():
 
             param 'excludeList' : a list of exclude punctuation symbols
         """
-        unicodeList, prevC = [], ""
+        unicodeList, prevC, beforePrevC = [], u"", u""
         for i, c in enumerate(self.strText):
             strC = c.encode('utf-8')
             #For date format, i.e. 21-Jul
             if strC in excludeList:
                 #Keep dots after uppercase letters
-                if prevC.isupper() and strC == ".":
+                if beforePrevC in (""," ") and not prevC.isdigit() \
+                    and strC == ".":
                     unicodeList.append(c)
                 unicodeList.append(u" ")
             elif self.languageId != 0 and strC in PUNCTUATIONMAP:
                 unicodeList.append(u" " + PUNCTUATIONMAP[strC][self.languageId] + u" ")
             else:
                 unicodeList.append(c)
+            beforePrevC = prevC
             prevC = strC
 
         self.strText = u"".join(unicodeList).rstrip().strip()

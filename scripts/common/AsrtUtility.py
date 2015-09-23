@@ -77,7 +77,7 @@ def convertNumber(cls, strText):
     wordsList = re.split(SPACEPATTERN, strText, flags=re.UNICODE)
 
     newWordsList = []
-    for w in wordsList:
+    for i, w in enumerate(wordsList):
         if not hasNumber(cls, w):
             newWordsList.append(w)
             continue
@@ -92,7 +92,7 @@ def convertNumber(cls, strText):
                 if cls._isCardinalNumber(wNorm):
                     wNorm = cls._cardinal2word(wNorm)
                 elif cls._isOrdinalNumber(wNorm):
-                    wNorm = cls._ordinal2word(wNorm)
+                    wNorm = cls._ordinal2word(wordsList, i)
                 elif cls._isDecimalNumber(wNorm):
                     wNorm = cls._decimal2word(wNorm)
                 elif cls._isRomanNumber(wNorm):
@@ -102,8 +102,12 @@ def convertNumber(cls, strText):
             newWordsList.append(wNorm)
 
         except Exception, e:
-            logger.warning("Error formatting number (%s): %s" % \
-                (w.encode('utf-8'), str(e)))
+            prefix = "Error formatting number (%s): %s" % \
+                        (w.encode('utf-8'), str(e))
+            #errorMessage = getErrorMessage(e, prefix)
+            logger.warning(prefix)
+
+            #Keep unformatted word
             newWordsList.append(w)
 
     return u" ".join(newWordsList)

@@ -133,7 +133,7 @@ class TestFormulaLMPreparation(unittest.TestCase):
 
     def testAll(self):
         testList =[(u"A dix heures", u"à dix heures"),
-                   (u"1.Election",u"premièrement election"),
+                   (u"1. Election",u"premièrement election"),
                    (u"R1",u"r. un"), (ur"A1", ur"a. un"),(ur"P3B", ur"p. trois b."),
                    (ur"P5B4", ur"p. cinq b. quatre"), 
                    (ur"PPB5",ur"p. p. b. cinq"),

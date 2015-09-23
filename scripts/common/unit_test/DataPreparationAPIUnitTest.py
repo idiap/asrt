@@ -65,6 +65,7 @@ class TestDataPreparationAPI(unittest.TestCase):
     
     def testPrepareDocument(self):
         api = DataPreparationAPI(None, None)
+        api.setRegexFile(self.regexFile)
         api.setLMModeling(True)
         for languageId, strFileName in self.testFileList:
             self.logger.info("Testing %s" % strFileName)

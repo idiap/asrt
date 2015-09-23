@@ -31,7 +31,6 @@ import logging
 
 from ioread import Ioread
 from TextDocument import TextDocument
-from config import FRENCH_PICKLE_FOLDER
 from ClassifierWord import WordClassifier
 from RegularExpressionList import RegexList
 from formula.FormulaRegularExpression import RegularExpressionFormula
@@ -148,7 +147,7 @@ class DataPreparationAPI():
             self.logger.info("Document file: %s" % self.inputFile)
 
             #The main document
-            self.doc = TextDocument(self.inputFile, FRENCH_PICKLE_FOLDER,
+            self.doc = TextDocument(self.inputFile, language,
                                     self.substitutionRegexFormula,
                                     self.validationPatternList,
                                     self.outputDir)
@@ -162,9 +161,13 @@ class DataPreparationAPI():
             else:
                 raise Exception("No input file or text string provided!")
 
+            #print self.doc.getCleanedText()
+
             #Control character and strip
             self.logger.info("Cleaning control characters")
             self.doc.cleanTextSentences()
+
+            #print self.doc.getCleanedText()
 
             if language == 0:
                 self.logger.info("Classifying sentences")
@@ -173,10 +176,14 @@ class DataPreparationAPI():
             else:
                 self.doc.setSentencesLanguage(language)
 
+            #print self.doc.getCleanedText()
+
             #User's supplied regular expression
             if self.substitutionRegexFormula.hasPatterns():
                 self.logger.info("Applying user regular expressions per language")
                 self.doc.normalizeTextSentences()
+
+            #print self.doc.getCleanedText()
 
             if self.filterSentences:
                 self.logger.info("Filtering data")
@@ -189,6 +196,8 @@ class DataPreparationAPI():
             
             if self.verbalizePunctuation and not self.removePunctuation:
                 self.doc.verbalizeTextPunctuation()
+
+            #print self.doc.getCleanedText()
 
             #After language id has been set as it depends of
             #languages (i.e. numbers expansion)

@@ -108,8 +108,11 @@ class FormulaNumberUnitTest(unittest.TestCase):
         
     def test_ordinal2word(self):
         testList = self.testDict["ordinal"]
-        self.evaluateListValues(testList, NumberFormula._ordinal2word)
-        
+        for i, (t, gt) in enumerate(testList):
+            r = NumberFormula._ordinal2word([t], 0)
+            self.assertEquals(gt.encode('utf-8'), r.encode('utf-8'), 
+                              "%s is not %s" % (r.encode('utf-8'), gt.encode('utf-8')))
+
     def test_decimal2word(self):
         testList = self.testDict["decimal"]
         self.evaluateListValues(testList, NumberFormula._decimal2word)

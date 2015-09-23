@@ -111,7 +111,7 @@ class NumberFormula():
         return TRANSITIONNUMBERS[FRENCH][strNumber]
 
     @staticmethod
-    def _ordinal2word(strNumber):
+    def _ordinal2word(wordsList, indice):
         """Convert an ordinal number to a written
            word.
 
@@ -120,12 +120,17 @@ class NumberFormula():
            param strNumber: an utf-8 ordinal number
            return a 'written' ordinal number
         """
+        strNumber = NumberFormula._normalizeNumber(wordsList[indice])
         if strNumber.encode('utf-8') == u"1ère".encode('utf-8'):
             return u"première"
 
+        print "Ordinal", strNumber
+
         strNewNumber = re.sub(u"[erèm]", "", strNumber)
         if NumberFormula._isCardinalNumber(strNewNumber):
+            print strNewNumber
             strNewNumber = num2words(int(strNewNumber), ordinal=True, lang='fr')
+            print strNewNumber
         elif NumberFormula._isRomanNumber(strNewNumber):
             #Roman to cardinal
             strNewNumber = strNewNumber.encode('utf-8')
@@ -188,7 +193,8 @@ class NumberFormula():
               ...
               neuvièmement
         """
-        return NumberFormula.TRANSITIONNUMBERREGEX.match(strWord) != None
+        return NumberFormula.TRANSITIONNUMBERREGEX.match(strWord) != None \
+            and NumberFormula.THOUSANDSEPARATOR not in strWord
 
     @staticmethod
     def _isOrdinalNumber(strWord):

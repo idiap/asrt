@@ -144,3 +144,5 @@ class Number():
         dec = int(decnumber[1].strip())
 
         return '%s komma %s' % (Number.convertNumberIntoLetters(num),Number.convertNumberIntoLetters(dec))
+
+    

@@ -37,6 +37,7 @@ from Document import Document
 from TextCluster import TextCluster
 from TextRepresentation import TextRepresentation
 from ClassifierWord import WordClassifier
+from config import FRENCH_PICKLE_FOLDER, GERMAN_PICKLE_FOLDER
 
 class TextDocument(Document):
     """A text document.
@@ -46,16 +47,22 @@ class TextDocument(Document):
     CONVERT_COMMAND     = ['pdftotext', '-raw', '-layout', '-enc', 'UTF-8', '-eol', 'unix', '-nopgbrk']
 
     MERGECLUSTERSEP     = u"\n"
-
+    DIGITANDDOTREGEX    = u"( |^)([0-9]{1,2})[.]( |$)"
+    DIGITANDDOTSUB      = u"\g<1>\g<2>.\g<3>"
+    #Do not put a ; for character entity, otherwise
+    #sentence segmentation is ocurring
+    DIGITANDENTITYREGEX = u"( |^)([0-9]{1,2})&#46( |$)"
+    DIGITANDENTITYSUB   = u"\g<1>\g<2>&#46\g<3>"
+    
     ########################
     # Default constructor
     #
-    def __init__(self, source, tokenizer_path,
+    def __init__(self, source, languageId,
                  regexSubstitutionFormula, regex_filter_list,
                  logDir):
         Document.__init__(self, source)
 
-        self.tokenizer_path = tokenizer_path
+        self.languageId = languageId
         self.regexSubstitutionFormula = regexSubstitutionFormula
         self.regex_filter_list = regex_filter_list
         self.logDir = logDir
@@ -216,18 +223,46 @@ class TextDocument(Document):
         #One string for the whole
         #text file as utf-8 string
         data = io.nltkRead(filePath)
-        self._loadAsSentences(self, data)
+        self._loadAsSentences(data)
 
     def _loadAsSentences(self, strText):
         """Load the given text as sentences.
 
+           Algorithm is:
+             - New lines removal
+             - Problematic periods replacement
+             - Sentences segmentation with nltk
+             - Problematic periods restauration
+
            param strText: an utf-8 encoded string
         """
+        tokenizer_path = FRENCH_PICKLE_FOLDER
+        if self.languageId == 2:
+            tokenizer_path = GERMAN_PICKLE_FOLDER
+
         #Trim new lines
         strText = self._replaceNewLines(strText)
 
-        #Sentences view of document
-        self._segmentIntoSentences(strText)
+        #Problematic periods replacement
+        strText = self._replaceProblematicPeriods(strText)
+
+        #print strText
+        #sys.exit(0)
+
+        #Nltk segmentation
+        sentences = self._segmentIntoSentences(strText, tokenizer_path)
+
+        #Problematic periods restauration
+        for i, s in enumerate(sentences):
+            sentences[i] = self._replaceProblematicPeriods(s, forward=False)
+            #print sentences[i].encode('utf-8')
+            #if i > 100:
+            #    sys.exit(status=0)
+
+        #Make text clusters with unknown language id
+        self._addSentences(sentences)
+
+        TextDocument.logger.info("Loaded %d raw sentences!" % len(sentences))
 
     def _applyAllClusters(self, method):
         """Apply 'method' to all clusters.
@@ -248,7 +283,24 @@ class TextDocument(Document):
         
         return re.sub(ur"\n", u" ", data, flags=re.UNICODE)
 
-    def _segmentIntoSentences(self, data):
+    def _replaceProblematicPeriods(self, data, forward=True):
+        """Convert dots preceded from a number and followed
+           by a space into an html entity.
+
+           If forward is set to False, it will convert from
+           html entity to dots.
+
+           This escaping is done in order to prevent
+           segmenting sentences on numbers.
+        """
+        if not forward:
+            return re.sub(self.DIGITANDENTITYREGEX, self.DIGITANDDOTSUB, data, 
+                           flags=re.UNICODE)
+    
+        return re.sub(self.DIGITANDDOTREGEX, self.DIGITANDENTITYSUB, data, 
+                        flags=re.UNICODE)
+
+    def _segmentIntoSentences(self, data, tokenizer_path):
         """Replace current content by sentences.
 
            The sentences segmentation is done using
@@ -257,8 +309,9 @@ class TextDocument(Document):
            param data: an utf-8 encoded string
         """
         try:
+
             #Get the french tokenizer
-            tokenizer = nltk.data.load(self.tokenizer_path)
+            tokenizer = nltk.data.load(tokenizer_path)
 
             #The actual job
             sentences = tokenizer.tokenize(data)
@@ -267,10 +320,8 @@ class TextDocument(Document):
             TextDocument.logger.critical("Tokenizer error: " + str(e))
             raise Exception("Tokenizer error: " + self.tokenizer_path)
 
-        self._addSentences(sentences)
+        return sentences
         
-        TextDocument.logger.info("Loaded %d raw sentences!" % len(sentences))
-
     def _addSentences(self, sentencesList, languageId=0, bEmpty = True):
         """Add the given sentences to the document.
 
