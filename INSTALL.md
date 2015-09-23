@@ -22,13 +22,15 @@ This install manual is for Debian based systems.
       - copora : europarl_raw
       - model  : punkt
 
-5. Build the debian package
+5. Install the num2words library: https://pypi.python.org/pypi/num2words
+
+6. Build the debian package
     - Change directory into scripts
     - Run the command `debuild` (debian build)
 
-6. Install the library
+7. Install the library
     - In the scripts directory, run `sudo dpkg -i ../asrt_1.0.0RC1_all.deb`
 
-7. Run the examples to test your installation
+8. Run the examples to test your installation
     - `/usr/share/asrt/examples/bash/run_data_preparation.sh`
     - `/usr/share/asrt/examples/bash/run_data_preparation_task.sh`
