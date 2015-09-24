@@ -28,16 +28,16 @@ sys.path.append(scriptsDir + "/../config")
 
 from config import FRENCH, GERMAN
 
-SPACEPATTERN      			= u"[ ]+"
+SPACEPATTERN                = u"[ ]+"
 CAPTURINGDIGITPATTERN		= u"([0-9\.,]+)"
 GROUPINGDOTCOMMAPATTERN		= u"( |$)([.,])( |$)"
 EXPANDEXCEPTIONS			= (u"er", u"re", u"ère", u"e", u"ème")
 
-UNITD2W             		= {1:'ein', 2:'zwei', 3:'drei', 4:'vier', 5:'fünf', 6:'sechs', 7:'sieben', 8:'acht', 9:'neun',
+UNITD2W                     = {1:'ein', 2:'zwei', 3:'drei', 4:'vier', 5:'fünf', 6:'sechs', 7:'sieben', 8:'acht', 9:'neun',
                                10:'zehn', 11:'elf', 12:'zwölf', 13:'dreizehn', 14:'vierzehn', 15:'fünfzehn', 16:'sechszehn',
-                       		   17:'siebzehn', 18:'achtzehn', 19:'neunzehn'}
+                               17:'siebzehn', 18:'achtzehn', 19:'neunzehn'}
 
-DECADED2W           		= {1:'zehn', 2:'zwanzig', 3:'dreissig', 4:'vierzig', 5:'fünfzig', 6:'sechzig', 7:'siebzig',
+DECADED2W                   = {1:'zehn', 2:'zwanzig', 3:'dreissig', 4:'vierzig', 5:'fünfzig', 6:'sechzig', 7:'siebzig',
                                8:'achtzig', 9:'neunzig'}
 GERMANMONTHESREGEX			= u"(Januar|Februar|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember)"
 
@@ -45,7 +45,7 @@ GERMANMONTHESREGEX			= u"(Januar|Februar|März|April|Mai|Juni|Juli|August|Septem
 #http://www.cloford.com/resources/charcodes/utf-8_punctuation.htm
 #http://xahlee.info/comp/unicode_matching_brackets.html
 #Format is matching pattern, substitution, comment, language id
-UTF8MAP         			= [
+UTF8MAP                     = [
 (ur"\u00A0",u" ",u"Spaces: non-breaking space",u"0"),
 (ur"\ufeff",u" ",u"Spaces: invisible",u"0"),
 (ur"\u200B",u" ",u"Spaces: zero-width space",u"0"),
@@ -147,34 +147,34 @@ UTF8MAP         			= [
 (ur"\u0153",u"oe",u"Ligatures: lattin small ligature oe",u"0")]
 
 #Do not exclude single quote
-PUNCTUATIONEXCLUDE 				= ['!', '"', '#', '(', ')', '*', '+', '-',
+PUNCTUATIONEXCLUDE              = ['!', '"', '#', '(', ')', '*', '+', '-',
                                    '/', ':', ';', '<', '=', '>', '?', '[', '\\',
                                    ']', '^', '_', '`', '{', '|', '}', '~']
-DOTCOMMAEXCLUDE 				= ['.',',']
-PUNCTUATIONMAP  				= {
+DOTCOMMAEXCLUDE                 = ['.',',']
+PUNCTUATIONMAP                  = {
     "%": (r"%",r"pourcent", u"Prozent", u"percent", u"per cento"),
     "&": (r"&",r"et", u"und", u"and", u"e"),
     "@": (r"@",r"at", u"at", u"at", u"at"),
     '$': (r'$',r"dollars", u"Dollar", u"dollars", u"dollari"),
 }
 
-PUNCTUATIONPATTERN 				= ur"(\!|\"|#|\$|%|&|'|\(|\)|\*|\+|,|-|\.|/|:|;|<|=|>|\?|@|\[|\\|\]|\^|_|`|\{|\}|~|\|){4,}"
+PUNCTUATIONPATTERN              = ur"(\!|\"|#|\$|%|&|'|\(|\)|\*|\+|,|-|\.|/|:|;|<|=|>|\?|@|\[|\\|\]|\^|_|`|\{|\}|~|\|){4,}"
 
-ACRONYMREGEXLIST 				= [(ur"( |^)([A-Z])([A-Z])([A-Z])([A-Z])([A-Z])[.,:;]?( |$)",
-						              ur"lambda p: p.group(1)+p.group(2).lower()+'. '+p.group(3).lower()+'. '+p.group(4).lower()+'. '+p.group(5).lower()+'. '+p.group(6).lower()+'.'+p.group(7)",ur"1",ur"0",ur"Acronyms"),
-						           (ur"( |^)([A-Z])([A-Z])([A-Z])([A-Z])[.,:;]?( |$)",
-						              ur"lambda p: p.group(1)+p.group(2).lower()+'. '+p.group(3).lower()+'. '+p.group(4).lower()+'. '+p.group(5).lower()+'.'+p.group(6)",ur"1",ur"0",ur"Acronyms"),
-						           (ur"( |^)([A-Z])([A-Z])([A-Z])[.,:;]?( |$)",
-						              ur"lambda p: p.group(1)+p.group(2).lower()+'. '+p.group(3).lower()+'. '+p.group(4).lower()+'.'+p.group(5)",ur"1",ur"0",ur"Acronyms"),
-						           (ur"( |^)([A-Z])([A-Z])[.,:;]?( |$)",
-						              ur"lambda p: p.group(1)+p.group(2).lower()+'. '+p.group(3).lower()+'.'+p.group(4)",ur"1",ur"0",ur"Acronyms")]
+ACRONYMREGEXLIST                = [(ur"( |^)([A-Z])([A-Z])([A-Z])([A-Z])([A-Z])[.,:;]?( |$)",
+                                    ur"lambda p: p.group(1)+p.group(2).lower()+'. '+p.group(3).lower()+'. '+p.group(4).lower()+'. '+p.group(5).lower()+'. '+p.group(6).lower()+'.'+p.group(7)",ur"1",ur"0",ur"Acronyms"),
+                                   (ur"( |^)([A-Z])([A-Z])([A-Z])([A-Z])[.,:;]?( |$)",
+                                    ur"lambda p: p.group(1)+p.group(2).lower()+'. '+p.group(3).lower()+'. '+p.group(4).lower()+'. '+p.group(5).lower()+'.'+p.group(6)",ur"1",ur"0",ur"Acronyms"),
+                                   (ur"( |^)([A-Z])([A-Z])([A-Z])[.,:;]?( |$)",
+                                    ur"lambda p: p.group(1)+p.group(2).lower()+'. '+p.group(3).lower()+'. '+p.group(4).lower()+'.'+p.group(5)",ur"1",ur"0",ur"Acronyms"),
+                                   (ur"( |^)([A-Z])([A-Z])[.,:;]?( |$)",
+                                    ur"lambda p: p.group(1)+p.group(2).lower()+'. '+p.group(3).lower()+'.'+p.group(4)",ur"1",ur"0",ur"Acronyms")]
 
-DATEREGEXLIST 					= [(ur"([0-9][0-9])[./]([0-9][0-9])[./]([0-9][0-9][0-9]?[0-9]?)", 
-                  					ur"\g<1> \g<2> \g<3>",ur"1",ur"0",ur"Dates")]
+DATEREGEXLIST                   = [(ur"([0-9][0-9])[./]([0-9][0-9])[./]([0-9][0-9][0-9]?[0-9]?)",
+                                    ur"\g<1> \g<2> \g<3>",ur"1",ur"0",ur"Dates")]
 
-APOSTHROPHELIST 				= [(ur"[']", ur"' ",ur"1",ur"0",ur"Spaces after apostrophes")]
+APOSTHROPHELIST                 = [(ur"[']", ur"' ",ur"1",ur"0",ur"Spaces after apostrophes")]
 
-CONTRACTIONPREFIXELIST 			= [
+CONTRACTIONPREFIXELIST          = [
 	(ur"á",ur"à",u"2",ur"1",u""),
 	(ur"-á-",ur"-à-",u"2",ur"1",u""),
 	(ur"^[aA] ",ur"à ",u"1",ur"1",u""),
@@ -203,84 +203,69 @@ CONTRACTIONPREFIXELIST 			= [
 
 TRANSITIONNUMBERS					= {
 	FRENCH:{'1.':u'premièrement','2.':u'deuxièmement','3.':u'troisièmement','4.':u'quatrièmement',
-	        '5.':u'cinquièmement','6.':u'sixièmement', '7.':u'septièmement','8.':u'huitièmement',
-	        '9.':u'neuvièmement', '10.':u'dixièmement'}
+            '5.':u'cinquièmement','6.':u'sixièmement', '7.':u'septièmement','8.':u'huitièmement',
+            '9.':u'neuvièmement', '10.':u'dixièmement'}
 }
 
-ABBREVIATIONS 					= {
+ABBREVIATIONS                       = {
 	FRENCH:{ u'A/R':u'accusé de réception',u'adj.':u'adjectif',u'admin':u'administration',u'ann.':u'annexe',u'art.':u'article',
 	u'assoc.':u'association',u'av.':u'avenue',u'bibliogr.':u'bibliographie',u'bibl.':u'bibliothèque',u'biogr.':u'biographie',u'bd.':u'boulevard ',
 	u'cad':u'c’est-à-dire',u'cap.':u'capitale',u'C.Q.F.D.':u'ce qu’il fallait démontrer',u'chap.':u'chapitre',u'ch.':u'chemin',u'circ.':u'circonscription',
 	u'col.':u'colonne',u'Cie':u'compagnie',u'c/c':u'compte courant',u'concl.':u'conclusion',u'cf.':u'confer',u'conj.':u'conjonction',u'coop.':u'coopération',
-	u'c.c.':u'copie conforme',u'c':u'copyright',u'©':u'copyright',u'c.v.':u'curriculum vitae',u'dest.':u'destinataire',u'disp.':u'disponible',
-	u'Dr.':u'docteur',u'Drs.':u'docteurs',u'Dre.':u'doctoresse',u'Dres.':u'doctoresses',u'doc.':u'document',u'env.':u'environ',u'err.':u'erratum, errata',
-	u'etc.':u'et cetera',u'ex.':u'exemple',u'e.g.':u'exempli gratia',u'ext.':u'externe',u'féd.':u'fédéral',u'fém.':u'féminin',
-	u'fig.':u'figure',u'id.':u'idem',u'intro':u'introduction',u'M.':u'monsieur',u'MM.':u'messieurs',
-	u'maj.':u'majuscule',u'Me':u'maître',u'Mes':u'maîtres',u'méd.':u'médecine',u'mer.':u'mercredi',u'Mgr':u'monseigneur',u'Mgrs':u'messeigneurs ',
-	u'Mlle':u'mademoiselle ',u'Mlles':u'mesdemoiselles',u'Mme':u'madame',u'Mmes':u'mesdames',u'Mo':u'mégaoctet',u'N.B.':u'nota bene',u'nbre':u'nombre',
-	u'nbx':u'nombreux',u'N/Réf.':u'notre référence',u'obs.':u'observation',u'pcq':u'parce que',u'pers.':u'personne',
-	u'plur.':u'pluriel',u'Prof.':u'professeur',u'P.-S.':u'post-scriptum',u'qté':u'quantité',
-	u'qqn':u'quelqu’un',u'tps':u'temps',u'qqch':u'quelque chose',u'qqf.':u'quelquefois',u'qqn':u'quelqu’un',u'quant.':u'quantité',u'RDV':u'rendez-vous',
-	u'réf.':u'référence',u'rte':u'route',u'sing.':u'singulier',u'St':u'saint',u'stat.':u'statistique',u'Ste':u'sainte',u'Sté':u'société',u'Stes':u'saintes',
-	u'Sts':u'saints',u'suiv.':u'suivant',u'sup.':u'supra',u'suppl.':u'supplément',u'S.V.P.':u's’il vous plaît',u'tél.':u'téléphone',u'téléc.':u'télécopieur',
-	u'temp.':u'température',u'trad.':u'traducteur',u'tjrs':u'toujours',u'univ.':u'université',u'us.':u'usage',u'UV':u'ultraviolet',u'vol.':u'volume',
-	u'V/Réf.':u'votre référence'},
-    GERMAN:{u'a.A.':u'auf Anfrage',u'Abb.':u'Abbildung',u'Abf.':u'Abfahrt',u'Abh.':u'Abhandlung',u'Abk.':u'Abkürzung',
-    u'Abs.':u'Absender',u'Abschn.':u'Abschnitt',u'Abt.':u'Abteilung',u'abw.':u'abwesend',u'a.d.':u'an der',u'a.D.':u'ausser Dienst',u'akad.':u'Akademisch',
-    u'AK':u'Aktienkapital',u'Akk.':u'Akkusativ',u'Akku':u'Akkumulator',u'allg.':u'allgemein',u'a.M.':u'am Main',u'Anh.':u'Anhang',u'Ank.':u'Ankunft',
-    u'Anm.':u'Anmerkung',u'Antw.':u'Antwort',u'Anw.':u'Anweisung',u'Anz.':u'Anzeiger',u'a.o.Prof.':u'ausserordentlicher Professor',u'Aufl.':u'Auflage',
-    u'aussch.':u'Ausschliesslich',u'Az':u'Aktenzeichen',u'Bed.':u'Bedarf',u'begl.':u'beglaubigt',u'beil.':u'beiliegend',
-    u'beisp.':u'beispielweise',u'Ber.':u'Bericht',u'bes.':u'besonders',u'Betr.':u'Betreff',u'betr.':u'betreffend',u'Bez.':u'Bezirk',u'bez.':u'Bezeichnung',
-    u'BH':u'Bustenhalter',u'Bhf.':u'Bahnhof',u'Bl.':u'Blatt',u'Br.':u'Bruder',u'bz.':u'bezahlt',u'bzw.':u'beziehungsweise',
-    u'cal.':u'Kalorie',u'cand.':u'Kandidat',u'cbm':u'Kubikmeter',u'ccm':u'Kubiczentimeter',u'dag.':u'dagegen',u'dam.':u'damals',u'Dat.':u'Dativ',
-    u'dazw.':u'dazwischen',u'db':u'Dezibel',u'desgl.':u'desgleichen',u'dgl.':u'dergleichen',u'Di':u'Dienstag',
-    u'Dipl.':u'Diplom',u'Dir.':u'Direktor',u'Dir.':u'Dirigent',
-    u'd.M.':u'Dieses Monats',u'Do.':u'Donnerstag',u'do.':u'dito',u'Doz.':u'Dozent',u'Dr.':u'Doktor',u'Dr.h.c.':u'Doktor honoris causa',
-    u'dt.':u'deutsch',u'dz.':u'derzeit',u'ehem.':u'ehemals',
-    u'eigtl.':u'eigentlich',u'EKG':u'Elektrokardiogramm',u'entspr.':u'entsprechend',u'entw.':u'entweder',u'ER':u'Europarat',u'Erdg.':u'Erdgeschoss',
-    u'Essl.':u'Esslöffel',u'etw.':u'etwas',u'exkl.':u'exklusive',u'Ff.':u'Fortsetzung folgt',u'Fa.':u'Firma',u'Fak.':u'Fakultät',
-    u'Fam.':u'Familie',u'Fdw.':u'Feldwebel',u'Fil.':u'Filiale',u'Fr.':u'Frau',u'fr.':u'frei',u'Frl.':u'Fraulein',u'g':u'Gramm',
-    u'geb.':u'geboren',u'Gebr.':u'Gebrüder',u'gegr.':u'gegrundet',u'gem.':u'gemäss',u'Gem.':u'Gemeinde',u'Gen.':u'Genetiv',u'Gen.':u'Genossenschaft',
-    u'gen.':u'genannt',u'gesch.':u'geschieden',u'geschr.':u'geschrieben',u'ges.gesch.':u'gesetzlich geschützt',u'geschl.':u'geschlossen',u'gest.':u'gestorben',
-    u'gez.':u'gezeichnet',u'GG':u'Grundgesetz',u'GmbH':u'Gesellschaft mit beschränkter Haftung',u'gzj.':u'ganzjährig',u'ha.':u'Hektar',
-    u'habil.':u'habilitiert',u'Hbf.':u'Hauptbahnhof',u'hdt.':u'hundert',u'hj.':u'halbjährlich',u'höfl.':u'höflichst',u'Hptst.':u'Hauptstadt',u'Hr.':u'Herr',
-    u'i.allg.':u'im allgemeinen',u'i.F':u'in der Fassung',
-    u'ill.':u'illustriert',u'inbegr.':u'inbegriffen',u'Ind.':u'Indikativ',u'Ing.':u'Ingenieur',u'Inh.':u'Inhaber',
-    u'inkl.':u'inklusive',u'Insp.':u'Inspektor',u'Inst.':u'Instanz',u'Inst.':u'Institut',u'int.':u'international',u'inzw.':u'inzwischen',u'i.R.':u'im Ruhestand',
-    u'iV.':u'in Vertretung',u'iV.':u'in Vorbereitung',u'iZm.':u'in Zusammenhang mit',u'jew.':u'jewelig',u'Jg.':u'Jahrgang',u'Jh.':u'Jahrhundert',
-    u'jun.':u'junior',u'jur.':u'juristisch',u'kath.':u'katholisch',u'Kfm.':u'Kaufmann',u'kg.':u'Kilogramm',u'kgl.':u'königlich',u'Kl.':u'Klasse',
+	u'c.v.':u'curriculum vitae',u'dest.':u'destinataire',u'disp.':u'disponible',u'Dr.':u'docteur',u'Drs.':u'docteurs',u'Dre.':u'doctoresse',
+    u'Dres.':u'doctoresses',u'doc.':u'document',u'env.':u'environ',u'etc.':u'et cetera',u'ex.':u'exemple',u'e.g.':u'exempli gratia',u'ext.':u'externe',
+    u'féd.':u'fédéral',u'fém.':u'féminin',u'fig.':u'figure',u'id.':u'idem',u'intro':u'introduction',u'MM.':u'messieurs',u'maj.':u'majuscule',
+    u'méd.':u'médecine',u'Mgr':u'monseigneur',u'Mgrs':u'messeigneurs ',u'Mlle':u'mademoiselle ',u'Mlles':u'mesdemoiselles',u'Mme':u'madame',
+    u'Mmes':u'mesdames',u'Mo':u'mégaoctet',u'N.B.':u'nota bene',u'nbre':u'nombre',u'nbx':u'nombreux',u'N/Réf.':u'notre référence',u'obs.':u'observation',
+    u'pcq':u'parce que',u'pers.':u'personne',u'plur.':u'pluriel',u'Prof.':u'professeur',u'P.-S.':u'post-scriptum',u'qté':u'quantité',u'qqn':u'quelqu’un',
+    u'tps':u'temps',u'qqch':u'quelque chose',u'qqf.':u'quelquefois',u'qqn':u'quelqu’un',u'RDV':u'rendez-vous',u'réf.':u'référence',u'rte':u'route',
+    u'sing.':u'singulier',u'St':u'saint',u'stat.':u'statistique',u'Ste':u'sainte',u'Sté':u'société',u'Stes':u'saintes',u'Sts':u'saints',u'suiv.':u'suivant',
+    u'sup.':u'supra',u'suppl.':u'supplément',u'S.V.P.':u's’il vous plaît',u'tél.':u'téléphone',u'téléc.':u'télécopieur',u'temp.':u'température',
+    u'trad.':u'traducteur',u'tjrs':u'toujours',u'univ.':u'université',u'us.':u'usage',u'UV':u'ultraviolet',u'V/Réf.':u'votre référence'},
+    GERMAN:{u'a.A.':u'auf Anfrage',u'Abb.':u'Abbildung',u'Abf.':u'Abfahrt',u'Abh.':u'Abhandlung',u'Abk.':u'Abkürzung',u'Abs.':u'Absender',u'Abschn.':u'Abschnitt',
+    u'Abt.':u'Abteilung',u'abw.':u'abwesend',u'akad.':u'Akademisch',u'AK':u'Aktienkapital',u'Akk.':u'Akkusativ',u'Akku':u'Akkumulator',u'allg.':u'allgemein',
+    u'a.M.':u'am Main',u'Anh.':u'Anhang',u'Ank.':u'Ankunft',u'Anm.':u'Anmerkung',u'Antw.':u'Antwort',u'Anw.':u'Anweisung',u'Anz.':u'Anzeiger',u'Aufl.':u'Auflage',
+    u'aussch.':u'Ausschliesslich',u'Az':u'Aktenzeichen',u'Bed.':u'Bedarf',u'begl.':u'beglaubigt',u'beil.':u'beiliegend',u'beisp.':u'beispielweise',
+    u'Ber.':u'Bericht',u'bes.':u'besonders',u'Betr.':u'Betreff',u'betr.':u'betreffend',u'Bez.':u'Bezirk',u'bez.':u'Bezeichnung',u'BH':u'Bustenhalter',
+    u'Bhf.':u'Bahnhof',u'Bl.':u'Blatt',u'Br.':u'Bruder',u'bz.':u'bezahlt',u'bzw.':u'beziehungsweise',u'cal.':u'Kalorie',u'cand.':u'Kandidat',u'cbm':u'Kubikmeter',
+    u'ccm':u'Kubiczentimeter',u'dag.':u'dagegen',u'dam.':u'damals',u'Dat.':u'Dativ',u'dazw.':u'dazwischen',u'db':u'Dezibel',u'desgl.':u'desgleichen',
+    u'dgl.':u'dergleichen',u'Dipl.':u'Diplom',u'Doz.':u'Dozent',u'Dr.':u'Doktor',u'Dr.h.c.':u'Doktor honoris causa',u'dt.':u'deutsch',u'dz.':u'derzeit',
+    u'ehem.':u'ehemals',u'eigtl.':u'eigentlich',u'EKG':u'Elektrokardiogramm',u'entspr.':u'entsprechend',u'entw.':u'entweder',u'ER':u'Europarat',
+    u'Erdg.':u'Erdgeschoss',u'Essl.':u'Esslöffel',u'etw.':u'etwas',u'exkl.':u'exklusive',u'Ff.':u'Fortsetzung folgt',u'Fak.':u'Fakultät',u'Fam.':u'Familie',
+    u'Fdw.':u'Feldwebel',u'Fr.':u'Frau',u'Frl.':u'Fraulein',u'geb.':u'geboren',u'Gebr.':u'Gebrüder',u'gegr.':u'gegrundet',u'gesch.':u'geschieden',
+    u'geschr.':u'geschrieben',u'ges.gesch.':u'gesetzlich geschützt',u'geschl.':u'geschlossen',u'gest.':u'gestorben',u'gez.':u'gezeichnet',u'GG':u'Grundgesetz',
+    u'GmbH':u'Gesellschaft mit beschränkter Haftung',u'gzj.':u'ganzjährig',u'ha.':u'Hektar',u'habil.':u'habilitiert',u'Hbf.':u'Hauptbahnhof',u'hdt.':u'hundert',
+    u'hj.':u'halbjährlich',u'höfl.':u'höflichst',u'Hptst.':u'Hauptstadt',u'Hr.':u'Herr',u'i.allg.':u'im allgemeinen',u'i.F':u'in der Fassung',u'ill.':u'illustriert',
+    u'inbegr.':u'inbegriffen',u'Ind.':u'Indikativ',u'Ing.':u'Ingenieur',u'Inh.':u'Inhaber',u'inkl.':u'inklusive',u'Insp.':u'Inspektor',u'Inst.':u'Instanz',
+    u'Inst.':u'Institut',u'int.':u'international',u'inzw.':u'inzwischen',u'i.R.':u'im Ruhestand',u'iZm.':u'in Zusammenhang mit',u'jew.':u'jewelig',u'Jg.':u'Jahrgang',
+    u'Jh.':u'Jahrhundert',u'jun.':u'junior',u'jur.':u'juristisch',u'kath.':u'katholisch',u'Kfm.':u'Kaufmann',u'kg.':u'Kilogramm',u'kgl.':u'königlich',u'Kl.':u'Klasse',
     u'km.':u'Kilometer',u'kn.':u'Knoten',u'kompl.':u'komplett',u'Kpt.':u'Kapitän',u'Kt.':u'Kanton',u'k.u.k.':u'kaiserlich und königlich',u'kW':u'Kilowatt',
-    u'led.':u'ledig',u'lfd.':u'laufend',u'Lfrg.':u'Lieferung',u'LG':u'Landgericht',u'LG':u'Liebe Grüsse',u'Lit.':u'Literatur',u'lt.':u'laut',u'Lt.':u'Leutnant',
-    u'MA':u'Mittelalter',u'ma.':u'mittelälterlich',u'Mag.':u'Magister',u'm.a.W.':u'mit anderen Worten',u'm.E':u'meines Erachtens',
-    u'mech.':u'mechanisch',u'med.':u'medizinisch',u'mehrf.':u'mehrfach',u'MEZ':u'Mitteleuropäische Zeit',u'MFG':u'mit freundlichen Grüssen',u'mg':u'Milligramm',
-    u'Mi':u'Mittwoch',u'Mill.':u'Million',u'Min.':u'Minute',u'm.M.':u'meiner Meinung',u'm.M.n.':u'meiner Meinung nach',u'mm':u'millimeter',u'Mo':u'Montag',
+    u'led.':u'ledig',u'lfd.':u'laufend',u'Lfrg.':u'Lieferung',u'Lit.':u'Literatur',u'lt.':u'laut',u'Lt.':u'Leutnant',u'MA':u'Mittelalter',u'ma.':u'mittelälterlich',
+    u'Mag.':u'Magister',u'm.a.W.':u'mit anderen Worten',u'm.E':u'meines Erachtens',u'mech.':u'mechanisch',u'med.':u'medizinisch',u'mehrf.':u'mehrfach',
+    u'MEZ':u'Mitteleuropäische Zeit',u'MFG':u'mit freundlichen Grüssen',u'mg':u'Milligramm',u'Mill.':u'Million',u'Min.':u'Minute',u'mm':u'millimeter',u'Mo':u'Montag',
     u'Mrd.':u'Milliarde',u'mtl.':u'monatlich',u'm.W.':u'meines Wissens',u'MWSt':u'Mehrwertsteuer',u'Mz.':u'Mehrzahl',u'N':u'Nord',u'Nachf.':u'Nachfolger',
     u'nachm.':u'nachmittags',u'nat.':u'national',u'n.J.':u'nächsten Jahres',u'n.M.':u'nächsten Monats',u'N.N.':u'Name unbekannt',u'NO':u'Nordost',
-    u'Nr.':u'Nummer',u'NS':u'Nachschrift',u'NW':u'Nordwest',u'NZ':u'Nachrichtenzentrale',u'O':u'Ost',u'od.':u'oder',u'o.a.':u'oben angeführt',
-    u'o.ä.':u'oder ähnliches',u'o.A.':u'ohne Adresse',u'OB':u'Oberbefelshaber',u'o.B.':u'ohne Befund',u'OEZ':u'Osteuropäische Zeit',u'o.J.':u'ohne Jahr',
-    u'ö.L':u'östlicher Länge',u'o.Pr.':u'ordentlicher Professor',u'örtl.':u'örtlich',u'o.V.':u'ohne Verfasser',u'p.A.':u'per Adresse',u'Part.':u'Parterre',
-    u'pat.':u'patentiert',u'pharm.':u'pharmazeutisch',u'Pkt.':u'Punkt',u'Pl.':u'Platz',u'pl':u'Plural',u'pol.':u'politisch',u'pol.':u'polizeilich',
-    u'Postf.':u'Postfach',u'priv.':u'privat',u'Prof.':u'Professor',u'prot.':u'protestantisch',u'Prov.':u'Provinz',u'qkm':u'Quadratkilometer',
-    u'qm':u'Quadratmeter',u'Quitt.':u'Quittung',u'rd.':u'rund',u'Red.':u'Redacteur',u'Reg.':u'Regierung',u'Rep.':u'Republik',u'resp.':u'respektiv',
-    u'Rgt.':u'Regiment',u'Rhld.':u'Rheinland',u'rm.':u'raummeter',u'Rzpt.':u'Rezept',u'S':u'Sud',u'S.':u'Seite',u'Sa':u'Samstag',u'Sa.':u'Sachsen',
+    u'Nr.':u'Nummer',u'NS':u'Nachschrift',u'NW':u'Nordwest',u'NZ':u'Nachrichtenzentrale',u'od.':u'oder',u'o.a.':u'oben angeführt',u'o.ä.':u'oder ähnliches',
+    u'o.A.':u'ohne Adresse',u'OB':u'Oberbefelshaber',u'o.B.':u'ohne Befund',u'OEZ':u'Osteuropäische Zeit',u'o.J.':u'ohne Jahr',u'ö.L':u'östlicher Länge',
+    u'o.Pr.':u'ordentlicher Professor',u'örtl.':u'örtlich',u'o.V.':u'ohne Verfasser',u'p.A.':u'per Adresse',u'Part.':u'Parterre',u'pat.':u'patentiert',
+    u'pharm.':u'pharmazeutisch',u'Pkt.':u'Punkt',u'Pl.':u'Platz',u'pl':u'Plural',u'pol.':u'politisch',u'pol.':u'polizeilich',u'Postf.':u'Postfach',u'priv.':u'privat',
+    u'Prof.':u'Professor',u'prot.':u'protestantisch',u'Prov.':u'Provinz',u'qkm':u'Quadratkilometer',u'qm':u'Quadratmeter',u'Quitt.':u'Quittung',u'rd.':u'rund',
+    u'Red.':u'Redacteur',u'Reg.':u'Regierung',u'Rep.':u'Republik',u'resp.':u'respektiv',u'Rgt.':u'Regiment',u'Rhld.':u'Rheinland',u'rm.':u'raummeter',u'Rzpt.':u'Rezept',
     u'S-Bahn':u'Schnellbahn',u'SB':u'Selbstbedienung',u'SBB':u'Schweizerische Bundesbahn',u's.Br.':u'südliche Breite',u'sek.':u'sekunde',u'Sekr.':u'Sekretär',
     u'sel.':u'selig',u'Sem.':u'Semester',u'Sen.':u'Senator',u'sen.':u'senior',u'sfr.':u'Schweizer Franken',u's.g.e.':u'sehr gut erhalten',u'sm.':u'Seemeile',
-    u'SM':u'Seine Majestät',u'SO':u'Südost',u's.o.':u'siehe oben',u's.u.':u'siehe unten',u'spez.':u'speziell',u'St.':u'Stück',
-    u'städt.':u'städtisch',u'Std.':u'Stunde',u'stdl.':u'stündlich',u'stellv.':u'stellvertretend',u'StGB':u'Strafgesetzbuch',u'StKl':u'Steuerklasse',
-    u'StPO':u'Strafprozessordnung',u'Str.':u'Strasse',u'StVO':u'Strassenverkehrsordnung',u'svw.':u'soviel wie',u'SW':u'Südwest',u'sZ':u'seinerzeit',
-    u'SZ':u'Sommerzeit',u't':u'Tonne',u'TA':u'Tierartzt',u'Tab.':u'Tabelle',u'tägl.':u'täglich',u'Tb.':u'Tuberkulose',u'Teilh.':u'Teilhaber',
-    u'Tel.':u'Telefon',u'TH':u'Technische Hochschule',u'Tnd.':u'Tausend',u'TU':u'Technische Universität',u'TV':u'Tarifvertrag',u'u.':u'und',
-    u'u.a.':u'unter anderem',u'u.ä.':u'und ähnliches',u'u.A.w.g.':u'um Antwort wird gebeten',u'Übers.':u'Übersetzer',u'übl.':u'üblich',
-    u'üblw.':u'üblicherweise',u'U-Boot':u'Unterseeboot',u'u.dsgl.':u'und desgleichen',u'u.d.M.':u'unter dem Meeresspiegel',u'ue.':u'unehelich',
-    u'u.E.':u'unseres Erachtens',u'U/min.':u'Umdrehungen in der Minute',u'Univ.':u'Universität',u'unverk.':u'unverkäuflich',u'urspr.':u'ursprünglich',
-    u'usw.':u'und so weiter',u'u.U.':u'unter Ümständen',u'u.ü.V.':u'unter üblichem Vorbehalt',u'u.v.a.':u'und veil andere',u'u.W.':u'unseres Wissens',
-    u'u.zw.':u'und zwar', u'v.a.':u'vor allem',u'var.':u'variabel',u'v.A.w.':u'von Amts wegen',
-    u'v.D.':u'vom Dienst',u'verb.':u'verbessert',u'verh.':u'verheiratet',u'Verl.':u'Verlag',u'Verm.':u'Vermerk',
-    u'versch.':u'verschieden',u'versch.':u'verschollen',u'verst.':u'verstorben',u'vgl.':u'vergleiche',u'v.H.':u'vom Hundert',u'v.J.':u'vorigen Jahres',
-    u'v.M.':u'vorigen Monats',u'v.o.':u'von oben',u'Vollm.':u'Vollmacht',u'vollst.':u'vollständig',u'vorl.':u'vorläufig',u'vorm.':u'vormittags',
-    u'Vors.':u'Vorsitzender',u'v.T.':u'vom Tausend',u'W':u'West',u'Wb.':u'Wörterbuch',u'WEZ':u'Westeuropäische Zeit',u'Whg.':u'Wohnung',
-    u'Wkst.':u'Werkstatt',u'w.L.':u'westlicher Länge',u'w.o.':u'wie oben',u'Wz.':u'Warenzeichen',
-    u'z.A.':u'zur Ansicht',u'z.B.':u'zum Beispiel',u'z.d.A.':u'zu den Akten',u'zgl.':u'zugleich',u'z.H.':u'zu Händen',u'Zi':u'Zimmer',u'Ziff.':u'Ziffer',
-    u'z.K.':u'zur Kenntnisnahme',u'ZPO':u'Zivilprozessordnung',u'z.S.':u'zur See',u'z.T.':u'zum Teil',u'Ztg.':u'Zeitung',u'zuf.':u'zufolge',u'zus.':u'zusammen',
-    u'zw.':u'zwischen',u'z.w.V.':u'zur weiteren Veranlassung',u'zzgl.':u'zuzüglich',u'z.Z.':u'zur Zeit'}
+    u'SM':u'Seine Majestät',u'SO':u'Südost',u's.o.':u'siehe oben',u's.u.':u'siehe unten',u'spez.':u'speziell',u'St.':u'Stück',u'städt.':u'städtisch',u'Std.':u'Stunde',
+    u'stdl.':u'stündlich',u'stellv.':u'stellvertretend',u'StGB':u'Strafgesetzbuch',u'StKl':u'Steuerklasse',u'StPO':u'Strafprozessordnung',u'Str.':u'Strasse',
+    u'StVO':u'Strassenverkehrsordnung',u'svw.':u'soviel wie',u'SW':u'Südwest',u'sZ':u'seinerzeit',u'SZ':u'Sommerzeit',u't':u'Tonne',u'TA':u'Tierartzt',u'Tab.':u'Tabelle',
+    u'tägl.':u'täglich',u'Tb.':u'Tuberkulose',u'Teilh.':u'Teilhaber',u'Tel.':u'Telefon',u'TH':u'Technische Hochschule',u'Tnd.':u'Tausend',u'TU':u'Technische Universität',
+    u'TV':u'Tarifvertrag',u'u.a.':u'unter anderem',u'u.ä.':u'und ähnliches',u'u.A.w.g.':u'um Antwort wird gebeten',u'Übers.':u'Übersetzer',u'übl.':u'üblich',
+    u'üblw.':u'üblicherweise',u'U-Boot':u'Unterseeboot',u'u.dsgl.':u'und desgleichen',u'u.d.M.':u'unter dem Meeresspiegel',u'ue.':u'unehelich',u'u.E.':u'unseres Erachtens',
+    u'U/min.':u'Umdrehungen in der Minute',u'Univ.':u'Universität',u'unverk.':u'unverkäuflich',u'urspr.':u'ursprünglich',u'usw.':u'und so weiter',u'u.U.':u'unter Ümständen',
+    u'u.ü.V.':u'unter üblichem Vorbehalt',u'u.v.a.':u'und veil andere',u'u.W.':u'unseres Wissens',u'u.zw.':u'und zwar', u'v.a.':u'vor allem',u'var.':u'variabel',
+    u'v.A.w.':u'von Amts wegen',u'v.D.':u'vom Dienst',u'verb.':u'verbessert',u'verh.':u'verheiratet',u'Verl.':u'Verlag',u'Verm.':u'Vermerk',u'verst.':u'verstorben',
+    u'vgl.':u'vergleiche',u'v.H.':u'vom Hundert',u'v.J.':u'vorigen Jahres',u'v.M.':u'vorigen Monats',u'v.o.':u'von oben',u'Vollm.':u'Vollmacht',u'vollst.':u'vollständig',
+    u'vorl.':u'vorläufig',u'vorm.':u'vormittags',u'Vors.':u'Vorsitzender',u'v.T.':u'vom Tausend',u'Wb.':u'Wörterbuch',u'WEZ':u'Westeuropäische Zeit',u'Whg.':u'Wohnung',
+    u'Wkst.':u'Werkstatt',u'w.L.':u'westlicher Länge',u'w.o.':u'wie oben',u'Wz.':u'Warenzeichen',u'z.A.':u'zur Ansicht',u'z.B.':u'zum Beispiel',u'z.d.A.':u'zu den Akten',
+    u'zgl.':u'zugleich',u'z.H.':u'zu Händen',u'Zi':u'Zimmer',u'Ziff.':u'Ziffer',u'z.K.':u'zur Kenntnisnahme',u'ZPO':u'Zivilprozessordnung',u'z.S.':u'zur See',
+    u'z.T.':u'zum Teil',u'Ztg.':u'Zeitung',u'zuf.':u'zufolge',u'zus.':u'zusammen',u'zw.':u'zwischen',u'z.w.V.':u'zur weiteren Veranlassung',u'zzgl.':u'zuzüglich',
+    u'z.Z.':u'zur Zeit'}
 }
