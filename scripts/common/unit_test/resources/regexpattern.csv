@@ -5,3 +5,4 @@ IV	I. V.	2	0
 d. [hH].	das heisst	2	0	
 etc[.]?	et cetera	2	0	
 ([0-9]+)'([0-9]*)	\g<1>\g<2>	1	0	
+DC	D. C.	2	0	
