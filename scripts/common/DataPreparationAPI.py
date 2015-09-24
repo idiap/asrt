@@ -116,6 +116,30 @@ class DataPreparationAPI():
             self.logger.info("Prepare the word classifier ...")
             self.wordClassifier = WordClassifier()
             self.wordClassifier.train()
+    
+    def getRegexes(self):
+        """Fetch validation and substitution regexes
+           from csv file.
+        """
+        #User did not specified rules
+        if self.regexFile == None:
+            return
+
+        #Are regexes already loaded in API
+        if self.substitutionRegexFormula.hasPatterns() or \
+            len(self.validationPatternList) > 0:
+            return
+
+        substitutionList = []
+        regexList = RegexList().loadFromFile(self.regexFile)
+        #Skip header
+        for row in regexList:
+            if int(row[2]) == VALIDATION_TYPE:
+                self.validationPatternList.append((row[0],row[3]))
+            else:
+                substitutionList.append((row[0],row[1],row[2],row[3]))
+            
+        self.substitutionRegexFormula.setSubstitutionPatternList(substitutionList)
 
     def prepareDocument(self, language = 0):
         """Segment the document into sentences and prepare them.
@@ -133,7 +157,7 @@ class DataPreparationAPI():
         #Done at the API level to share resources between
         #documents
         self.logger.info("Getting regexes")
-        self._getRegexes()
+        self.getRegexes()
 
         if self.substitutionRegexFormula.hasPatterns():
             self.logger.info("Using following regexes substitution:\n" +\
@@ -269,29 +293,3 @@ class DataPreparationAPI():
             else:
                 DataPreparationAPI.logger.info("No sentences found for: %s" % resultLanguage)
 
-    #####################
-    #Implementation
-    #
-    def _getRegexes(self):
-        """Fetch validation and substitution regexes
-           from csv file.
-        """
-        #User did not specified rules
-        if self.regexFile == None:
-            return
-
-        #Are regexes already loaded in API
-        if self.substitutionRegexFormula.hasPatterns() or \
-            len(self.validationPatternList) > 0:
-            return
-
-        substitutionList = []
-        regexList = RegexList().loadFromFile(self.regexFile)
-        #Skip header
-        for row in regexList:
-            if int(row[2]) == VALIDATION_TYPE:
-                self.validationPatternList.append((row[0],row[3]))
-            else:
-                substitutionList.append((row[0],row[1],row[2],row[3]))
-            
-        self.substitutionRegexFormula.setSubstitutionPatternList(substitutionList)

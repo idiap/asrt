@@ -53,10 +53,10 @@ class TestFormulaRegex(unittest.TestCase):
                 self.assertEquals(s.encode('utf-8'), 
                               resultString.encode('utf-8'))
 
-        testList = [(ur"d une",ur"d'une"),(ur"j' ai",ur"j'ai"), (ur"l' y ",ur"l'y "),
-                    (ur"m' a",ur"m'a"), (ur"n' est",ur"n'est"),(ur"n' a",ur"n'a"),
-                    (ur"d' y",ur"d'y"),(ur"c' en",ur"c'en"), (ur"qu' y",ur"qu'y"),
-                    (ur"qu' en",ur"qu'en"), (ur"-t-on",ur" -t-on")]
+        testList = [(ur"d une",ur"d' une"),(ur"j' ai",ur"j' ai"), (ur"l' y ",ur"l' y "),
+                    (ur"m' a",ur"m' a"), (ur"n' est",ur"n' est"),(ur"n' a",ur"n' a"),
+                    (ur"d' y",ur"d' y"),(ur"c' en",ur"c' en"), (ur"qu' y",ur"qu' y"),
+                    (ur"qu' en",ur"qu' en"), (ur"-t-on",ur" -t-on")]
 
         for p, gt in testList:
             resultString = f.apply(p, 1, False)

@@ -188,7 +188,7 @@ CONTRACTIONPREFIXELIST 			= [
 	#(ur"s' il",ur"s'il",u"2",ur"1",u""),
 	#(ur"s' ils",ur"s'ils",u"2",ur"1",u""),
 	#(ur"d' abord",ur"d'abord",u"2",ur"1",u""),
-	#(ur"d un(?P<gr1>e?)",ur"d'un\g<gr1>",u"2",ur"1",u""),
+	(ur"d un(?P<gr1>e?)",ur"d' un\g<gr1>",u"2",ur"1",u""),
 	#(ur"(?P<gr1>[jl])' ai",ur"\g<gr1>'ai",u"2",ur"1",u""),
 	#(ur"(?P<gr1>[jl])' y",ur"\g<gr1>'y",u"2",ur"1",u""),
 	#(ur"(?P<gr1>[ltm])' a",ur"\g<gr1>'a",u"2",ur"1",u""),
