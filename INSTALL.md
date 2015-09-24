@@ -24,13 +24,15 @@ This install manual is for Debian based systems.
 
 5. Install the num2words library: https://pypi.python.org/pypi/num2words
 
-6. Build the debian package
+6. Install the python-roman library: sudo apt-get install python-roman
+
+7. Build the debian package
     - Change directory into scripts
     - Run the command `debuild` (debian build)
 
-7. Install the library
+8. Install the library
     - In the scripts directory, run `sudo dpkg -i ../asrt_1.0.0RC1_all.deb`
 
-8. Run the examples to test your installation
+9. Run the examples to test your installation
     - `/usr/share/asrt/examples/bash/run_data_preparation.sh`
     - `/usr/share/asrt/examples/bash/run_data_preparation_task.sh`
