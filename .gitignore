@@ -1,2 +1,16 @@
 temp
 *.pyc
+data-preparation/output/sentences_english.txt
+data-preparation/output/sentences_french.txt
+data-preparation/output/sentences_german.txt
+data-preparation/output/sentences_italian.txt
+data-preparation/output/sentences_unknown.txt
+data-preparation/output/task_log.txt
+data-preparation/output/task_log.txt.1
+data-preparation/output/task_log.txt.2
+data-preparation/output/task_log.txt.3
+data-preparation/output/task_log.txt.4
+data-preparation/output/task_log.txt.5
+data-preparation/python/2012_05_Sessiondemai2012.pdf
+data-preparation/python/2015.03_Sessiondemars2015.pdf
+data-preparation/python/regex_mediaparl.csv
