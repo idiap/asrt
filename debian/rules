@@ -36,6 +36,7 @@ install: build
 	mkdir -p debian/$(DEB_PACKAGE)/usr/share/$(DEB_PACKAGE)/data-preparation/python
 
 	#Common resources
+	cp __init__.py debian/$(DEB_PACKAGE)/usr/share/$(DEB_PACKAGE)/.
 	cp -r common debian/$(DEB_PACKAGE)/usr/share/$(DEB_PACKAGE)/.
 	cp -r config debian/$(DEB_PACKAGE)/usr/share/$(DEB_PACKAGE)/.
 	cp -r data-preparation/python/run_data_preparation.py debian/$(DEB_PACKAGE)/usr/share/$(DEB_PACKAGE)/data-preparation/python/.
