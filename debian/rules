@@ -46,9 +46,9 @@ install: build
 	cp -r debian/py2pyc debian/$(DEB_PACKAGE)/usr/share/$(DEB_PACKAGE)/.
 	
 	#Documentation
-	cp ../README.md debian/$(DEB_PACKAGE)/usr/share/$(DEB_PACKAGE)/.
-	cp ../INSTALL.md debian/$(DEB_PACKAGE)/usr/share/$(DEB_PACKAGE)/.
-	cp ../COPYING debian/$(DEB_PACKAGE)/usr/share/$(DEB_PACKAGE)/.
+	cp README.md debian/$(DEB_PACKAGE)/usr/share/$(DEB_PACKAGE)/.
+	cp INSTALL.md debian/$(DEB_PACKAGE)/usr/share/$(DEB_PACKAGE)/.
+	cp COPYING debian/$(DEB_PACKAGE)/usr/share/$(DEB_PACKAGE)/.
 
 # Build architecture-dependent files here.
 binary-arch: build install
