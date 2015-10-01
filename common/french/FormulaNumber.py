@@ -131,6 +131,11 @@ class NumberFormula():
         else:
             strNewNumber = strNumber
 
+        strNewNumber = re.sub(r'vingtsi','vingti',strNewNumber)
+        strNewNumber = re.sub(r'centsi','centi',strNewNumber)
+        strNewNumber = re.sub(r'millionsi','millioni',strNewNumber)
+        strNewNumber = re.sub(r'milliardsi','milliardi',strNewNumber)
+        
         return strNewNumber
             
     @staticmethod

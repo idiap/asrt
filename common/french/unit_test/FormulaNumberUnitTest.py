@@ -30,6 +30,8 @@ class FormulaNumberUnitTest(unittest.TestCase):
     testDict = { "cardinal"   : [(u"10",u"dix"),(u"25",u"vingt cinq")],
                  "transition" : [(u"1.",u"premièrement"),(u"10.",u"dixièmement")],
                  "ordinal"    : [(u"1er",u"premier"),(u"1ère",u"première"),(u"2ème",u"deuxième"),
+                                 (u"80ème",u"quatre-vingtième"),(u"400ème",u"quatre centième"),
+                                 (u"380ème",u"trois cent quatre-vingtième"),(u"4000000ème",u"quatre millionième"),
                                  (u"XXVème",u"vingt-cinquième"), (u"XXème",u"vingtième"),
                                  (u"XXIIIe",u"vingt-troisième")],
                  "decimal"    : [(u"2,5",u"deux virgule cinq"), (u"2.5,3",u"deux point cinq virgule trois")],
