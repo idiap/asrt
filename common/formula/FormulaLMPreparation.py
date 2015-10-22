@@ -182,9 +182,10 @@ class LMPreparationFormula():
 
         self.strText = u"".join(utf8List).rstrip().strip()
 
-        if self.strText[-1] in self.ALLPUNCTUATIONSYMBOLS and \
-           self.strText[-2].isdigit():
-           self.strText = self.strText.rstrip(self.ALLPUNCTUATIONSYMBOLS)
+        if len(self.strText) > 1 and \
+               self.strText[-1] in self.ALLPUNCTUATIONSYMBOLS and \
+               self.strText[-2].isdigit():
+            self.strText = self.strText.rstrip(self.ALLPUNCTUATIONSYMBOLS)
         
         self.strText = re.sub(SPACEPATTERN, u" ", self.strText, flags=re.UNICODE)
 

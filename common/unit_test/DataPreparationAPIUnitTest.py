@@ -63,6 +63,16 @@ class TestDataPreparationAPI(unittest.TestCase):
         self.assertTrue(len(api.validationPatternList) > 0)
         self.assertTrue(len(api.substitutionRegexFormula.substitutionPatternList[0]) > 1)
     
+    def testPrepareDocumentSimple(self):
+        api = DataPreparationAPI(None, None)
+        api.setRegexFile(self.regexFile)
+        api.setLMModeling(True)
+        try:
+            api.setFormattedText(u'"')
+            api.prepareDocument(1)
+        except Exception:
+            self.fail("Should not raise an exception")
+
     def testPrepareDocument(self):
         api = DataPreparationAPI(None, None)
         api.setRegexFile(self.regexFile)
