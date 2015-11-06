@@ -22,11 +22,12 @@ __copyright__ = "Copyright (c) 2015 Idiap Research Institute"
 __license__ = "BSD 3-Clause"
 
 import unittest
+import re
 
 from asrt.common.formula.FormulaRegularExpression import RegularExpressionFormula
 from asrt.common.RegularExpressionList import RegexList
 from asrt.common.AsrtConstants import CONTRACTIONPREFIXELIST, ACRONYMREGEXLIST
-from asrt.common.AsrtConstants import DATEREGEXLIST, APOSTHROPHELIST
+from asrt.common.AsrtConstants import DATEREGEXLIST, APOSTHROPHELIST, ACRONYMDELIMITER
 
 class TestFormulaRegex(unittest.TestCase):
     def setUp(self):
@@ -64,11 +65,15 @@ class TestFormulaRegex(unittest.TestCase):
         f = RegularExpressionFormula(None,
                 RegexList.removeComments(ACRONYMREGEXLIST))
 
-        testList = [(u"ADG SPO PS",u"a. d. g. s. p. o. p. s."),
-                    (u"ADG SPO PS PDCC",u"a. d. g. s. p. o. p. s. p. d. c. c."),
-                    (u"A ADG SPO PS PDCCC",u"A a. d. g. s. p. o. p. s. p. d. c. c. c."),]
+        testList = [(u"ADG SPO PS",u"a. d. g.  s. p. o.  p. s."),
+                    (u"ADG SPO PS PDCC",u"a. d. g.  s. p. o.  p. s.  p. d. c. c."),
+                    (u"A ADG SPO PS PDCCC",u"A a. d. g.  s. p. o.  p. s.  p. d. c. c. c."),
+                    (u"ABCDs ABCs ABs",u"a. b. c. d. s.  a. b. c. s.  a. b. s.")]
 
-        self.verifyEqual(testList, f, 0)
+        for t, gt in testList:
+            resultString = f.apply(t, 0, False)
+            resultString = re.sub(ACRONYMDELIMITER, u"", resultString, flags=re.UNICODE)
+            self.assertEquals(gt.encode('utf-8'), resultString.encode('utf-8'))
 
     def testDates(self):
         f = RegularExpressionFormula(None,

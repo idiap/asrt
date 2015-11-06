@@ -155,14 +155,18 @@ PUNCTUATIONMAP                  = {
 
 PUNCTUATIONPATTERN              = ur"(\!|\"|#|\$|%|&|'|\(|\)|\*|\+|,|-|\.|/|:|;|<|=|>|\?|@|\[|\\|\]|\^|_|`|\{|\}|~|\|){4,}"
 
-ACRONYMREGEXLIST                = [(ur"( |^)([A-Z])([A-Z])([A-Z])([A-Z])([A-Z])[.,:;]?( |$)",
-                                    ur"lambda p: p.group(1)+p.group(2).lower()+'. '+p.group(3).lower()+'. '+p.group(4).lower()+'. '+p.group(5).lower()+'. '+p.group(6).lower()+'.'+p.group(7)",ur"1",ur"0",ur"Acronyms"),
+#No row specifier
+ACRONYMDELIMITER                = u"\$\$\$\$\$"
+ACRONYMREGEXLIST                = [(ur"( |^)([A-Z]{2,4})s[.,:;]?( |$)",
+                                    ur"\g<1>\g<2>S\g<3>",ur"1",ur"0",ur"Acronyms"),
+                                   (ur"( |^)([A-Z])([A-Z])([A-Z])([A-Z])([A-Z])[.,:;]?( |$)",
+                                    ur"lambda p: p.group(1)+p.group(2).lower()+'. '+p.group(3).lower()+'. '+p.group(4).lower()+'. '+p.group(5).lower()+'. '+p.group(6).lower()+'.'+p.group(7)+'$$$$$'",ur"1",ur"0",ur"Acronyms"),
                                    (ur"( |^)([A-Z])([A-Z])([A-Z])([A-Z])[.,:;]?( |$)",
-                                    ur"lambda p: p.group(1)+p.group(2).lower()+'. '+p.group(3).lower()+'. '+p.group(4).lower()+'. '+p.group(5).lower()+'.'+p.group(6)",ur"1",ur"0",ur"Acronyms"),
+                                    ur"lambda p: p.group(1)+p.group(2).lower()+'. '+p.group(3).lower()+'. '+p.group(4).lower()+'. '+p.group(5).lower()+'.'+p.group(6)+'$$$$$'",ur"1",ur"0",ur"Acronyms"),
                                    (ur"( |^)([A-Z])([A-Z])([A-Z])[.,:;]?( |$)",
-                                    ur"lambda p: p.group(1)+p.group(2).lower()+'. '+p.group(3).lower()+'. '+p.group(4).lower()+'.'+p.group(5)",ur"1",ur"0",ur"Acronyms"),
+                                    ur"lambda p: p.group(1)+p.group(2).lower()+'. '+p.group(3).lower()+'. '+p.group(4).lower()+'.'+p.group(5)+'$$$$$'",ur"1",ur"0",ur"Acronyms"),
                                    (ur"( |^)([A-Z])([A-Z])[.,:;]?( |$)",
-                                    ur"lambda p: p.group(1)+p.group(2).lower()+'. '+p.group(3).lower()+'.'+p.group(4)",ur"1",ur"0",ur"Acronyms")]
+                                    ur"lambda p: p.group(1)+p.group(2).lower()+'. '+p.group(3).lower()+'.'+p.group(4)+'$$$$$'",ur"1",ur"0",ur"Acronyms")]
 
 DATEREGEXLIST                   = [(ur"([0-9][0-9])[./]([0-9][0-9])[./]([0-9][0-9][0-9]?[0-9]?)",
                                     ur"\g<1> \g<2> \g<3>",ur"1",ur"0",ur"Dates")]

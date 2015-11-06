@@ -31,6 +31,7 @@ from asrt.common.AsrtConstants import PUNCTUATIONMAP, PUNCTUATIONPATTERN, SPACEP
 from asrt.common.AsrtConstants import DATEREGEXLIST, CONTRACTIONPREFIXELIST, ACRONYMREGEXLIST
 from asrt.common.AsrtConstants import ABBREVIATIONS, APOSTHROPHELIST, CAPTURINGDIGITPATTERN
 from asrt.common.AsrtConstants import GROUPINGDOTCOMMAPATTERN, EXPANDEXCEPTIONS
+from asrt.common.AsrtConstants import ACRONYMDELIMITER
 from asrt.config.AsrtConfig import FRENCH, GERMAN
 
 class LMPreparationFormula():
@@ -250,6 +251,7 @@ class LMPreparationFormula():
            i.e. PDC --> p. d. c.
         """
         self.strText = self.acronymFormula.apply(self.strText, self.languageId)
+        self.strText = re.sub(ACRONYMDELIMITER, u"", self.strText, flags=re.UNICODE)
         
     def _normalizePunctuation(self, excludeList):
         """Some punctuation characters are 
