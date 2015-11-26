@@ -88,6 +88,24 @@ class DataPreparationAPI():
     def setRegexFile(self, regexFile):
         self.regexFile = regexFile
 
+    def setRegexList(self, regexList):
+        """Set the acronyms to be used.
+
+           param acronymList: a list of the following form:
+
+           ['matching pattern', 'substitution', 'type', 'language id']
+        """
+        substitutionList = []
+
+        #Skip header
+        for row in regexList:
+            if int(row[2]) == VALIDATION_TYPE:
+                self.validationPatternList.append((row[0],row[3]))
+            else:
+                substitutionList.append((row[0],row[1],row[2],row[3]))
+            
+        self.substitutionRegexFormula.setSubstitutionPatternList(substitutionList)
+
     def setLMModeling(self, modelNgram):
         self.lmModeling = modelNgram
 
@@ -129,16 +147,8 @@ class DataPreparationAPI():
             len(self.validationPatternList) > 0:
             return
 
-        substitutionList = []
         regexList = RegexList().loadFromFile(self.regexFile)
-        #Skip header
-        for row in regexList:
-            if int(row[2]) == VALIDATION_TYPE:
-                self.validationPatternList.append((row[0],row[3]))
-            else:
-                substitutionList.append((row[0],row[1],row[2],row[3]))
-            
-        self.substitutionRegexFormula.setSubstitutionPatternList(substitutionList)
+        self.setRegexList(regexList)
 
     def prepareDocument(self, language = 0):
         """Segment the document into sentences and prepare them.
