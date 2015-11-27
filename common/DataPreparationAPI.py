@@ -89,9 +89,9 @@ class DataPreparationAPI():
         self.regexFile = regexFile
 
     def setRegexList(self, regexList):
-        """Set the acronyms to be used.
+        """Set both validation and substitution user regexes.
 
-           param acronymList: a list of the following form:
+           param regexList: a list of the following form:
 
            ['matching pattern', 'substitution', 'type', 'language id']
         """
@@ -101,7 +101,6 @@ class DataPreparationAPI():
 
         substitutionList = []
 
-        #Skip header
         for row in regexList:
             if int(row[2]) == VALIDATION_TYPE:
                 self.validationPatternList.append((row[0],row[3]))
@@ -115,10 +114,39 @@ class DataPreparationAPI():
         """
         return self.substitutionRegexFormula.getSubstitutionPatterns()
 
+    def setSubstitutionList(self, regexList):
+        """Set the user regexes substitution list.
+
+           param regexList: a four columns list of lists:
+          
+           ['matching pattern', 'substitution', 'type', 'language id']
+        """
+        self.substitutionRegexFormula = RegularExpressionFormula(None)
+        
+        substitutionList = []
+
+        for row in regexList:
+            substitutionList.append((row[0],row[1],row[2],row[3]))
+
+        self.substitutionRegexFormula.setSubstitutionPatternList(substitutionList)
+
     def getValidationList(self):
         """Get the user defined validation list.
         """
         return self.validationPatternList
+
+    def setValidationList(self, regexList):
+        """Set the user regexes validation list.
+
+           param regexList: a four columns list of lists:
+          
+           ['matching pattern', 'substitution', 'type', 'language id']
+        """
+        self.validationPatternList = []
+
+        for row in regexList:
+            if int(row[2]) == VALIDATION_TYPE:
+                self.validationPatternList.append((row[0],row[3]))
 
     def setLMModeling(self, modelNgram):
         self.lmModeling = modelNgram
