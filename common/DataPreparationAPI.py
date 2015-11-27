@@ -93,7 +93,7 @@ class DataPreparationAPI():
 
            param regexList: a list of the following form:
 
-           ['matching pattern', 'substitution', 'type', 'language id']
+           [u'matching pattern', u'substitution', u'type', u'language id']
         """
         #Reset current lists
         self.substitutionRegexFormula = RegularExpressionFormula(None)
@@ -111,6 +111,10 @@ class DataPreparationAPI():
 
     def getSubstitutionList(self):
         """Get the user defined substitution list.
+
+           return a four columns list of lists:
+
+           [u'matching pattern', u'substitution', u'type', u'language id']
         """
         return self.substitutionRegexFormula.getSubstitutionPatterns()
 
@@ -119,7 +123,7 @@ class DataPreparationAPI():
 
            param regexList: a four columns list of lists:
           
-           ['matching pattern', 'substitution', 'type', 'language id']
+           [u'matching pattern', u'substitution', u'type', u'language id']
         """
         self.substitutionRegexFormula = RegularExpressionFormula(None)
         
@@ -132,11 +136,21 @@ class DataPreparationAPI():
 
     def getValidationList(self):
         """Get the user defined validation list.
+
+           return a four columns list of lists:
+
+           [u'matching pattern', u'', u'-1', u'0']
         """
-        return self.validationPatternList
+        validationList = []
+        for pattern, regexType in self.validationPatternList:
+            validationList.append(pattern, u"",regexType, u"0")
+
+        return validationList
 
     def setValidationList(self, regexList):
         """Set the user regexes validation list.
+
+           Filter 'regexList' for validation rules only.
 
            param regexList: a four columns list of lists:
           
