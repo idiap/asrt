@@ -95,6 +95,10 @@ class DataPreparationAPI():
 
            ['matching pattern', 'substitution', 'type', 'language id']
         """
+        #Reset current lists
+        self.substitutionRegexFormula = RegularExpressionFormula(None)
+        self.validationPatternList = []
+
         substitutionList = []
 
         #Skip header
@@ -105,6 +109,16 @@ class DataPreparationAPI():
                 substitutionList.append((row[0],row[1],row[2],row[3]))
             
         self.substitutionRegexFormula.setSubstitutionPatternList(substitutionList)
+
+    def getSubstitutionList(self):
+        """Get the user defined substitution list.
+        """
+        return self.substitutionRegexFormula.getSubstitutionPatterns()
+
+    def getValidationList(self):
+        """Get the user defined validation list.
+        """
+        return self.validationPatternList
 
     def setLMModeling(self, modelNgram):
         self.lmModeling = modelNgram
