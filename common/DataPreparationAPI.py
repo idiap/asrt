@@ -206,6 +206,12 @@ class DataPreparationAPI():
         regexList = RegexList().loadFromFile(self.regexFile)
         self.setRegexList(regexList)
 
+    def resetAllPatterns(self):
+        """Empty all validation and substitution regexes.
+        """
+        self.substitutionRegexFormula = RegularExpressionFormula(None)
+        self.validationPatternList = []
+
     def prepareDocument(self, language = 0):
         """Segment the document into sentences and prepare them.
 
