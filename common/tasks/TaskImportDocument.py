@@ -116,6 +116,7 @@ class ImportDocumentTask(Task):
             api.setRemovePunctuation(self.removePunctuation)
             api.setVerbalizePunctuation(self.verbalizePunctuation)
             api.setLMModeling(self.lmModeling)
+            api.trainClassifier()
 
             #Loop trough map file
             for documentName in dictMap.keys():
