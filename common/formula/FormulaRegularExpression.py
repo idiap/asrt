@@ -39,6 +39,7 @@ class RegexType():
     TYPE3 = [(u'([.,;:()”?!-])',u'([.,;:()”?!-])')]    # After converting punctuation
     TYPE4 = [(u'([0-9] +|[a-z] +|[A-Z] +)',u'( |$)')]
     TYPE5 = [(u'([0-9] +)',u'( |$)')]
+    TYPE6 = [(u'([ \"\'\-]|^)',u'([ \"\'\-,\.\?\!;:]|$)')]
 
     ###############################
     # Static methods
@@ -62,6 +63,8 @@ class RegexType():
             contextsList = RegexType.TYPE4
         elif type == 5:
             contextsList = RegexType.TYPE5
+        elif type == 6:
+            contextsList = RegexType.TYPE6
         else:
             raise Exception("Unknown type %d" % type)
 
@@ -207,7 +210,7 @@ class RegularExpressionFormula():
                 else:
                     #print regexPattern, regexSubstitution
                     #No ignore case available
-                    #print regexPattern, strText.encode('utf-8')
+                    #print regexPattern, " --> ", strText.encode('utf-8')
                     strText = re.sub(regexPattern, regexSubstitution, strText, flags=re.UNICODE | re.MULTILINE)
 
                 if debug:

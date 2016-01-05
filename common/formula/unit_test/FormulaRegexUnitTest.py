@@ -93,3 +93,28 @@ class TestFormulaRegex(unittest.TestCase):
         testList = [(u"d'avant",u"d' avant")]
 
         self.verifyEqual(testList, f, 1)
+
+    def testRegexTypes(self):
+        TYPEREGEXLIST = [(ur"ADG", ur"a. d. g.",ur"6",ur"0",ur"")]
+
+        TESTLIST = [(u"ADG",u"a. d. g."),
+                    (u"ADG/LA",u"ADG/LA"),
+                    (u"a ADG b",u"a a. d. g. b"),
+                    (u"l ADG ",u"l a. d. g. "),
+                    (u"l'ADG'",u"l'a. d. g.'"),
+                    (u"\"ADG\"",u"\"a. d. g.\""),
+                    (u"\"ADG",u"\"a. d. g."),
+                    (u"e-ADG-",u"e-a. d. g.-"),
+                    (u"l'ADG,",u"l'a. d. g.,"),
+                    (u"l'ADG.",u"l'a. d. g.."),
+                    (u"l'ADG?",u"l'a. d. g.?"),
+                    (u"l'ADG!",u"l'a. d. g.!"),
+                    (u"l'ADG;",u"l'a. d. g.;"),
+                    (u"l'ADG:",u"l'a. d. g.:")]
+
+        f = RegularExpressionFormula(None,
+                RegexList.removeComments(TYPEREGEXLIST))
+        
+        for t, gt in TESTLIST:
+            r = f.apply(t, 0)
+            self.assertEquals(gt.encode('utf-8'), r.encode('utf-8'))
