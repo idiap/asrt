@@ -133,7 +133,8 @@ class TestFormulaLMPreparation(unittest.TestCase):
                    (u"R1",u"r. un"), (ur"A1", ur"a. un"),(ur"P3B", ur"p. trois b."),
                    (ur"P5B4", ur"p. cinq b. quatre"), 
                    (ur"PPB5",ur"p. p. b.  cinq"),
-                   (ur"rte",ur"route")]
+                   (ur"rte",ur"route"),
+                   (ur"Constantin, p. l. r., président de",ur"constantin p. l. r. président de")]
 
         f = LMPreparationFormula()
         f.setLanguageId(1)

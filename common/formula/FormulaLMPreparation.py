@@ -226,8 +226,9 @@ class LMPreparationFormula():
         newWordsList = []
         for w in wordsList:
             tokenList = re.split(CAPTURINGDIGITPATTERN, w, flags=re.UNICODE)
+            #Numbers need to contain a digit
             #Ordinal numbers are not expanded
-            if w.endswith(EXPANDEXCEPTIONS):
+            if not re.search(u"[0-9]", w) or w.endswith(EXPANDEXCEPTIONS):
                 newWordsList.append(w)
             #We have a match
             elif len(tokenList) > 1:
