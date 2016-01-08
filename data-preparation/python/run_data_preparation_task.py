@@ -40,7 +40,7 @@ from asrt.common.LoggingSetup import setupLogging
 
 
 STRPARAMETERS = "regexfile=%s;debug=%s;removePunctuation=%s;verbalizePunctuation=%s;" + \
-                "textFiltering=%s;lmModeling=%s"
+                "segmentWithNLTK=%s;textFiltering=%s;lmModeling=%s"
 
 
 ####################
@@ -57,19 +57,21 @@ if __name__ == "__main__":
     parser.add_argument("-d", "--debug", help="enable debug output", action="store_true")
     parser.add_argument("-n", "--rmpunctuation", help="remove punctuation", action="store_true")
     parser.add_argument("-p", "--vbpunctuation", help="verbalize punctuation", action="store_true")
+    parser.add_argument("-s", "--rawseg", help="do not segment sentences with NLTK", dest="rawseg",action="store_true")
     parser.add_argument("-m", "--lm", help="prepare for lm modeling", dest="lm",action="store_true")
 
-    
     #Parse arguments
     args = parser.parse_args()
     targetDir = args.targetDir[0]
     outputDir = args.outputDir[0]
     regexFile = args.regexFile[0]
 
+    segmentWithNLTK = "True" if not args.rawseg else "False"
+
     setupLogging(logging.INFO, outputDir + "/task_log.txt")
 
     task = ImportDocumentTask(TaskInfo(STRPARAMETERS % (regexFile, str(args.debug), 
                                                         args.rmpunctuation, args.vbpunctuation,
-                                                        args.filter, args.lm), 
+                                                        segmentWithNLTK, args.filter, args.lm), 
                                        outputDir, targetDir))
     task.execute()

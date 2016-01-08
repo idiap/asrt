@@ -54,7 +54,7 @@ class TextDocument(Document):
     #
     def __init__(self, source, languageId,
                  regexSubstitutionFormula, regex_filter_list,
-                 logDir):
+                 logDir, segmentWithNLTK):
         Document.__init__(self, source)
 
         self.languageId = languageId
@@ -62,6 +62,7 @@ class TextDocument(Document):
         self.regex_filter_list = regex_filter_list
         self.logDir = logDir
         self.classifier = None
+        self.segmentWithNLTK = segmentWithNLTK
 
     ########################
     #Getter and setters
@@ -253,24 +254,24 @@ class TextDocument(Document):
         if self.languageId == 2:
             tokenizer_path = GERMAN_PICKLE_FOLDER
 
-        #Trim new lines
-        strText = self._replaceNewLines(strText)
+        sentences = []
+        if self.segmentWithNLTK:
+            TextDocument.logger.info("Segment with NLTK")
+            #Trim new lines
+            strText = self._replaceNewLines(strText)
 
-        #Problematic periods replacement
-        strText = self._replaceProblematicPeriods(strText)
+            #Problematic periods replacement
+            strText = self._replaceProblematicPeriods(strText)
 
-        #print strText
-        #sys.exit(0)
+            #Nltk segmentation
+            sentences = self._segmentIntoSentences(strText, tokenizer_path)
 
-        #Nltk segmentation
-        sentences = self._segmentIntoSentences(strText, tokenizer_path)
-
-        #Problematic periods restauration
-        for i, s in enumerate(sentences):
-            sentences[i] = self._replaceProblematicPeriods(s, forward=False)
-            #print sentences[i].encode('utf-8')
-            #if i > 100:
-            #    sys.exit(status=0)
+            #Problematic periods restauration
+            for i, s in enumerate(sentences):
+                sentences[i] = self._replaceProblematicPeriods(s, forward=False)
+        else:
+            TextDocument.logger.info("Segment with new lines")
+            sentences = strText.split(u"\n")
 
         #Make text clusters with unknown language id
         self._addSentences(sentences)
@@ -343,18 +344,27 @@ class TextDocument(Document):
            param 'bEmpty'       : empty current document is set otherwise
                                   add to existing clusters 
         """
-        if bEmpty:
-            self.reset()
+        if bEmpty: self.reset()
 
         #Add sentences as clusters
         for line in sentencesList:
-            #Further sentence split to avoid long paragraphes
-            for utterance in re.split(ur"\t|;|:|!|\?", line, flags=re.UNICODE):
-                utterance = utterance.strip()
-                if len(utterance) > 0:
-                    c = TextCluster(self, utterance)
-                    c.setLanguage(languageId)
-                    self.addDocumentLine(c)
+            if self.segmentWithNLTK:
+                #Further sentence split to avoid long paragraphes
+                for utterance in re.split(ur"\t|;|:|!|\?", line, flags=re.UNICODE):
+                    self._addClusterText(utterance, languageId)
+            else:
+                self._addClusterText(line, languageId)
+
+    def _addClusterText(self, utterance, languageId):
+        """Add 'utterance' as a text cluster.
+
+           param utterance: an utf-8 encoded string
+        """
+        utterance = utterance.strip()
+        if len(utterance) > 0:
+            c = TextCluster(self, utterance)
+            c.setLanguage(languageId)
+            self.addDocumentLine(c)
 
     def _getLanguage2ClustersDict(self):
         """Map languages with a list of clusters.

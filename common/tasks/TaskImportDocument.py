@@ -42,10 +42,10 @@ class ImportDocumentTask(Task):
     TEXTFILTERING           = 'textFiltering'
     REMOVEPUNCTUATION       = 'removePunctuation'
     VERBALIZEPUNCTUATION    = 'verbalizePunctuation'
+    SEGMENTWITHNLTK         = 'segmentWithNLTK'
     LMMODELING              = 'lmModeling'
     PARAMETERS              = [PARAMREGEXFILE,TEXTFILTERING,PARAMDEBUG,REMOVEPUNCTUATION,
-                               VERBALIZEPUNCTUATION, LMMODELING]
-
+                               VERBALIZEPUNCTUATION, SEGMENTWITHNLTK, LMMODELING]
 
     def __init__(self, taskInfo):
         """Default constructor.
@@ -57,6 +57,7 @@ class ImportDocumentTask(Task):
         self.textFiltering = False
         self.removePunctuation = False
         self.verbalizePunctuation = False
+        self.segmentWithNLTK = True
         self.lmModeling = False
 
     ############
@@ -80,6 +81,7 @@ class ImportDocumentTask(Task):
         self.textFiltering = self.taskParameters[ImportDocumentTask.TEXTFILTERING] == "True"
         self.removePunctuation = self.taskParameters[ImportDocumentTask.REMOVEPUNCTUATION] == "True"
         self.verbalizePunctuation = self.taskParameters[ImportDocumentTask.VERBALIZEPUNCTUATION] == "True"
+        self.segmentWithNLTK = self.taskParameters[ImportDocumentTask.SEGMENTWITHNLTK] == "True"
         self.lmModeling = self.taskParameters[ImportDocumentTask.LMMODELING] == "True"
         
         self._log(logging.INFO, "Debug is set to " + str(self.debug))
@@ -115,6 +117,7 @@ class ImportDocumentTask(Task):
             api.setDebugMode(self.debug)
             api.setRemovePunctuation(self.removePunctuation)
             api.setVerbalizePunctuation(self.verbalizePunctuation)
+            api.setSegmentWithNLTK(self.segmentWithNLTK)
             api.setLMModeling(self.lmModeling)
             api.trainClassifier()
 

@@ -50,6 +50,7 @@ if __name__ == "__main__":
     parser.add_argument("-f", "--filter", help="filter sentences", dest="filter",action="store_true")
     parser.add_argument("-n", "--rmpunct", help="remove punctuation", dest="rmpunct",action="store_true")
     parser.add_argument("-p", "--vbpunct", help="verbalize punctuation", dest="vbpunct",action="store_true")
+    parser.add_argument("-s", "--rawseg", help="do not segment sentences with NLTK", dest="rawseg",action="store_true")
     parser.add_argument("-m", "--lm", help="prepare for lm modeling", dest="lm",action="store_true")
     parser.add_argument("-d", "--debug", help="enable debug output", dest="debug",action="store_true")
     
@@ -61,11 +62,12 @@ if __name__ == "__main__":
     regexFile = args.regexFile[0]
 
     #Flags
-    debug = args.debug
-    filterSentences = args.filter
-    removePunctuation = args.rmpunct
-    verbalizePunctuation = args.vbpunct
-    lmModeling = args.lm
+    debug = bool(args.debug)
+    filterSentences = bool(args.filter)
+    removePunctuation = bool(args.rmpunct)
+    verbalizePunctuation = bool(args.vbpunct)
+    rawSeg = bool(args.rawseg)
+    lmModeling = bool(args.lm)
 
     setupLogging(logging.INFO, outputDir + "/task_log.txt")
 
@@ -76,6 +78,7 @@ if __name__ == "__main__":
     api.setLMModeling(lmModeling)
     api.setRemovePunctuation(removePunctuation)
     api.setVerbalizePunctuation(verbalizePunctuation)
+    api.setSegmentWithNLTK(not rawSeg)
 
     if language == 0:
         api.trainClassifier()
