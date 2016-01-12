@@ -28,7 +28,7 @@ from asrt.common.TextDocument import TextDocument
 from asrt.common.ClassifierWord import WordClassifier
 from asrt.common.RegularExpressionList import RegexList
 from asrt.common.formula.FormulaRegularExpression import RegularExpressionFormula
-from asrt.common.AsrtUtility import getErrorMessage
+from asrt.common.AsrtUtility import getByteString, getErrorMessage
 from asrt.config.AsrtConfig import VALIDATION_TYPE
 from asrt.config.AsrtConfig import FRENCH_LABEL, GERMAN_LABEL, ENGLISH_LABEL
 from asrt.config.AsrtConfig import ITALIAN_LABEL, UNKNOWN_LABEL
@@ -304,9 +304,10 @@ class DataPreparationAPI():
             if self.lmModeling:
                 self.logger.info("Preparing for language modeling")
                 self.doc.prepareLM()
-
+            
         except Exception, e:
-            errorMessage = "An error as occurred when importing sentences: %s\n%s" % (str(e), self.inputFile)
+            errorMessage = "An error as occurred when importing sentences: %s\n%s" % \
+                             (getByteString(e.message), self.inputFile)
             errorMessage = getErrorMessage(e, errorMessage)
             
             self.logger.critical(errorMessage)

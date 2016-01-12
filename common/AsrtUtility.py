@@ -30,16 +30,24 @@ logger  = logging.getLogger("Asrt.AsrtUtility")
 ##################
 #Debug
 #
+def getByteString(message):
+    """Get a byte encoded exception message.
+    """
+    if type(message) == unicode: 
+        return message.encode('utf-8')
+
+    return message
+
 def getErrorMessage(e, prefix):
     """Get full error message with stack trace.
     """
     exc_type, exc_obj, exc_tb = sys.exc_info()
     fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
     stackMessage = "\n------------ Begin stack ------------\n" + \
-                   traceback.format_exc().rstrip() + "\n" + \
+                   getByteString(traceback.format_exc().rstrip()) + "\n" + \
                    "------------ End stack --------------"
     strError = "%s: %s (line: %d), %s\n%s" % \
-        (prefix, fname, exc_tb.tb_lineno,str(e),stackMessage)
+        (prefix, fname, exc_tb.tb_lineno, getByteString(e.message),stackMessage)
 
     return strError
 
