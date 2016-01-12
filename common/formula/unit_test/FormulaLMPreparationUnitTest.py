@@ -52,7 +52,7 @@ class TestFormulaLMPreparation(unittest.TestCase):
             gtList.append(sub)
 
         strGt = u" ".join(gtList)
-        strGt = strGt.encode('utf-8').rstrip().strip()
+        strGt = strGt.rstrip().strip()
         strGt = re.sub(SPACEPATTERN, u" ", 
                         strGt, flags=re.UNICODE)
 
@@ -61,7 +61,7 @@ class TestFormulaLMPreparation(unittest.TestCase):
         f._normalizeUtf8()
         strResult = f.getText()
 
-        self.assertEquals(strGt, strResult.encode('utf-8'))
+        self.assertEquals(strGt.encode('utf-8'), strResult.encode('utf-8'))
 
     def testNormalizePunctuation(self):
         f = LMPreparationFormula()

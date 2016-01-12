@@ -344,7 +344,8 @@ class LMPreparationFormula():
         ordDict = {}
         for match, sub, comment, languageId in UTF8MAP:
             if ord(match) in ordDict:
-                raise Exception("Already in dictionary %s !" % unichr(ord(match)))
+                raise Exception("Already in dictionary '%s' '%s'!" % (unichr(ord(match)),
+                                  comment.encode('utf8')))
             ordDict[ord(match)] = sub
 
         LMPreparationFormula.ordDict = ordDict
