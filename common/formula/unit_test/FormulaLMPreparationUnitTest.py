@@ -65,18 +65,29 @@ class TestFormulaLMPreparation(unittest.TestCase):
 
     def testNormalizePunctuation(self):
         f = LMPreparationFormula()
-        f.setText(u"".join(string.punctuation))
+        f.setText(u"".join(string.punctuation + u"‰"))
         f._normalizePunctuation(self.allPunctList)
         strResult = f.getText()
 
-        gt = "$%&' @"
+        gt = u"$%&'@\u2030"
         self.assertEquals(gt, strResult)
 
         f.setLanguageId(1)
         f._normalizePunctuation(self.allPunctList)
         strResult = f.getText()
 
-        gt = "dollars pourcent et ' at"
+        gt = "dollars pourcent et ' at pour mille"
+        self.assertEquals(gt, strResult)
+
+    def testNormalizePunctuationKeepInWords(self):
+        f = LMPreparationFormula()
+        f.setKeepNewWords(True)
+
+        f.setText(u"".join("/ HES-SO und AdG/LA - auch im Winter / Sommer -"))
+        f._normalizePunctuation(self.allPunctList)
+        strResult = f.getText()
+
+        gt = "HES-SO und AdG/LA auch im Winter Sommer"
         self.assertEquals(gt, strResult)
 
     def testNormalizeCharacters(self):
@@ -128,18 +139,20 @@ class TestFormulaLMPreparation(unittest.TestCase):
                 self.assertEquals(gt.encode('utf-8'), f.strText.encode('utf-8'))
 
     def testAll(self):
-        testList =[(u"A dix heures", u"à dix heures"),
-                   (u"1. Election",u"premièrement election"),
-                   (u"R1",u"r. un"), (ur"A1", ur"a. un"),(ur"P3B", ur"p. trois b."),
-                   (ur"P5B4", ur"p. cinq b. quatre"), 
-                   (ur"PPB5",ur"p. p. b.  cinq"),
-                   (ur"rte",ur"route"),
-                   (ur"Constantin, p. l. r., président de",ur"constantin p. l. r. président de")]
+        testList =[(u"A dix heures", u"à dix heures", False),
+                   (u"1. Election",u"premièrement election", False),
+                   (u"R1",u"r. un", False), (ur"A1", ur"a. un", False),(ur"P3B", ur"p. trois b.", False),
+                   (ur"P5B4", ur"p. cinq b. quatre", False), 
+                   (ur"PPB5",ur"p. p. b.  cinq", False),
+                   (ur"rte",ur"route", False),
+                   (ur"Constantin, p. l. r., président de",ur"constantin p. l. r. président de", False),
+                   (ur"/ HES-SO und AdG/LA - auch im Winter / Sommer -",ur"hes-so und adg/la auch im winter sommer", True)]
 
         f = LMPreparationFormula()
         f.setLanguageId(1)
         
-        for t, gt in testList:
+        for t, gt, knw in testList:
             f.setText(t)
+            f.setKeepNewWords(knw)
             r = f.prepareText()
             self.assertEquals(gt.encode('utf-8'), r.encode('utf-8'))

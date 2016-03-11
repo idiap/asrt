@@ -73,6 +73,19 @@ class TestDataPreparationAPI(unittest.TestCase):
         except Exception:
             self.fail("Should not raise an exception")
 
+    def testPrepareDocumentBasic(self):
+        testString = ur"/ HES-SO und AdG/LA - auch im Winter / Sommer -"
+        gtString = ur"hes-so und adg/la auch im winter sommer"
+
+        api = DataPreparationAPI(None, None)
+        api.setRegexFile(self.regexFile)
+        api.setLMModeling(True)
+        api.setKeepNewWords(True)
+        api.setFormattedText(testString)
+        api.prepareDocument(2)
+        formattedText = api.getCleanedText()
+        self.assertEquals(gtString.encode('utf-8'), formattedText.encode('utf-8'))
+
     def testPrepareDocument(self):
         api = DataPreparationAPI(None, None)
         api.setRegexFile(self.regexFile)

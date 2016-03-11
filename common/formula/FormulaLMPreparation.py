@@ -26,7 +26,7 @@ from asrt.common.french.FormulaNumber import NumberFormula as FrenchNumberFormul
 from asrt.common.german.FormulaNumber import NumberFormula as GermanNumberFormula
 from asrt.common.formula.FormulaRegularExpression import RegularExpressionFormula
 from asrt.common.RegularExpressionList import RegexList
-from asrt.common.AsrtConstants import UTF8MAP, PUNCTUATIONEXCLUDE, DOTCOMMAEXCLUDE
+from asrt.common.AsrtConstants import UTF8MAP, PUNCTUATIONEXCLUDE, PUNCTUATIONKEEPINWORD, DOTCOMMAEXCLUDE
 from asrt.common.AsrtConstants import PUNCTUATIONMAP, PUNCTUATIONPATTERN, SPACEPATTERN
 from asrt.common.AsrtConstants import DATEREGEXLIST, CONTRACTIONPREFIXELIST, ACRONYMREGEXLIST
 from asrt.common.AsrtConstants import ABBREVIATIONS, APOSTHROPHELIST, CAPTURINGDIGITPATTERN
@@ -61,6 +61,7 @@ class LMPreparationFormula():
         """
         self.strText = ""
         self.languageId = 0
+        self.keepNewWords = False
         self.numberFormula = {
             FRENCH: FrenchNumberFormula,
             GERMAN: GermanNumberFormula
@@ -97,6 +98,11 @@ class LMPreparationFormula():
         """
         self.languageId = languageId
 
+    def setKeepNewWords(self, keepNewWords):
+        """Keep new words.
+        """
+        self.keepNewWords = keepNewWords
+
     ##################
     #Public interface
     #
@@ -123,8 +129,10 @@ class LMPreparationFormula():
         #are applied
         self._normalizeDates()
         self._expandAbbreviations()
-        self._expandNumberInWords()
-        #print self.strText
+
+        if not self.keepNewWords:
+            self._expandNumberInWords()
+            #print self.strText
 
         #Removal of some of punctuation symbols
         self._normalizePunctuation(PUNCTUATIONEXCLUDE)
@@ -141,8 +149,9 @@ class LMPreparationFormula():
         self._normalizePunctuation(self.ALLPUNCTUATIONSYMBOLS)
         #print self.strText
 
-        self._expandAcronyms()
-        #print self.strText
+        if not self.keepNewWords:
+            self._expandAcronyms()
+            #print self.strText
         
         self._normalizeCase()
         #print self.strText
@@ -288,7 +297,10 @@ class LMPreparationFormula():
                 if beforePrevC in (""," ") and not prevC.isdigit() \
                     and strC == ".":
                     unicodeList.append(c)
-                unicodeList.append(u" ")
+                    unicodeList.append(u" ")
+                #Keep some special characters if they appear after a non-space value
+                elif self.keepNewWords and prevC not in ("", " ") and strC in PUNCTUATIONKEEPINWORD:
+                    unicodeList.append(c)
             elif self.languageId != 0 and strC in PUNCTUATIONMAP:
                 unicodeList.append(u" " + PUNCTUATIONMAP[strC][self.languageId] + u" ")
             else:

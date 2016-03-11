@@ -24,9 +24,9 @@ __license__ = "BSD 3-Clause"
 from asrt.config.AsrtConfig import FRENCH, GERMAN
 
 SPACEPATTERN                = u"[ ]+"
-CAPTURINGDIGITPATTERN		= u"([0-9\.,]+)"
-GROUPINGDOTCOMMAPATTERN		= u"( |$)([.,])( |$)"
-EXPANDEXCEPTIONS			= (u"er", u"re", u"ère", u"e", u"ème")
+CAPTURINGDIGITPATTERN       = u"([0-9\.,]+)"
+GROUPINGDOTCOMMAPATTERN     = u"( |$)([.,])( |$)"
+EXPANDEXCEPTIONS            = (u"er", u"re", u"ère", u"e", u"ème")
 
 UNITD2W                     = {1:'ein', 2:'zwei', 3:'drei', 4:'vier', 5:'fünf', 6:'sechs', 7:'sieben', 8:'acht', 9:'neun',
                                10:'zehn', 11:'elf', 12:'zwölf', 13:'dreizehn', 14:'vierzehn', 15:'fünfzehn', 16:'sechszehn',
@@ -34,7 +34,7 @@ UNITD2W                     = {1:'ein', 2:'zwei', 3:'drei', 4:'vier', 5:'fünf',
 
 DECADED2W                   = {1:'zehn', 2:'zwanzig', 3:'dreissig', 4:'vierzig', 5:'fünfzig', 6:'sechzig', 7:'siebzig',
                                8:'achtzig', 9:'neunzig'}
-GERMANMONTHESREGEX			= u"(Januar|Februar|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember)"
+GERMANMONTHESREGEX          = u"(Januar|Februar|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember)"
 
 #See https://en.wikipedia.org/wiki/List_of_Unicode_characters
 #http://www.cloford.com/resources/charcodes/utf-8_punctuation.htm
@@ -187,9 +187,11 @@ UTF8MAP                     = [
 PUNCTUATIONEXCLUDE              = ['!', '"', '#', '(', ')', '*', '+', '-',
                                    '/', ':', ';', '<', '=', '>', '?', '[', '\\',
                                    ']', '^', '_', '`', '{', '|', '}', '~']
+PUNCTUATIONKEEPINWORD           = ['/', '-']
 DOTCOMMAEXCLUDE                 = ['.',',']
 PUNCTUATIONMAP                  = {
     "%": (r"%",r"pourcent", u"Prozent", u"percent", u"per cento"),
+    "‰": ("‰",r"pour mille", u"Promille", u"per mill", u"grammi al litro"),
     "&": (r"&",r"et", u"und", u"and", u"e"),
     "@": (r"@",r"at", u"at", u"at", u"at"),
     '$': (r'$',r"dollars", u"Dollar", u"dollars", u"dollari"),
@@ -216,44 +218,44 @@ DATEREGEXLIST                   = [(ur"([0-9][0-9])[./]([0-9][0-9])[./]([0-9][0-
 APOSTHROPHELIST                 = [(ur"[']", ur"' ",ur"1",ur"0",ur"Spaces after apostrophes")]
 
 CONTRACTIONPREFIXELIST          = [
-	(ur"á",ur"à",u"2",ur"1",u""),
-	(ur"-á-",ur"-à-",u"2",ur"1",u""),
-	(ur"^[aA] ",ur"à ",u"1",ur"1",u""),
-	#(ur"quelqu' un",ur"quelqu'un",u"2",ur"1",u""),
-	#(ur"c' qu",ur"ce qu",u"2",ur"1",u""),
-	#(ur"c' ",ur"c'",u"2",ur"1",u""),
-	#(ur"s' est",ur"s'est",u"2",ur"1",u""),
-	#(ur"s' agit ",ur"s'agit",u"2",ur"1",u""),
-	#(ur"s' agir",ur"s'agir",u"2",ur"1",u""),
-	#(ur"s' agiss",ur"s'agiss",u"2",ur"1",u""),
-	#(ur"s' il",ur"s'il",u"2",ur"1",u""),
-	#(ur"s' ils",ur"s'ils",u"2",ur"1",u""),
-	#(ur"d' abord",ur"d'abord",u"2",ur"1",u""),
-	(ur"d un(?P<gr1>e?)",ur"d' un\g<gr1>",u"2",ur"1",u""),
-	#(ur"(?P<gr1>[jl])' ai",ur"\g<gr1>'ai",u"2",ur"1",u""),
-	#(ur"(?P<gr1>[jl])' y",ur"\g<gr1>'y",u"2",ur"1",u""),
-	#(ur"(?P<gr1>[ltm])' a",ur"\g<gr1>'a",u"2",ur"1",u""),
-	#(ur"n' est",ur"n'est",u"2",ur"1",u""),
-	#(ur"n' a",ur"n'a",u"2",ur"1",u""),
-	#(ur"(?P<gr1>[djlmnst])' y",ur"\g<gr1>'y",u"2",ur"1",u""),
-	#(ur"(?P<gr1>[cdjlmnst])' en",ur"\g<gr1>'en",u"2",ur"1",u""),
-	#(ur"(?P<gr1>qu)' y",ur"\g<gr1>'y",u"2",ur"1",u""),
-	#(ur"(?P<gr1>qu)' en",ur"\g<gr1>'en",u"2",ur"1",u""),
-	(ur"[ -]t[ -](?P<gr1>il|elle|on)",ur" -t-\g<gr1>",u"1",ur"1",u"")]
+    (ur"á",ur"à",u"2",ur"1",u""),
+    (ur"-á-",ur"-à-",u"2",ur"1",u""),
+    (ur"^[aA] ",ur"à ",u"1",ur"1",u""),
+    #(ur"quelqu' un",ur"quelqu'un",u"2",ur"1",u""),
+    #(ur"c' qu",ur"ce qu",u"2",ur"1",u""),
+    #(ur"c' ",ur"c'",u"2",ur"1",u""),
+    #(ur"s' est",ur"s'est",u"2",ur"1",u""),
+    #(ur"s' agit ",ur"s'agit",u"2",ur"1",u""),
+    #(ur"s' agir",ur"s'agir",u"2",ur"1",u""),
+    #(ur"s' agiss",ur"s'agiss",u"2",ur"1",u""),
+    #(ur"s' il",ur"s'il",u"2",ur"1",u""),
+    #(ur"s' ils",ur"s'ils",u"2",ur"1",u""),
+    #(ur"d' abord",ur"d'abord",u"2",ur"1",u""),
+    (ur"d un(?P<gr1>e?)",ur"d' un\g<gr1>",u"2",ur"1",u""),
+    #(ur"(?P<gr1>[jl])' ai",ur"\g<gr1>'ai",u"2",ur"1",u""),
+    #(ur"(?P<gr1>[jl])' y",ur"\g<gr1>'y",u"2",ur"1",u""),
+    #(ur"(?P<gr1>[ltm])' a",ur"\g<gr1>'a",u"2",ur"1",u""),
+    #(ur"n' est",ur"n'est",u"2",ur"1",u""),
+    #(ur"n' a",ur"n'a",u"2",ur"1",u""),
+    #(ur"(?P<gr1>[djlmnst])' y",ur"\g<gr1>'y",u"2",ur"1",u""),
+    #(ur"(?P<gr1>[cdjlmnst])' en",ur"\g<gr1>'en",u"2",ur"1",u""),
+    #(ur"(?P<gr1>qu)' y",ur"\g<gr1>'y",u"2",ur"1",u""),
+    #(ur"(?P<gr1>qu)' en",ur"\g<gr1>'en",u"2",ur"1",u""),
+    (ur"[ -]t[ -](?P<gr1>il|elle|on)",ur" -t-\g<gr1>",u"1",ur"1",u"")]
 
 
-TRANSITIONNUMBERS					= {
-	FRENCH:{'1.':u'premièrement','2.':u'deuxièmement','3.':u'troisièmement','4.':u'quatrièmement',
+TRANSITIONNUMBERS                   = {
+    FRENCH:{'1.':u'premièrement','2.':u'deuxièmement','3.':u'troisièmement','4.':u'quatrièmement',
             '5.':u'cinquièmement','6.':u'sixièmement', '7.':u'septièmement','8.':u'huitièmement',
             '9.':u'neuvièmement', '10.':u'dixièmement'}
 }
 
 ABBREVIATIONS                       = {
-	FRENCH:{ u'A/R':u'accusé de réception',u'adj.':u'adjectif',u'admin':u'administration',u'ann.':u'annexe',u'art.':u'article',
-	u'assoc.':u'association',u'av.':u'avenue',u'bibliogr.':u'bibliographie',u'bibl.':u'bibliothèque',u'biogr.':u'biographie',u'bd.':u'boulevard ',
-	u'cad':u'c’est-à-dire',u'cap.':u'capitale',u'C.Q.F.D.':u'ce qu’il fallait démontrer',u'chap.':u'chapitre',u'ch.':u'chemin',u'circ.':u'circonscription',
-	u'col.':u'colonne',u'Cie':u'compagnie',u'c/c':u'compte courant',u'concl.':u'conclusion',u'cf.':u'confer',u'conj.':u'conjonction',u'coop.':u'coopération',
-	u'c.v.':u'curriculum vitae',u'dest.':u'destinataire',u'disp.':u'disponible',u'Dr.':u'docteur',u'Drs.':u'docteurs',u'Dre.':u'doctoresse',
+    FRENCH:{ u'A/R':u'accusé de réception',u'adj.':u'adjectif',u'admin':u'administration',u'ann.':u'annexe',u'art.':u'article',
+    u'assoc.':u'association',u'av.':u'avenue',u'bibliogr.':u'bibliographie',u'bibl.':u'bibliothèque',u'biogr.':u'biographie',u'bd.':u'boulevard ',
+    u'cad':u'c’est-à-dire',u'cap.':u'capitale',u'C.Q.F.D.':u'ce qu’il fallait démontrer',u'chap.':u'chapitre',u'ch.':u'chemin',u'circ.':u'circonscription',
+    u'col.':u'colonne',u'Cie':u'compagnie',u'c/c':u'compte courant',u'concl.':u'conclusion',u'cf.':u'confer',u'conj.':u'conjonction',u'coop.':u'coopération',
+    u'c.v.':u'curriculum vitae',u'dest.':u'destinataire',u'disp.':u'disponible',u'Dr.':u'docteur',u'Drs.':u'docteurs',u'Dre.':u'doctoresse',
     u'Dres.':u'doctoresses',u'doc.':u'document',u'env.':u'environ',u'etc.':u'et cetera',u'ex.':u'exemple',u'e.g.':u'exempli gratia',u'ext.':u'externe',
     u'féd.':u'fédéral',u'fém.':u'féminin',u'fig.':u'figure',u'id.':u'idem',u'intro':u'introduction',u'MM.':u'messieurs',u'maj.':u'majuscule',
     u'méd.':u'médecine',u'Mgr':u'monseigneur',u'Mgrs':u'messeigneurs ',u'Mlle':u'mademoiselle ',u'Mlles':u'mesdemoiselles',u'Mme':u'madame',

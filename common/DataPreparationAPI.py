@@ -53,6 +53,7 @@ class DataPreparationAPI():
         self.removePunctuation = False
         self.verbalizePunctuation = False
         self.segmentWithNLTK = True
+        self.keepNewWords = False
         self.doc = None
         self.wordClassifier = None
         self.substitutionRegexFormula = RegularExpressionFormula(None)
@@ -178,6 +179,9 @@ class DataPreparationAPI():
     def setSegmentWithNLTK(self, segmentWithNLTK):
         self.segmentWithNLTK = segmentWithNLTK
 
+    def setKeepNewWords(self, keepNewWords):
+        self.keepNewWords = keepNewWords
+
     def getDocument(self):
         """Get the underlying 'TextDocument'.
         """
@@ -250,7 +254,8 @@ class DataPreparationAPI():
                                     self.substitutionRegexFormula,
                                     self.validationPatternList,
                                     self.outputDir,
-                                    self.segmentWithNLTK)
+                                    self.segmentWithNLTK,
+                                    self.keepNewWords)
             
             if self.inputFile != None:
                 self.logger.info("Load file, convert to text when pdf document")
