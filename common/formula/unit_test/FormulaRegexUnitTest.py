@@ -104,7 +104,7 @@ class TestFormulaRegex(unittest.TestCase):
                     (u"l'ADG'",u"l'a. d. g.'"),
                     (u"\"ADG\"",u"\"a. d. g.\""),
                     (u"\"ADG",u"\"a. d. g."),
-                    (u"e-ADG-",u"e-a. d. g.-"),
+                    (u"e-ADG-",u"e-ADG-"),
                     (u"l'ADG,",u"l'a. d. g.,"),
                     (u"l'ADG.",u"l'a. d. g.."),
                     (u"l'ADG?",u"l'a. d. g.?"),
