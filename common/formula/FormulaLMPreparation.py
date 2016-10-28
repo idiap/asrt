@@ -309,7 +309,8 @@ class LMPreparationFormula():
             prevC = strC
 
         self.strText = u"".join(unicodeList).rstrip().strip()
-        self.strText = re.sub(u"(^- *| - |- |-$)", u"", self.strText, flags=re.UNICODE)
+        self.strText = re.sub(u"(^- *| - |-$)", u"", self.strText, flags=re.UNICODE)
+        self.strText = re.sub(u"(- )", u" ", self.strText, flags=re.UNICODE)
         self.strText = re.sub(SPACEPATTERN, u" ", self.strText, flags=re.UNICODE)
 
     def _normalizeWords(self):
