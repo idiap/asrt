@@ -43,25 +43,32 @@ class TestFormulaLMPreparation(unittest.TestCase):
     #Tests
     #
     def testNormalizeUtf8(self):
-        testList = []
+        languages = ['0', '1', '2']
+        testList = {}
+        for lang in languages: testList[lang] = []
         for match, sub, comment, languageId in UTF8MAP:
-            testList.append(match)
+            for lang in languages:
+                if (lang == int(languageId)): testList[lang].append(match)
 
-        gtList = []
+        gtList = {}
+        for lang in languages: gtList[lang] = []
         for match, sub, comment, languageId in UTF8MAP:
-            gtList.append(sub)
+            for lang in languages:
+                if (lang == int(languageId)): gtList[lang].append(sub)
 
-        strGt = u" ".join(gtList)
-        strGt = strGt.rstrip().strip()
-        strGt = re.sub(SPACEPATTERN, u" ", 
-                        strGt, flags=re.UNICODE)
+        for lang in languages:
+            strGt = u" ".join(gtList[lang])
+            strGt = strGt.rstrip().strip()
+            strGt = re.sub(SPACEPATTERN, u" ",
+                            strGt, flags=re.UNICODE)
 
-        f = LMPreparationFormula()
-        f.setText(u" ".join(testList))
-        f._normalizeUtf8()
-        strResult = f.getText()
+            f = LMPreparationFormula()
+            f.setText(u" ".join(testList[lang]))
+            f._normalizeUtf8()
+            strResult = f.getText()
 
-        self.assertEquals(strGt.encode('utf-8'), strResult.encode('utf-8'))
+            self.assertEquals(strGt.encode('utf-8'), strResult.encode('utf-8'))
+
 
     def testNormalizePunctuation(self):
         f = LMPreparationFormula()
@@ -125,7 +132,7 @@ class TestFormulaLMPreparation(unittest.TestCase):
     def testExpandNumberInWords(self):
         testList = [(ur"A1", ur"A. 1"),(ur"P3B", ur"P. 3 B."), (ur"P5B4", ur"P. 5 B. 4"),
                      (ur"PPB5",ur"PPB 5")]
-        
+
         f = LMPreparationFormula()
         self.verifyEqual(testList, f, f._expandNumberInWords)
 
@@ -142,7 +149,7 @@ class TestFormulaLMPreparation(unittest.TestCase):
         testList =[(u"A dix heures", u"à dix heures", False),
                    (u"1. Election",u"premièrement election", False),
                    (u"R1",u"r. un", False), (ur"A1", ur"a. un", False),(ur"P3B", ur"p. trois b.", False),
-                   (ur"P5B4", ur"p. cinq b. quatre", False), 
+                   (ur"P5B4", ur"p. cinq b. quatre", False),
                    (ur"PPB5",ur"p. p. b.  cinq", False),
                    (ur"rte",ur"route", False),
                    (ur"Constantin, p. l. r., président de",ur"constantin p. l. r. président de", False),
@@ -150,9 +157,43 @@ class TestFormulaLMPreparation(unittest.TestCase):
 
         f = LMPreparationFormula()
         f.setLanguageId(1)
-        
+
         for t, gt, knw in testList:
             f.setText(t)
             f.setKeepNewWords(knw)
+            r = f.prepareText()
+            self.assertEquals(gt.encode('utf-8'), r.encode('utf-8'))
+
+    def testFrench(self):
+        testList =[
+                   (ur"à plus tard",ur"à plus tard"),
+                   (ur"maîtres",ur"maîtres"),
+                   (ur"maïs",ur"maïs"),
+                   (ur"emmaüs",ur"emmaüs"),
+                   (ur"mäman",ur"maman")]
+
+        f = LMPreparationFormula()
+        f.setLanguageId(1)
+
+        for t, gt in testList:
+            f.setText(t)
+            r = f.prepareText()
+            self.assertEquals(gt.encode('utf-8'), r.encode('utf-8'))
+
+    def testGerman(self):
+        testList =[
+                   (ur"emmaüs",ur"emmaüs"),
+                   (u"mein àrbeit", u"mein arbeit"),
+                   (ur"môchten",ur"mochten"),
+                   (ur"mädchen",ur"mädchen"),
+                   (ur"meîn",ur"mein"),
+                   (ur"meïn",ur"mein")
+                   ]
+
+        f = LMPreparationFormula()
+        f.setLanguageId(2)
+
+        for t, gt in testList:
+            f.setText(t)
             r = f.prepareText()
             self.assertEquals(gt.encode('utf-8'), r.encode('utf-8'))

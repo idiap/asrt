@@ -39,23 +39,23 @@ class LMPreparationFormula():
        preparation.
     """
     logger                      = logging.getLogger("Asrt.LMPreparationFormula")
-    
+
     ordDict                     = {}
     abbreviationsDict           = {}
 
     #Regular expressions formulas
-    dateFormula                 = RegularExpressionFormula(None, 
+    dateFormula                 = RegularExpressionFormula(None,
                                     RegexList.removeComments(DATEREGEXLIST))
-    apostropheFormula           = RegularExpressionFormula(None, 
+    apostropheFormula           = RegularExpressionFormula(None,
                                     RegexList.removeComments(APOSTHROPHELIST))
-    contractionPrefixFormula    = RegularExpressionFormula(None, 
+    contractionPrefixFormula    = RegularExpressionFormula(None,
                                     RegexList.removeComments(CONTRACTIONPREFIXELIST))
-    acronymFormula              = RegularExpressionFormula(None, 
+    acronymFormula              = RegularExpressionFormula(None,
                                     RegexList.removeComments(ACRONYMREGEXLIST))
 
     PUNCTUATIONREGEX            = re.compile(PUNCTUATIONPATTERN, flags=re.UNICODE)
     ALLPUNCTUATIONSYMBOLS       = "".join(PUNCTUATIONEXCLUDE + DOTCOMMAEXCLUDE)
-    
+
     def __init__(self):
         """Default constructor.
         """
@@ -72,11 +72,11 @@ class LMPreparationFormula():
     #
     def getText(self):
         return self.strText
-    
+
     def getLanguageId(self):
         """Return a number between 0 and 4:
 
-           0:'unknown', 1:'French', 2:'German', 
+           0:'unknown', 1:'French', 2:'German',
            3:'English', 4:'Italian'
         """
         return self.languageId
@@ -93,10 +93,12 @@ class LMPreparationFormula():
 
            param 'languageId': a value between 0 and 4:
 
-           0:'unknown', 1:'French', 2:'German', 
+           0:'unknown', 1:'French', 2:'German',
            3:'English', 4:'Italian'
         """
         self.languageId = languageId
+        LMPreparationFormula.ordDict = {}
+        LMPreparationFormula.ordDict = LMPreparationFormula._getOrdDict(self.languageId)
 
     def setKeepNewWords(self, keepNewWords):
         """Keep new words.
@@ -152,7 +154,7 @@ class LMPreparationFormula():
         if not self.keepNewWords:
             self._expandAcronyms()
             #print self.strText
-        
+
         self._normalizeCase()
         #print self.strText
 
@@ -164,8 +166,8 @@ class LMPreparationFormula():
     def _filterNoiseWords(self):
         """Do not keep some words considered as noise.
 
-           For example words consisting of 4 or more punctuation 
-           characters. 
+           For example words consisting of 4 or more punctuation
+           characters.
         """
         wordsList = re.split(SPACEPATTERN, self.strText, flags=re.UNICODE)
         newWordsList = []
@@ -179,9 +181,12 @@ class LMPreparationFormula():
     def _normalizeUtf8(self):
         """Some punctuation characters are normalized.
         """
+
+        languageId = self.getLanguageId()
+
         #Mapping dictionary
-        ordDict = LMPreparationFormula._getOrdDict()
-        
+        ordDict = LMPreparationFormula._getOrdDict(languageId)
+
         utf8List = []
         #Loop through unicode characters
         for i, c in enumerate(self.strText):
@@ -196,14 +201,14 @@ class LMPreparationFormula():
                self.strText[-1] in self.ALLPUNCTUATIONSYMBOLS and \
                self.strText[-2].isdigit():
             self.strText = self.strText.rstrip(self.ALLPUNCTUATIONSYMBOLS)
-        
+
         self.strText = re.sub(SPACEPATTERN, u" ", self.strText, flags=re.UNICODE)
 
     def _normalizeDates(self):
         """Normalize dates.
         """
-        self.strText = self.dateFormula.apply(self.strText, self.languageId)    
-    
+        self.strText = self.dateFormula.apply(self.strText, self.languageId)
+
     def _expandAbbreviations(self):
         """Expand language abbreviations.
         """
@@ -262,9 +267,9 @@ class LMPreparationFormula():
         """
         self.strText = self.acronymFormula.apply(self.strText, self.languageId)
         self.strText = re.sub(ACRONYMDELIMITER, u"", self.strText, flags=re.UNICODE)
-        
+
     def _normalizePunctuation(self, excludeList):
-        """Some punctuation characters are 
+        """Some punctuation characters are
            normalized:
            - Removal by spacing
                     - Single, double quotes
@@ -339,14 +344,14 @@ class LMPreparationFormula():
         """
         self.strText = self.apostropheFormula.apply(self.strText, self.languageId)
         self.strText = self.contractionPrefixFormula.apply(self.strText, self.languageId, False)
-    
+
     def _normalizeCase(self):
         """Case normalization (change to lower case)
         """
         self.strText = self.strText.lower()
 
     @staticmethod
-    def _getOrdDict():
+    def _getOrdDict(langId):
         """Utf-8 characters mapping in the form of a
            code point dictionary.
         """
@@ -359,7 +364,8 @@ class LMPreparationFormula():
             if ord(match) in ordDict:
                 raise Exception("Already in dictionary '%s' '%s'!" % (unichr(ord(match)),
                                   comment.encode('utf8')))
-            ordDict[ord(match)] = sub
+            if (langId == int(languageId) or int(languageId) == 0):
+                ordDict[ord(match)] = sub
 
         LMPreparationFormula.ordDict = ordDict
         return LMPreparationFormula.ordDict

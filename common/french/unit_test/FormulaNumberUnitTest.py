@@ -27,7 +27,7 @@ from asrt.common.AsrtUtility import hasNumber
 
 class FormulaNumberUnitTest(unittest.TestCase):
 
-    testDict = { "cardinal"   : [(u"10",u"dix"),(u"25",u"vingt cinq")],
+    testDict = { "cardinal"   : [(u"10",u"dix"),(u"25",u"vingt cinq"),(u"1416000",u"un million quatre cent seize mille")],
                  "transition" : [(u"1.",u"premièrement"),(u"10.",u"dixièmement")],
                  "ordinal"    : [(u"1er",u"premier"),(u"1ère",u"première"),(u"2ème",u"deuxième"),
                                  (u"80ème",u"quatre-vingtième"),(u"400ème",u"quatre centième"),
@@ -44,6 +44,7 @@ class FormulaNumberUnitTest(unittest.TestCase):
                                  (u"l'article 12,",u"l'article douze"),
                                  (u"dans le XXIIIe siècle", u"dans le vingt-troisième siècle"),
                                  (u"Ce matin", u"Ce matin"),
+                                 (u"1'416'000",u"un million quatre cent seize mille"),
                                  (u"Le matin", u"Le matin")]
     }
 
@@ -91,13 +92,13 @@ class FormulaNumberUnitTest(unittest.TestCase):
 
     def test_hasNumber(self):
         testList = [(u"12",True), (u"1ab",True),(u"ab22",True), (u"Xab",True),
-                    (u"xab",False), (u"a1ab",True)]
+                    (u"xab",False), (u"a1ab",True), (u"il a 1'416'000 francs",True)]
 
         for t, gt in testList:
             self.assertEquals(hasNumber(NumberFormula,t), gt, t.encode('utf-8'))
 
     def test_normalizeNumber(self):
-        testList = [(u"50'000",u"50000"),(u"550'000'000",u"550000000")]
+        testList = [(u"50'000",u"50000"),(u"550'000'000",u"550000000"),(u"1'416'000",u"1416000")]
         self.evaluateListValues(testList, NumberFormula._normalizeNumber)
         
     def test_cardinal2word(self):
