@@ -170,7 +170,7 @@ class TestFormulaLMPreparation(unittest.TestCase):
                    (ur"maîtres",ur"maîtres"),
                    (ur"maïs",ur"maïs"),
                    (ur"emmaüs",ur"emmaüs"),
-                   (ur"mäman",ur"maman")]
+                   (ur"mäman",ur"mäman")]
 
         f = LMPreparationFormula()
         f.setLanguageId(1)
@@ -183,11 +183,11 @@ class TestFormulaLMPreparation(unittest.TestCase):
     def testGerman(self):
         testList =[
                    (ur"emmaüs",ur"emmaüs"),
-                   (u"mein àrbeit", u"mein arbeit"),
-                   (ur"môchten",ur"mochten"),
+                   (u"mein àrbeit", u"mein àrbeit"),
+                   (ur"môchten",ur"môchten"),
                    (ur"mädchen",ur"mädchen"),
-                   (ur"meîn",ur"mein"),
-                   (ur"meïn",ur"mein")
+                   (ur"meîn",ur"meîn"),
+                   (ur"meïn",ur"meïn")
                    ]
 
         f = LMPreparationFormula()

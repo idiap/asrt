@@ -30,20 +30,23 @@ sys.path.append(scriptsDir + "/../")
 import asrt.common.unit_test.CommonTestSuite as CommonTestSuite
 import asrt.common.french.unit_test.FrenchTestSuite as FrenchTestSuite
 import asrt.common.german.unit_test.GermanTestSuite as GermanTestSuite
+import asrt.common.english.unit_test.EnglishTestSuite as EnglishTestSuite
 import asrt.common.formula.unit_test.FormulaTestSuite as FormulaTestSuite
 
 from asrt.common.MyFile import MyFile
 from asrt.config.AsrtConfig import TEMPDIRUNITTEST
 
-usage = """ 
+usage = """
     Run specific unit tests or all.
 
     Available unit tests are: %s
 """
 
 def getUsage():
-    strTests = "%s, %s, %s, %s" % (CommonTestSuite.getSuite(), FormulaTestSuite.getSuite(),
-                               FrenchTestSuite.getSuite(), GermanTestSuite.getSuite())
+    strTests = "%s, %s, %s, %s, %s" % \
+                         (CommonTestSuite.getSuite(), FormulaTestSuite.getSuite(),
+                          FrenchTestSuite.getSuite(), GermanTestSuite.getSuite(),
+                          EnglishTestSuite.getSuite())
     return usage % strTests
 
 def asrtTestSuite(unitTestList = None):
@@ -53,6 +56,7 @@ def asrtTestSuite(unitTestList = None):
     commonTestSuite = CommonTestSuite.getCommonTestSuite(unitTestList)
     frenchTestSuite = FrenchTestSuite.getFrenchTestSuite(unitTestList)
     germanTestSuite = GermanTestSuite.getGermanTestSuite(unitTestList)
+    englishTestSuite = EnglishTestSuite.getEnglishTestSuite(unitTestList)
     formulaTestSuite = FormulaTestSuite.getFormulaTestSuite(unitTestList)
 
     allTestSuite = []
@@ -64,6 +68,8 @@ def asrtTestSuite(unitTestList = None):
         allTestSuite.extend(frenchTestSuite)
     if germanTestSuite is not None:
         allTestSuite.extend(germanTestSuite)
+    if englishTestSuite is not None:
+        allTestSuite.extend(englishTestSuite)
 
     allTests = unittest.TestSuite(allTestSuite)
 
