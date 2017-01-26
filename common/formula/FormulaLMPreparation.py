@@ -22,6 +22,7 @@ __copyright__ = "Copyright (c) 2015 Idiap Research Institute"
 __license__ = "BSD 3-Clause"
 
 import logging, re
+from asrt.common.english.FormulaNumber import NumberFormula as EnglishNumberFormula
 from asrt.common.french.FormulaNumber import NumberFormula as FrenchNumberFormula
 from asrt.common.german.FormulaNumber import NumberFormula as GermanNumberFormula
 from asrt.common.formula.FormulaRegularExpression import RegularExpressionFormula
@@ -32,7 +33,7 @@ from asrt.common.AsrtConstants import DATEREGEXLIST, CONTRACTIONPREFIXELIST, ACR
 from asrt.common.AsrtConstants import ABBREVIATIONS, APOSTHROPHELIST, CAPTURINGDIGITPATTERN
 from asrt.common.AsrtConstants import GROUPINGDOTCOMMAPATTERN, EXPANDEXCEPTIONS
 from asrt.common.AsrtConstants import ACRONYMDELIMITER
-from asrt.config.AsrtConfig import FRENCH, GERMAN
+from asrt.config.AsrtConfig import FRENCH, GERMAN, ENGLISH
 
 class LMPreparationFormula():
     """Main formula for language modeling text
@@ -64,7 +65,8 @@ class LMPreparationFormula():
         self.keepNewWords = False
         self.numberFormula = {
             FRENCH: FrenchNumberFormula,
-            GERMAN: GermanNumberFormula
+            GERMAN: GermanNumberFormula,
+            ENGLISH: EnglishNumberFormula
         }
 
     #####################
@@ -332,7 +334,7 @@ class LMPreparationFormula():
         """
         languageId = self.getLanguageId()
         if languageId not in self.numberFormula:
-            #self.logger.warning("LM preparation not implemented for language id %d" % languageId)
+            self.logger.warning("LM preparation not implemented for language id %d" % languageId)
             return
         numberFormula = self.numberFormula[languageId]
 

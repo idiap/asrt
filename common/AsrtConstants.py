@@ -21,12 +21,12 @@ __date__ = "Date: 2015/09"
 __copyright__ = "Copyright (c) 2015 Idiap Research Institute"
 __license__ = "BSD 3-Clause"
 
-from asrt.config.AsrtConfig import FRENCH, GERMAN
+from asrt.config.AsrtConfig import FRENCH, GERMAN, ENGLISH
 
 SPACEPATTERN                = u"[ ]+"
 CAPTURINGDIGITPATTERN       = u"([0-9\.,]+)"
 GROUPINGDOTCOMMAPATTERN     = u"( |$)([.,])( |$)"
-EXPANDEXCEPTIONS            = (u"er", u"re", u"ère", u"e", u"ème")
+EXPANDEXCEPTIONS            = (u"er", u"re", u"ère", u"e", u"ème", u"st", u"nd", u"rd", u"th")
 
 UNITD2W                     = {1:'ein', 2:'zwei', 3:'drei', 4:'vier', 5:'fünf', 6:'sechs', 7:'sieben', 8:'acht', 9:'neun',
                                10:'zehn', 11:'elf', 12:'zwölf', 13:'dreizehn', 14:'vierzehn', 15:'fünfzehn', 16:'sechszehn',
@@ -403,8 +403,10 @@ CONTRACTIONPREFIXELIST          = [
 TRANSITIONNUMBERS                   = {
     FRENCH:{'1.':u'premièrement','2.':u'deuxièmement','3.':u'troisièmement','4.':u'quatrièmement',
             '5.':u'cinquièmement','6.':u'sixièmement', '7.':u'septièmement','8.':u'huitièmement',
-            '9.':u'neuvièmement', '10.':u'dixièmement'}
+            '9.':u'neuvièmement', '10.':u'dixièmement'},
+    ENGLISH:{'1.':u'first','2.':u'second','3.':u'third','4.':u'fourth','5.':u'fifth','6.':u'sixth','7.':u'seventh','8.':u'eigth','9.':u'nineth', '10.':u'tenth'}
 }
+
 
 ABBREVIATIONS                       = {
     FRENCH:{ u'A/R':u'accusé de réception',u'adj.':u'adjectif',u'admin':u'administration',u'ann.':u'annexe',u'art.':u'article',
@@ -467,4 +469,5 @@ ABBREVIATIONS                       = {
     u'zgl.':u'zugleich',u'z.H.':u'zu Händen',u'Zi':u'Zimmer',u'Ziff.':u'Ziffer',u'z.K.':u'zur Kenntnisnahme',u'ZPO':u'Zivilprozessordnung',u'z.S.':u'zur See',
     u'z.T.':u'zum Teil',u'Ztg.':u'Zeitung',u'zuf.':u'zufolge',u'zus.':u'zusammen',u'zw.':u'zwischen',u'z.w.V.':u'zur weiteren Veranlassung',u'zzgl.':u'zuzüglich',
     u'z.Z.':u'zur Zeit'}
+    # ENGLISH = {u'Mr\.':u'Mister',u'Mrs\.':u'Misses',u'Ms\.':u'Miss',u'Dr\.':u'Doctor',u'Prof\.':u'Professor',u'etc\.':u'et cetera'}
 }

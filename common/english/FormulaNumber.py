@@ -22,21 +22,25 @@ __copyright__ = "Copyright (c) 2016 Idiap Research Institute"
 __license__ = "BSD 3-Clause"
 
 import logging, re
+from num2words import num2words
+from roman import fromRoman
 from asrt.common.AsrtUtility import convertNumber
+from asrt.common.AsrtConstants import SPACEPATTERN, TRANSITIONNUMBERS
+from asrt.config.AsrtConfig import ENGLISH
 
 class NumberFormula():
     """A set of rules to 'unformat' formatted numbers.
     """
 
-    logger                  = logging.getLogger("Asrt.english.NumberFormula")
+    logger                  = logging.getLogger("asrt.common.english.NumberFormula")
 
-    THOUSANDSEPARATOR       = u"'"
+    THOUSANDSEPARATOR       = u","
 
     HASNUMBERREGEX          = re.compile(u"([0-9]|I|V|X|L|C|D|M)+", flags=re.UNICODE)
     CARDINALNUMBERREGEX     = re.compile(u"[0-9]+$", flags=re.UNICODE)
     TRANSITIONNUMBERREGEX   = re.compile(u"([1-9]|10)[.]( |$)", flags=re.UNICODE)
-    ORDINALNUMBERREGEX      = re.compile(u"(1er|1re|1ère|[0-9]+e|[0-9]+ème|Ier|Ire|Ière|[IVXLCDM]+ème|[IVXLCDM]{2,}e)$", flags=re.UNICODE)
-    DECIMALNUMBERREGEX      = re.compile(u"[0-9,.]+[0-9,.]*$", flags=re.UNICODE)
+    ORDINALNUMBERREGEX      = re.compile(u"([0-9]+st|[0-9]+nd|[0-9]+rd|[0-9]+th|[IVXLCDM]+[stnrdh]{2,})$", flags=re.UNICODE)
+    DECIMALNUMBERREGEX      = re.compile(u"[0-9.]+[0-9.]*$", flags=re.UNICODE)
     ROMANNUMBERREGEX        = re.compile(u"[IVXLCDM]{2,}$", flags=re.UNICODE)
 
     ##################
@@ -67,7 +71,14 @@ class NumberFormula():
            param strWord: an utf-8 encoded words
            return an utf-8 encoded string
         """
-        pass
+        strWord = strWord.replace(NumberFormula.THOUSANDSEPARATOR, u"")
+
+        #Case when there is a full stop, comma
+        #after a number
+        if strWord.endswith((".",",")):
+            strWord = strWord[:-1]
+
+        return strWord
 
     @staticmethod
     def _cardinal2word(strNumber):
@@ -77,7 +88,9 @@ class NumberFormula():
            param strNumber: an utf-8 cardinal number
            return a 'written' cardinal number
         """
-        pass
+        strNumber = num2words(int(strNumber))
+        return strNumber.replace(u"-", u" ")
+
 
     @staticmethod
     def _transition2word(strNumber):
@@ -87,7 +100,11 @@ class NumberFormula():
            param strNumber: an utf-8 transition number
            return a 'written' transition number
         """
-        pass
+        if strNumber.encode('utf-8') not in TRANSITIONNUMBERS[ENGLISH]:
+          return strNumber
+
+        return TRANSITIONNUMBERS[ENGLISH][strNumber]
+
 
     @staticmethod
     def _ordinal2word(wordsList, indice):
@@ -99,7 +116,28 @@ class NumberFormula():
            param strNumber: an utf-8 ordinal number
            return a 'written' ordinal number
         """
-        pass
+        strNumber = NumberFormula._normalizeNumber(wordsList[indice])
+        if strNumber.encode('utf-8') == u"1st".encode('utf-8'):
+            return u"first"
+
+        strNewNumber = re.sub(u"[ndstrh]", "", strNumber)
+        # print strNewNumber
+        # if NumberFormula._isCardinalNumber(strNewNumber):
+        if strNewNumber.isdigit():
+            strNewNumber = num2words(int(strNewNumber), ordinal=True)
+            # print(strNewNumber)
+        elif NumberFormula._isRomanNumber(strNewNumber):
+            #Roman to cardinal
+            strNewNumber = strNewNumber.encode('utf-8')
+            # print strNewNumber
+            cardinalNumber = fromRoman(strNewNumber)
+            #Digits to ordinal
+            strNewNumber = num2words(cardinalNumber, ordinal=True)
+        else:
+            print("newnumberis not digit!!!")
+            strNewNumber = strNumber
+
+        return strNewNumber
 
     @staticmethod
     def _decimal2word(strNumber):
@@ -109,7 +147,16 @@ class NumberFormula():
            param strNumber: an utf-8 decimal number
            return a 'written' decimal number
         """
-        pass
+        strNumber = u" point ".join(re.split("[.]",strNumber))
+
+        tokenList = []
+        for w in re.split(SPACEPATTERN, strNumber):
+            w = w.strip()
+            if NumberFormula._isCardinalNumber(w):
+                w = NumberFormula._cardinal2word(w)
+            tokenList.append(w)
+
+        return u" ".join(tokenList)
 
     @staticmethod
     def _roman2word(strNumber):
@@ -119,7 +166,10 @@ class NumberFormula():
            param strNumber: an utf-8 roman number
            return a 'written' roman number
         """
-        pass
+        strNumber = strNumber.encode('utf-8')
+        cardinalNumber = fromRoman(strNumber)
+        strNewNumber = num2words(cardinalNumber)
+        return strNewNumber
 
     @staticmethod
     def _isCardinalNumber(strWord):
@@ -128,7 +178,7 @@ class NumberFormula():
            param strWord: an utf-8 encoded words
            return True or False
         """
-        pass
+        return NumberFormula.CARDINALNUMBERREGEX.match(strWord) != None
 
     @staticmethod
     def _isTransitionNumber(strWord):
@@ -140,7 +190,8 @@ class NumberFormula():
               ...
               neuvièmement
         """
-        pass
+        return NumberFormula.TRANSITIONNUMBERREGEX.match(strWord) != None \
+            and NumberFormula.THOUSANDSEPARATOR not in strWord
 
     @staticmethod
     def _isOrdinalNumber(strWord):
@@ -151,7 +202,7 @@ class NumberFormula():
            param strWord: an utf-8 encoded words
            return True or False
         """
-        pass
+        return NumberFormula.ORDINALNUMBERREGEX.match(strWord) != None
 
     @staticmethod
     def _isDecimalNumber(strWord):
@@ -163,7 +214,7 @@ class NumberFormula():
            param strWord: an utf-8 encoded words
            return True or False
         """
-        pass
+        return NumberFormula.DECIMALNUMBERREGEX.match(strWord) != None
 
     @staticmethod
     def _isRomanNumber(strWord):
@@ -177,4 +228,4 @@ class NumberFormula():
            param strWord: an utf-8 encoded words
            return True or False
         """
-        pass
+        return NumberFormula.ROMANNUMBERREGEX.match(strWord) != None

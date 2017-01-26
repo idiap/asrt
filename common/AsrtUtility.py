@@ -33,7 +33,7 @@ logger  = logging.getLogger("Asrt.AsrtUtility")
 def getByteString(message):
     """Get a byte encoded exception message.
     """
-    if type(message) == unicode: 
+    if type(message) == unicode:
         return message.encode('utf-8')
 
     return message

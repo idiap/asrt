@@ -69,7 +69,6 @@ class TestFormulaLMPreparation(unittest.TestCase):
 
             self.assertEquals(strGt.encode('utf-8'), strResult.encode('utf-8'))
 
-
     def testNormalizePunctuation(self):
         f = LMPreparationFormula()
         f.setText(u"".join(string.punctuation + u"‰"))
@@ -197,3 +196,15 @@ class TestFormulaLMPreparation(unittest.TestCase):
             f.setText(t)
             r = f.prepareText()
             self.assertEquals(gt.encode('utf-8'), r.encode('utf-8'))
+
+    def testEnglish(self):
+        testList =[(ur"object [1-5]",ur"object one five")]
+
+        f = LMPreparationFormula()
+        f.setLanguageId(3)
+
+        for t, gt in testList:
+            f.setText(t)
+            r = f.prepareText()
+            self.assertEquals(gt.encode('utf-8'), r.encode('utf-8'))
+
