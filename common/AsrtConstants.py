@@ -469,6 +469,7 @@ ABBREVIATIONS                       = {
     u'Wkst.':u'Werkstatt',u'w.L.':u'westlicher Länge',u'w.o.':u'wie oben',u'Wz.':u'Warenzeichen',u'z.A.':u'zur Ansicht',u'z.B.':u'zum Beispiel',u'z.d.A.':u'zu den Akten',
     u'zgl.':u'zugleich',u'z.H.':u'zu Händen',u'Zi':u'Zimmer',u'Ziff.':u'Ziffer',u'z.K.':u'zur Kenntnisnahme',u'ZPO':u'Zivilprozessordnung',u'z.S.':u'zur See',
     u'z.T.':u'zum Teil',u'Ztg.':u'Zeitung',u'zuf.':u'zufolge',u'zus.':u'zusammen',u'zw.':u'zwischen',u'z.w.V.':u'zur weiteren Veranlassung',u'zzgl.':u'zuzüglich',
-    u'z.Z.':u'zur Zeit'}
-    # ENGLISH = {u'Mr\.':u'Mister',u'Mrs\.':u'Misses',u'Ms\.':u'Miss',u'Dr\.':u'Doctor',u'Prof\.':u'Professor',u'etc\.':u'et cetera'}
+    u'z.Z.':u'zur Zeit'},
+    ENGLISH : {u'Mr.':u'Mister',u'Mrs.':u'Misses',u'Ms.':u'Miss',u'Dr.':u'Doctor',u'Prof.':u'Professor',
+    			u'etc.':u'et cetera'}
 }
