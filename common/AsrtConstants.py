@@ -397,7 +397,8 @@ CONTRACTIONPREFIXELIST          = [
     #(ur"(?P<gr1>[cdjlmnst])' en",ur"\g<gr1>'en",u"2",ur"1",u""),
     #(ur"(?P<gr1>qu)' y",ur"\g<gr1>'y",u"2",ur"1",u""),
     #(ur"(?P<gr1>qu)' en",ur"\g<gr1>'en",u"2",ur"1",u""),
-    (ur"[ -]t[ -](?P<gr1>il|elle|on)",ur" -t-\g<gr1>",u"1",ur"1",u"")]
+    (ur"[ -]t[ -](?P<gr1>il|elle|on)",ur" -t-\g<gr1>",u"1",ur"1",u""),
+    (ur"' s(?P<gr1> |$)",ur"'s\g<gr1>",u"1",ur"3",u"")]
 
 
 TRANSITIONNUMBERS                   = {

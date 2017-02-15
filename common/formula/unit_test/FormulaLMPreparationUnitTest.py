@@ -144,6 +144,19 @@ class TestFormulaLMPreparation(unittest.TestCase):
                 f._expandAbbreviations()
                 self.assertEquals(gt.encode('utf-8'), f.strText.encode('utf-8'))
 
+    def testContractionPrefixes(self):
+        testList =[(ur"President' s", ur"president's", 3),
+                   (ur"President' s of", ur"president's of", 3)]
+
+        f = LMPreparationFormula()
+        f.setKeepNewWords(True)
+
+        for t, gt, languageId in testList:
+            f.setLanguageId(languageId)
+            f.setText(t)
+            r = f.prepareText()
+            self.assertEquals(gt.encode('utf-8'), r.encode('utf-8'))
+
     def testAll(self):
         testList =[(u"A dix heures", u"à dix heures", False),
                    (u"1. Election",u"premièrement election", False),
