@@ -62,7 +62,7 @@ class LMPreparationFormula():
         """
         self.strText = ""
         self.languageId = 0
-        self.keepNewWords = False
+        self.keepNewWords = True
         self.numberFormula = {
             FRENCH: FrenchNumberFormula,
             GERMAN: GermanNumberFormula,
