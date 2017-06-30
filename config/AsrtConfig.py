@@ -34,6 +34,7 @@ FRENCH_PICKLE_FOLDER    = "file:%s/tokenizers/punkt/french.pickle" % NLTK_DATA
 GERMAN_PICKLE_FOLDER    = "file:%s/tokenizers/punkt/german.pickle" % NLTK_DATA
 ITALIAN_PICKLE_FOLDER   = "file:%s/tokenizers/punkt/italian.pickle" % NLTK_DATA
 
+# print( NLTK_DATA + "/corpora/europarl_raw" );   quit();
 if not os.path.exists(NLTK_DATA + "/corpora/europarl_raw"):
     print "No europarl_raw corpora found!"
     sys.exit(1)
@@ -64,7 +65,8 @@ LANGUAGE2ID         	= {UNKNOWN_LABEL:UNKNOWN,FRENCH_LABEL:FRENCH,GERMAN_LABEL:G
 #Filtering rules
 MAX_SENTENCE_LENGTH 	= 1000 #Number of characters
 MIN_SENTENCE_LENGTH 	= 5    #Number of characters
-MIN_WORDS_COUNT     	= 2
+MAX_WORD_LENGTH         = 50   # Max length of word, added by Yang Wang
+MIN_WORDS_COUNT     	= 1
 MAX_WORDS_COUNT     	= 100
 MAX_DIGITS_GROUPS   	= 5    #Filter lines with too many groups of digits
 
