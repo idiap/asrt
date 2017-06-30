@@ -206,6 +206,20 @@ class TextDocument(Document):
                 filteredContentList.append(textCluster)
 
         self.listContent = filteredContentList
+        filteredContentList = [ ]
+
+    def filterTextSentences2ndStage(self):
+        """Filter sentences before LM preparation.
+        
+           Remove web address and check German orthography https://en.wikipedia.org/wiki/German_orthography .
+        """
+        filteredContentList = []
+        for textCluster in self.listContent:
+            if textCluster.isValid2ndStage():
+                filteredContentList.append(textCluster)
+
+        self.listContent = filteredContentList
+        filteredContentList = [ ]
 
     def classifySentences(self):
         """Classify sentences by language (FRENCH or

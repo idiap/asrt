@@ -48,6 +48,7 @@ if __name__ == "__main__":
                                        dest="language", default=[0])
     parser.add_argument("-r", "--regex", help="regex file", nargs=1, dest="regexFile", default=[None])
     parser.add_argument("-f", "--filter", help="filter sentences", dest="filter",action="store_true")
+    parser.add_argument(      "--filter2ndStage", help="enable filter sentence checking for second stage", dest="filter2ndStage", action="store_true")
     parser.add_argument("-n", "--rmpunct", help="remove punctuation", dest="rmpunct",action="store_true")
     parser.add_argument("-p", "--vbpunct", help="verbalize punctuation", dest="vbpunct",action="store_true")
     parser.add_argument("-s", "--rawseg", help="do not segment sentences with NLTK", dest="rawseg",action="store_true")
@@ -64,6 +65,7 @@ if __name__ == "__main__":
     #Flags
     debug = bool(args.debug)
     filterSentences = bool(args.filter)
+    filterSentences2ndStage  = bool( args.filter2ndStage )
     removePunctuation = bool(args.rmpunct)
     verbalizePunctuation = bool(args.vbpunct)
     rawSeg = bool(args.rawseg)
@@ -75,6 +77,7 @@ if __name__ == "__main__":
     api = DataPreparationAPI(inputFile, outputDir)
     api.setRegexFile(regexFile)
     api.setFilterSentences(filterSentences)
+    api.setFilterSentences2ndStage(filterSentences2ndStage)
     api.setLMModeling(lmModeling)
     api.setRemovePunctuation(removePunctuation)
     api.setVerbalizePunctuation(verbalizePunctuation)

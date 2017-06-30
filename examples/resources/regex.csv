@@ -1,8 +1,18 @@
 Matching pattern	Substitution pattern	Regex type id	Language Id	Comment
-←		2	0	Delete sentence pattern
+←		2	0	Delete sentence pattern (Rules by Alexandre)
 [|]		2	0	Delete sentence pattern
-•	- 	1	0	Substitution rule
-ß	ss	1	0	Substitution rule
-»		1	0	Substitution rule
-[(]([^)(]*)[)]	 \g<1> 	1	0	Group substitution exemple
-[)]	 	1	0	Remainding parentheses
+•		1	0	Substitution rule: Remove this char
+»		1	0	Substitution rule: Remove this char
+[(]([^)(]*)[)]	 \g<1> 	1	0	Group substitution example
+[)]	 	1	0	Remaining parentheses
+[.]{2,3}		1	0	Delete ellipsis "..." and speciall two dots ".." (by Yang Wang hereafter)
+«		1	0	Delete this char
+–		1	0	Delete this char
+„		1	0	Delete inverted quote. E.g.: 22. Oktober 2007 In „Lissi“
+“		1	0	Delete inverted quote.
+(")		1	0	Delete double quote regardless its context.
+''		1	0	Delete two consecutive single quote. This is (mistakenly) used as double quote.
+^'		1	0	Delete single quote at beginning of sentence. Eg.:  'Die Schweizer ...
+ '		1	0	Delete single quote after a space. Eg.:  "Der Dialog mit 'moderaten Taliban' muss dringend organisiert werden."
+[^s]'[ ,]		1	0	# Delete single quote (before a space or a comma) and (not after a s letter). This is probably ending single quote. Eg.: "Hier gab es 'Bürgler für Bürger', und van de...". Counter-example: gab's, Roels' 
+:	 	1	0	Replace colon with single space. E.g.: "1:2".

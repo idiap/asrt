@@ -31,8 +31,12 @@ from asrt.common.formula.FormulaLMPreparation import LMPreparationFormula
 from asrt.config.AsrtConfig import FRENCH_LABEL, GERMAN_LABEL, ENGLISH_LABEL
 from asrt.config.AsrtConfig import ITALIAN_LABEL, LANGUAGEID2LABELS
 from asrt.config.AsrtConfig import MAX_SENTENCE_LENGTH, MIN_SENTENCE_LENGTH
+from asrt.config.AsrtConfig import MAX_WORD_LENGTH
 from asrt.config.AsrtConfig import MIN_WORDS_COUNT, MAX_WORDS_COUNT
 from asrt.config.AsrtConfig import MAX_DIGITS_GROUPS, LANGUAGE2ID
+
+## Added by Yang WANG
+import os
 
 class TextCluster(Cluster):
     """Concrete type representing a text sentence from
@@ -184,7 +188,7 @@ class TextCluster(Cluster):
         if len(strText) > MAX_SENTENCE_LENGTH or\
            len(strText) < MIN_SENTENCE_LENGTH:
             #print strText.encode('utf-8')
-            TextCluster.logger.info("Discard sentence: inappropriate length: %d!" % len(strText))
+            TextCluster.logger.info("Discard sentence: inappropriate length: %d! '%s'" % (len(strText), strText.encode("utf-8") ) )
             return False
 
         #Nb words
@@ -192,19 +196,66 @@ class TextCluster(Cluster):
         if nbWords < MIN_WORDS_COUNT or \
            nbWords > MAX_WORDS_COUNT:
             #print strText.encode('utf-8')
-            TextCluster.logger.info("Discard sentence, not enough or to many words!")
+            TextCluster.logger.info("Discard sentence, not enough or to many words, wordsNum = %d! '%s'" % ( nbWords, strText.encode("utf-8" ) ) )
             return False
 
         #Nb digit groups
         if len(re.split("\d+", strText)) > MAX_DIGITS_GROUPS:
             #print strText.encode('utf-8')
-            TextCluster.logger.info("Discard sentence, to many groups of digits!")
+            TextCluster.logger.info("Discard sentence, to many groups of digits! '%s'" % strText.encode("utf-8" ) )
             return False
 
         #Try decode
         #Use some regex
         if not self._isTextValid(strText):
             return False
+
+        return True
+
+    def isValid2ndStage(self):
+        """Check validity of sentence, this is the 2nd stage checking.
+           Added by Yang WANG on Aug 9, 2016
+
+           Remove web address and check German orthography https://en.wikipedia.org/wiki/German_orthography .
+        """
+        strText = self.getTextSentence()
+        
+        # To filter out web addresses        
+        if strText.find( "http" ) >= 0 \
+            or strText.find( "www" ) >= 0 \
+            or strText.find( "html" ) >= 0 \
+            or strText.find( "URL" ) >= 0:
+                TextCluster.logger.info("Discard sentence, web address! '%s'" % strText.encode("utf-8" ) )
+                return False
+                
+        # regular expression verification by German orthography:    https://en.wikipedia.org/wiki/German_orthography
+        # pattern   = u"^[a-zA-ZäöüÄÖÜ0-9.,?\"'\-]+$"   # All allowed chars
+        # pattern   = u"^[a-zA-ZäöüÄÖÜß]+[.|']?$"       # common char of [a-zäöü] with an optional trailing dot or apostrophe '
+        pattern     = u"^[a-zA-ZäöüÄÖÜß.']+$"
+        # print( pattern.encode( "utf-8" ) )
+        
+        recmped   = re.compile( pattern.encode("utf-8" ) )   # re compiled
+        words     = strText.split( )
+        for word in words:
+            # German orthography check 
+            result = recmped.match( word.encode( "utf-8" ) )
+            if result is None:
+                TextCluster.logger.info("Discard sentence, disobey German orthography rule (%s)! '%s' in '%s'" \
+                    % ( pattern.encode( "utf-8" ), word.encode("utf-8" ), strText.encode("utf-8" ) ) )
+                return False
+                
+            # Check for too long word
+            if len( word.encode( "utf-8" ) ) > MAX_WORD_LENGTH:
+                TextCluster.logger.info("Discard sentence, too long word '%s' of length '%d'! In '%s'" \
+                    % ( word.encode( "utf-8" ), len( word.encode( "utf-8" ) ), strText.encode("utf-8" ) ) )
+                
+                # For temporary debugging: Output all long words for analysis
+                if False:
+                    cmd = 'echo "' + word.encode( "utf-8" ) + '" >> long_words.txt'
+                    print( cmd )
+                    os.system( cmd )
+                
+                return False
 
         return True
 
