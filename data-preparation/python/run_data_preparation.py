@@ -44,7 +44,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=usage)
     parser.add_argument("-i", "--input", help="input file", nargs=1, dest="inputFile", required=True)
     parser.add_argument("-o", "--output", help="output directory", nargs=1, dest="outputDir", required=True)
-    parser.add_argument("-l", "--language", help="language (0=unk,1=fr,2=ge,3=en,4=it)", nargs=1, 
+    parser.add_argument("-l", "--language", help="language (0=unk,1=fr,2=ge,3=en,4=it)", nargs=1,
                                        dest="language", default=[0])
     parser.add_argument("-r", "--regex", help="regex file", nargs=1, dest="regexFile", default=[None])
     parser.add_argument("-f", "--filter", help="filter sentences", dest="filter",action="store_true")
@@ -53,8 +53,10 @@ if __name__ == "__main__":
     parser.add_argument("-p", "--vbpunct", help="verbalize punctuation", dest="vbpunct",action="store_true")
     parser.add_argument("-s", "--rawseg", help="do not segment sentences with NLTK", dest="rawseg",action="store_true")
     parser.add_argument("-m", "--lm", help="prepare for lm modeling", dest="lm",action="store_true")
+    parser.add_argument("-t", "--trim", help="remove special characters in words", dest="trim",action="store_true")
     parser.add_argument("-d", "--debug", help="enable debug output", dest="debug",action="store_true")
-    
+
+
     #Parse arguments
     args = parser.parse_args()
     inputFile = args.inputFile[0]
@@ -70,6 +72,7 @@ if __name__ == "__main__":
     verbalizePunctuation = bool(args.vbpunct)
     rawSeg = bool(args.rawseg)
     lmModeling = bool(args.lm)
+    keepNewWords = bool(not args.trim)
 
     setupLogging(logging.INFO, outputDir + "/task_log.txt")
 
@@ -82,6 +85,7 @@ if __name__ == "__main__":
     api.setRemovePunctuation(removePunctuation)
     api.setVerbalizePunctuation(verbalizePunctuation)
     api.setSegmentWithNLTK(not rawSeg)
+    api.setKeepNewWords(keepNewWords)
 
     if language == 0:
         api.trainClassifier()

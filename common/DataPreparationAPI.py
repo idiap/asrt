@@ -55,7 +55,7 @@ class DataPreparationAPI():
         self.removePunctuation = False
         self.verbalizePunctuation = False
         self.segmentWithNLTK = True
-        self.keepNewWords = False
+        self.keepNewWords = True
         self.doc = None
         self.wordClassifier = None
         self.substitutionRegexFormula = RegularExpressionFormula(None)
@@ -110,7 +110,7 @@ class DataPreparationAPI():
                 self.validationPatternList.append((row[0],row[3]))
             else:
                 substitutionList.append((row[0],row[1],row[2],row[3]))
-            
+
         self.substitutionRegexFormula.setSubstitutionPatternList(substitutionList)
 
     def getSubstitutionList(self):
@@ -126,11 +126,11 @@ class DataPreparationAPI():
         """Set the user regexes substitution list.
 
            param regexList: a four columns list of lists:
-          
+
            [u'matching pattern', u'substitution', u'type', u'language id']
         """
         self.substitutionRegexFormula = RegularExpressionFormula(None)
-        
+
         substitutionList = []
 
         for row in regexList:
@@ -157,7 +157,7 @@ class DataPreparationAPI():
            Filter 'regexList' for validation rules only.
 
            param regexList: a four columns list of lists:
-          
+
            ['matching pattern', 'substitution', 'type', 'language id']
         """
         self.validationPatternList = []
@@ -202,7 +202,7 @@ class DataPreparationAPI():
             self.logger.info("Prepare the word classifier ...")
             self.wordClassifier = WordClassifier()
             self.wordClassifier.train()
-    
+
     def getRegexes(self):
         """Fetch validation and substitution regexes
            from csv file.
@@ -262,7 +262,7 @@ class DataPreparationAPI():
                                     self.outputDir,
                                     self.segmentWithNLTK,
                                     self.keepNewWords)
-            
+
             if self.inputFile != None:
                 self.logger.info("Load file, convert to text when pdf document")
                 self.doc.loadDocumentAsSentences(self.tempDir)
@@ -304,7 +304,7 @@ class DataPreparationAPI():
             #the prepareLM stage
             if self.removePunctuation and not self.lmModeling:
                 self.doc.removeTextPunctuation()
-            
+
             if self.verbalizePunctuation and not self.removePunctuation:
                 self.doc.verbalizeTextPunctuation()
 
@@ -315,7 +315,7 @@ class DataPreparationAPI():
             if self.lmModeling:
                 self.logger.info("Preparing for language modeling")
                 self.doc.prepareLM()
-            
+
             if self.filterTextSentences2ndStage:
                 if language == GERMAN:
                     self.logger.info("Filtering data - 2nd stage (remove web address and check German orthograph)")
@@ -325,7 +325,7 @@ class DataPreparationAPI():
             errorMessage = "An error has occurred when importing sentences: %s\n%s" % \
                              (getByteString(e.message), self.inputFile)
             errorMessage = getErrorMessage(e, errorMessage)
-            
+
             self.logger.critical(errorMessage)
 
             raise Exception(e)
