@@ -104,4 +104,4 @@ if __name__ == "__main__":
         strUnformatted = api.getCleanedText()
 
         outputFile = "%s/%s.lab" % (outputDir, os.path.splitext(os.path.basename(f))[0])
-        io.writeFileContent(outputFile, strUnformatted)
+        io.writeFileContent(outputFile, strUnformatted + u"\n")
