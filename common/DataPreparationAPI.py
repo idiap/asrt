@@ -147,7 +147,7 @@ class DataPreparationAPI():
         """
         validationList = []
         for pattern, regexType in self.validationPatternList:
-            validationList.append(pattern, u"",regexType, u"0")
+            validationList.append([pattern, u"",regexType, u"0"])
 
         return validationList
 
