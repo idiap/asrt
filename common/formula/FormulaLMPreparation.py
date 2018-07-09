@@ -244,7 +244,8 @@ class LMPreparationFormula():
             tokenList = re.split(CAPTURINGDIGITPATTERN, w, flags=re.UNICODE)
             #Numbers need to contain a digit
             #Ordinal numbers are not expanded
-            if not re.search(u"[0-9]", w) or w.endswith(EXPANDEXCEPTIONS):
+            if not re.search(u"[0-9]", w) or (self.languageId in EXPANDEXCEPTIONS and \
+                re.search(EXPANDEXCEPTIONS[self.languageId], w, flags=re.UNICODE)):
                 newWordsList.append(w)
             #We have a match
             elif len(tokenList) > 1:

@@ -75,14 +75,14 @@ class TestFormulaLMPreparation(unittest.TestCase):
         f._normalizePunctuation(self.allPunctList)
         strResult = f.getText()
 
-        gt = u"$%&'@\u2030"
+        gt = u"$%&'-/@\u2030"
         self.assertEquals(gt, strResult)
 
         f.setLanguageId(1)
         f._normalizePunctuation(self.allPunctList)
         strResult = f.getText()
 
-        gt = "dollars pourcent et ' at pour mille"
+        gt = "dollars pourcent et '-/ at pour mille"
         self.assertEquals(gt, strResult)
 
     def testNormalizePunctuationKeepInWords(self):
@@ -135,6 +135,19 @@ class TestFormulaLMPreparation(unittest.TestCase):
         f = LMPreparationFormula()
         self.verifyEqual(testList, f, f._expandNumberInWords)
 
+        f.setKeepNewWords(False)
+        testList = [(ur"1er",ur"1er")]
+        f.setLanguageId(1)
+        self.verifyEqual(testList, f, f._expandNumberInWords)
+
+        testList = [(ur"1st",ur"1st")]
+        f.setLanguageId(3)
+        self.verifyEqual(testList, f, f._expandNumberInWords)
+
+        testList = [(ur"18-jähriger", ur"18 -jähriger")]
+        f.setLanguageId(2)
+        self.verifyEqual(testList, f, f._expandNumberInWords)
+
     def testExpandAbbreviations(self):
         f = LMPreparationFormula()
         for languageId, v in ABBREVIATIONS.items():
@@ -177,14 +190,18 @@ class TestFormulaLMPreparation(unittest.TestCase):
             self.assertEquals(gt.encode('utf-8'), r.encode('utf-8'))
 
     def testFrench(self):
-        testList =[
-                   (ur"à plus tard",ur"à plus tard"),
+        testList =[(ur"à plus tard",ur"à plus tard"),
                    (ur"maîtres",ur"maîtres"),
                    (ur"maïs",ur"maïs"),
                    (ur"emmaüs",ur"emmaüs"),
-                   (ur"mäman",ur"mäman")]
+                   (ur"mäman",ur"mäman"),
+                   (ur"1er", ur"premier"),
+                   (ur"20ème", ur"vingtième"),
+                   (ur"18-age", ur"dix huit age")]
 
+        #No new words are kepts, hyphens are removed
         f = LMPreparationFormula()
+        f.setKeepNewWords(False)
         f.setLanguageId(1)
 
         for t, gt in testList:
@@ -192,17 +209,27 @@ class TestFormulaLMPreparation(unittest.TestCase):
             r = f.prepareText()
             self.assertEquals(gt.encode('utf-8'), r.encode('utf-8'))
 
+        # Keep new words implies keep hyphens in words
+        f.setKeepNewWords(True)
+
+        testList =[(ur"18-age", ur"18-age")]
+        for t, gt in testList:
+            f.setText(t)
+            r = f.prepareText()
+            self.assertEquals(gt.encode('utf-8'), r.encode('utf-8'))
+
     def testGerman(self):
-        testList =[
-                   (ur"emmaüs",ur"emmaüs"),
+        testList =[(ur"emmaüs",ur"emmaüs"),
                    (u"mein àrbeit", u"mein àrbeit"),
                    (ur"môchten",ur"môchten"),
                    (ur"mädchen",ur"mädchen"),
                    (ur"meîn",ur"meîn"),
-                   (ur"meïn",ur"meïn")
-                   ]
+                   (ur"meïn",ur"meïn"),
+                   (ur"18-jähriger", ur"achtzehn jähriger")]
 
+        #No new words are kepts
         f = LMPreparationFormula()
+        f.setKeepNewWords(False)
         f.setLanguageId(2)
 
         for t, gt in testList:
@@ -210,11 +237,31 @@ class TestFormulaLMPreparation(unittest.TestCase):
             r = f.prepareText()
             self.assertEquals(gt.encode('utf-8'), r.encode('utf-8'))
 
+        #New words are kept
+        testList =[(ur"18-jähriger", ur"18-jähriger")]
+        f.setKeepNewWords(True)
+
+        for t, gt in testList:
+            f.setText(t)
+            r = f.prepareText()
+            self.assertEquals(gt.encode('utf-8'), r.encode('utf-8'))
+
     def testEnglish(self):
-        testList =[(ur"object [1-5]",ur"object one five")]
+        testList =[(ur"object 5",ur"object five"),
+                   (ur"1st", ur"first")]
 
         f = LMPreparationFormula()
+        f.setKeepNewWords(False)
         f.setLanguageId(3)
+
+        for t, gt in testList:
+            f.setText(t)
+            r = f.prepareText()
+            self.assertEquals(gt.encode('utf-8'), r.encode('utf-8'))
+
+
+        testList =[(ur"18-year-old", ur"18-year-old")]
+        f.setKeepNewWords(True)
 
         for t, gt in testList:
             f.setText(t)

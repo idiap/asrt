@@ -26,7 +26,8 @@ from asrt.config.AsrtConfig import FRENCH, GERMAN, ENGLISH
 SPACEPATTERN                = u"[ ]+"
 CAPTURINGDIGITPATTERN       = u"([0-9\.,]+)"
 GROUPINGDOTCOMMAPATTERN     = u"( |$)([.,])( |$)"
-EXPANDEXCEPTIONS            = (u"er", u"re", u"ère", u"e", u"ème", u"st", u"nd", u"rd", u"th")
+EXPANDEXCEPTIONS            = { FRENCH  : u"[0-9]+(er|re|ère|e|ème)",
+                                ENGLISH : u"[0-9]+(st|nd|rd|th)"}
 
 UNITD2W                     = {1:'ein', 2:'zwei', 3:'drei', 4:'vier', 5:'fünf', 6:'sechs', 7:'sieben', 8:'acht', 9:'neun',
                                10:'zehn', 11:'elf', 12:'zwölf', 13:'dreizehn', 14:'vierzehn', 15:'fünfzehn', 16:'sechszehn',

@@ -33,7 +33,7 @@ class FormulaNumberUnitTest(unittest.TestCase):
                                  (u"XXth",u"twentieth"),(u"XXIIIrd",u"twenty-third")],
                  "roman"      : [(u"XXIII",u"twenty-three"), (u"XX",u"twenty")],
                  "decimal"    : [(u"2.5",u"two point five"), (u"2.53",u"two point fifty three"),
-                                 (u"2.5555",u"two point five five")],
+                                 (u"2.55",u"two point fifty five")],
                  "all"        : [(u"1ab",u"1ab"),(u"ab",u"ab"),
                                  (u"the 25 march 2015 2.5 XXth",u"the twenty five march two thousand and fifteen two point five twentieth"),
                                  (u"the 25.",u"the twenty five"),
