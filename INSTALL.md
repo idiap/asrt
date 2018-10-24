@@ -12,7 +12,15 @@ This install manual is for Debian based systems.
 
 2. Install the three libraries using the *setup.py* scripts.
 
-   `setup.py install --prefix=/path/to/local/install`
+   ```bash
+    for ll in nltk unicodecsv num2words;
+    do 
+      (
+        cd lib/$ll
+        setup.py install --prefix=/path/to/local/install/$ll`
+      )
+    done
+    ```
 
 3. Setup nltk data location with environment variable `NLTK_DATA` (see: http://www.nltk.org/data.html)
 
@@ -22,9 +30,14 @@ This install manual is for Debian based systems.
       - copora : europarl_raw
       - model  : punkt
 
-5. Install the num2words library: https://pypi.python.org/pypi/num2words
+(5. Install the num2words library: https://pypi.python.org/pypi/num2words
+already installed above)
 
-6. Install the python-roman library: sudo apt-get install python-roman
+6. Install the python-roman library: 
+    ```bash
+    # on debian / ubuntu
+    sudo apt-get install python-roman
+    ```
 
 7. Build the debian package
     - Change directory into scripts
