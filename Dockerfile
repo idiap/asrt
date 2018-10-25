@@ -9,9 +9,7 @@ RUN apt-get update && \
     python2.7 \
     python-dev \
     python-pip \
-    python-roman && \
-    pip install pdftotext
-     
+    python-roman     
 
 WORKDIR /usr/local
 
