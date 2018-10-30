@@ -9,7 +9,10 @@ RUN apt-get update && \
     python2.7 \
     python-dev \
     python-pip \
-    python-roman
+    python-roman \
+    poppler-utils \
+    vim
+
 
 WORKDIR /usr/local
 
