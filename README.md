@@ -29,3 +29,19 @@ please have a look at the `run_data_preparation.sh` script located in
 
 There is also an API to be used in python code. It is located into the
 common package and is called `DataPreparationAPI.py`
+
+# Docker
+To build a docker image of asrt:
+
+```bash
+docker build -t asrt .
+```
+
+To run `run_data_preparation.py` using docker image, where your test file is
+`docker-example/research.txt`:
+
+```bash
+docker run -d -v $PWD/docker_test:/usr/local/asrt/data asrt -i data/research.txt -o /usr/local/asrt/data
+```
+
+The output will then be in `docker-example/sentences_*.txt`

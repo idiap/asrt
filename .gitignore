@@ -14,5 +14,6 @@ data-preparation/output/task_log.txt.5
 data-preparation/python/2012_05_Sessiondemai2012.pdf
 data-preparation/python/2015.03_Sessiondemars2015.pdf
 data-preparation/python/regex_mediaparl.csv
+docker-example/sentences_*.txt
 build-stamp
 debian
