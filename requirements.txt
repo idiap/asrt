@@ -1,0 +1,5 @@
+nltk
+num2words
+pdftotext
+unicodecsv
+
