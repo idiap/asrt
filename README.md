@@ -41,7 +41,7 @@ To run `run_data_preparation.py` using docker image, where your test file is
 `docker-example/research.txt`:
 
 ```bash
-docker run -d -v $PWD/docker_test:/usr/local/asrt/data asrt -i data/research.txt -o /usr/local/asrt/data
+docker run -d -v $PWD/docker-example:/usr/local/asrt/data asrt -i data/research.txt -o /usr/local/asrt/data
 ```
 
 The output will then be in `docker-example/sentences_*.txt`
