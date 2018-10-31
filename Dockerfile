@@ -1,4 +1,4 @@
-FROM debian:stretch
+FROM ubuntu:16.04
 
 RUN apt-get update && \
     apt-get install -y \
@@ -12,7 +12,7 @@ RUN apt-get update && \
     python-roman \
     poppler-utils \
     vim
-         
+
 
 WORKDIR /usr/local
 
@@ -30,7 +30,11 @@ RUN mkdir -p NLTK_DATA && \
     python -m nltk.downloader punkt -d $NLTK_DATA && \
     python -m nltk.downloader europarl_raw -d $NLTK_DATA
 
-CMD echo "#==== This is a test of ASRT library in Docker." && \
-    ls /usr/local/asrt/examples/resources/* && \
-    /usr/local/asrt/examples/bash/run_data_preparation.sh && \
-    /usr/local/asrt/examples/bash/run_data_preparation_task.sh
+ENV LANG=1
+ENV REGEX=examples/resources/regex.csv
+
+ENTRYPOINT ["data-preparation/python/run_data_preparation.py", \
+    "-l", "0", \
+    "-r", "examples/resources/regex.csv", "-s", "-m"]
+
+# requires -i inputfile -o outputfolder and mounting volume
