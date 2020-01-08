@@ -21,7 +21,8 @@ __date__ = "Date: 2012/05"
 __copyright__ = "Copyright (c) 2012 Idiap Research Institute"
 __license__ = "BSD 3-Clause"
 
-import re, logging
+import re
+import logging
 import unicodedata
 
 from asrt.common.Cluster import Cluster
@@ -35,8 +36,9 @@ from asrt.config.AsrtConfig import MAX_WORD_LENGTH
 from asrt.config.AsrtConfig import MIN_WORDS_COUNT, MAX_WORDS_COUNT
 from asrt.config.AsrtConfig import MAX_DIGITS_GROUPS, LANGUAGE2ID
 
-## Added by Yang WANG
+# Added by Yang WANG
 import os
+
 
 class TextCluster(Cluster):
     """Concrete type representing a text sentence from
@@ -44,37 +46,37 @@ class TextCluster(Cluster):
 
        Sentences are stored in utf-8 encoding.
     """
-    
+
     logger = logging.getLogger("Asrt.TextCluster")
 
-    LANGUAGE_ATTRIBUTE      = 'language'
-    ID_COUNTER              = 0
-    
+    LANGUAGE_ATTRIBUTE = 'language'
+    ID_COUNTER = 0
+
     def __init__(self, document, sentenceText):
         """Constructor.
         """
-        #Give a unique id to cluster
+        # Give a unique id to cluster
         TextCluster.ID_COUNTER += 1
 
-        #Unknown language
+        # Unknown language
         attributesList = [(TextCluster.LANGUAGE_ATTRIBUTE, 0)]
 
-        #Key is mlf pattern
+        # Key is mlf pattern
         Cluster.__init__(self, str(TextCluster.ID_COUNTER), attributesList)
 
         self.document = document
 
-        #Actual data
+        # Actual data
         self.addElement(sentenceText)
 
-        #LM normalization
+        # LM normalization
         self.lmPreparationFormula = LMPreparationFormula()
         self.lmPreparationFormula.setKeepNewWords(document.keepNewWords)
 
     #####################
     #Getters and setters
     #
-    def getTextSentence(self, noPunctuation = False, debug=False):
+    def getTextSentence(self, noPunctuation=False, debug=False):
         """Return the associated utf-8 text sentence.
         """
         if len(self.elementList) == 0:
@@ -122,7 +124,7 @@ class TextCluster(Cluster):
         self.setAttribute(TextCluster.LANGUAGE_ATTRIBUTE, strLanguage)
 
     #####################
-    #Public interface
+    # Public interface
     #
     def clean(self):
         """Perform text cleaning.
@@ -135,7 +137,7 @@ class TextCluster(Cluster):
         strText = self.getTextSentence()
         strText = TextCluster.removeControlCharacters(strText)
         self.setTextSentence(strText)
-    
+
     def classify(self, classifier):
         """Classify between french and german.
         """
@@ -146,8 +148,8 @@ class TextCluster(Cluster):
         """Remove punctuation symbols.
         """
         strText = self.getTextSentence()
-        strText = LanguageClassifier.removePunctuation(strText = strText,
-                                                       removeDots = False)
+        strText = LanguageClassifier.removePunctuation(strText=strText,
+                                                       removeDots=False)
         self.setTextSentence(strText)
 
     def verbalizeTextPunctuation(self):
@@ -158,7 +160,8 @@ class TextCluster(Cluster):
             p = Punctuation()
             self.setTextSentence(p.replaceText(self.getTextSentence()))
         else:
-            raise Exception("Text verbalization is only implemented for French!")
+            raise Exception(
+                "Text verbalization is only implemented for French!")
 
     def prepareLM(self):
         """Prepare for language modeling.
@@ -169,11 +172,11 @@ class TextCluster(Cluster):
         self.lmPreparationFormula.setText(strText)
         self.lmPreparationFormula.setLanguageId(languageId)
         strText = self.lmPreparationFormula.prepareText()
-        
+
         self.setTextSentence(strText)
 
     #####################
-    #Predicates
+    # Predicates
     #
     def isValid(self):
         """Check validity of sentence.
@@ -184,29 +187,32 @@ class TextCluster(Cluster):
         """
         strText = self.getTextSentence()
 
-        #Nb characters
+        # Nb characters
         if len(strText) > MAX_SENTENCE_LENGTH or\
            len(strText) < MIN_SENTENCE_LENGTH:
-            #print strText.encode('utf-8')
-            TextCluster.logger.info("Discard sentence: inappropriate length: %d! '%s'" % (len(strText), strText.encode("utf-8") ) )
+            # print strText.encode('utf-8')
+            TextCluster.logger.info("Discard sentence: inappropriate length: %d! '%s'" % (
+                len(strText), strText.encode("utf-8")))
             return False
 
-        #Nb words
+        # Nb words
         nbWords = len(strText.split(' '))
         if nbWords < MIN_WORDS_COUNT or \
            nbWords > MAX_WORDS_COUNT:
-            #print strText.encode('utf-8')
-            TextCluster.logger.info("Discard sentence, not enough or to many words, wordsNum = %d! '%s'" % ( nbWords, strText.encode("utf-8" ) ) )
+            # print strText.encode('utf-8')
+            TextCluster.logger.info("Discard sentence, not enough or to many words, wordsNum = %d! '%s'" % (
+                nbWords, strText.encode("utf-8")))
             return False
 
-        #Nb digit groups
+        # Nb digit groups
         if len(re.split("\d+", strText)) > MAX_DIGITS_GROUPS:
-            #print strText.encode('utf-8')
-            TextCluster.logger.info("Discard sentence, to many groups of digits! '%s'" % strText.encode("utf-8" ) )
+            # print strText.encode('utf-8')
+            TextCluster.logger.info(
+                "Discard sentence, to many groups of digits! '%s'" % strText.encode("utf-8"))
             return False
 
-        #Try decode
-        #Use some regex
+        # Try decode
+        # Use some regex
         if not self._isTextValid(strText):
             return False
 
@@ -219,42 +225,45 @@ class TextCluster(Cluster):
            Remove web address and check German orthography https://en.wikipedia.org/wiki/German_orthography .
         """
         strText = self.getTextSentence()
-        
-        # To filter out web addresses        
+
+        # To filter out web addresses
         if strText.find( "http" ) >= 0 \
-            or strText.find( "www" ) >= 0 \
-            or strText.find( "html" ) >= 0 \
-            or strText.find( "URL" ) >= 0:
-                TextCluster.logger.info("Discard sentence, web address! '%s'" % strText.encode("utf-8" ) )
-                return False
-                
+                or strText.find( "www" ) >= 0 \
+                or strText.find( "html" ) >= 0 \
+                or strText.find("URL") >= 0:
+            TextCluster.logger.info(
+                "Discard sentence, web address! '%s'" % strText.encode("utf-8"))
+            return False
+
         # regular expression verification by German orthography:    https://en.wikipedia.org/wiki/German_orthography
         # pattern   = u"^[a-zA-ZäöüÄÖÜ0-9.,?\"'\-]+$"   # All allowed chars
-        # pattern   = u"^[a-zA-ZäöüÄÖÜß]+[.|']?$"       # common char of [a-zäöü] with an optional trailing dot or apostrophe '
-        pattern     = u"^[a-zA-ZäöüÄÖÜß.']+$"
+        # pattern   = u"^[a-zA-ZäöüÄÖÜß]+[.|']?$"       # common char of
+        # [a-zäöü] with an optional trailing dot or apostrophe '
+        pattern = u"^[a-zA-ZäöüÄÖÜß.']+$"
         # print( pattern.encode( "utf-8" ) )
-        
-        recmped   = re.compile( pattern.encode("utf-8" ) )   # re compiled
-        words     = strText.split( )
+
+        recmped = re.compile(pattern.encode("utf-8"))   # re compiled
+        words = strText.split()
         for word in words:
-            # German orthography check 
-            result = recmped.match( word.encode( "utf-8" ) )
+            # German orthography check
+            result = recmped.match(word.encode("utf-8"))
             if result is None:
-                TextCluster.logger.info("Discard sentence, disobey German orthography rule (%s)! '%s' in '%s'" \
-                    % ( pattern.encode( "utf-8" ), word.encode("utf-8" ), strText.encode("utf-8" ) ) )
+                TextCluster.logger.info("Discard sentence, disobey German orthography rule (%s)! '%s' in '%s'"
+                                        % (pattern.encode("utf-8"), word.encode("utf-8"), strText.encode("utf-8")))
                 return False
-                
+
             # Check for too long word
-            if len( word.encode( "utf-8" ) ) > MAX_WORD_LENGTH:
-                TextCluster.logger.info("Discard sentence, too long word '%s' of length '%d'! In '%s'" \
-                    % ( word.encode( "utf-8" ), len( word.encode( "utf-8" ) ), strText.encode("utf-8" ) ) )
-                
+            if len(word.encode("utf-8")) > MAX_WORD_LENGTH:
+                TextCluster.logger.info("Discard sentence, too long word '%s' of length '%d'! In '%s'"
+                                        % (word.encode("utf-8"), len(word.encode("utf-8")), strText.encode("utf-8")))
+
                 # For temporary debugging: Output all long words for analysis
                 if False:
-                    cmd = 'echo "' + word.encode( "utf-8" ) + '" >> long_words.txt'
-                    print( cmd )
-                    os.system( cmd )
-                
+                    cmd = 'echo "' + \
+                        word.encode("utf-8") + '" >> long_words.txt'
+                    print(cmd)
+                    os.system(cmd)
+
                 return False
 
         return True
@@ -263,25 +272,25 @@ class TextCluster(Cluster):
         """Content is French
         """
         return self.getAttribute(TextCluster.LANGUAGE_ATTRIBUTE) ==\
-                     FRENCH_LABEL
+            FRENCH_LABEL
 
     def isGerman(self):
         """Content is German
         """
         return self.getAttribute(TextCluster.LANGUAGE_ATTRIBUTE) ==\
-                     GERMAN_LABEL
+            GERMAN_LABEL
 
     def isItalian(self):
         """Content is Italian
         """
         return self.getAttribute(TextCluster.LANGUAGE_ATTRIBUTE) ==\
-                     ITALIAN_LABEL
+            ITALIAN_LABEL
 
     def isEnglish(self):
         """Content is English
         """
         return self.getAttribute(TextCluster.LANGUAGE_ATTRIBUTE) ==\
-                     ENGLISH_LABEL
+            ENGLISH_LABEL
 
     def getClusterInfo(self):
         """Return key.
@@ -299,17 +308,18 @@ class TextCluster(Cluster):
         """
         clusterLanguageId = self.getLanguageId()
 
-        #Some regex
+        # Some regex
         for regex, regexLanguageId in self.document.regex_filter_list:
             regexLanguageId = int(regexLanguageId)
-            #Does it match the text language
+            # Does it match the text language
             if regexLanguageId != clusterLanguageId and \
                regexLanguageId != 0:
                 continue
-            #Ignore case available
-            #if re.search(regex, strText, re.IGNORECASE) != None:
+            # Ignore case available
+            # if re.search(regex, strText, re.IGNORECASE) != None:
             if re.search(regex, strText, flags=re.UNICODE) != None:
-                TextCluster.logger.info("Discard:%s\n%s" % (regex.encode("utf-8"), strText.encode("utf-8")))
+                TextCluster.logger.info("Discard:%s\n%s" % (
+                    regex.encode("utf-8"), strText.encode("utf-8")))
                 return False
 
         return True
