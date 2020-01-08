@@ -64,7 +64,7 @@ class LMPreparationFormula():
         """
         self.strText = ""
         self.languageId = 0
-        self.keepNewWords = True
+        self.expandNumberInWords = True
         self.numberFormula = {
             FRENCH: FrenchNumberFormula,
             GERMAN: GermanNumberFormula,
@@ -105,10 +105,10 @@ class LMPreparationFormula():
         LMPreparationFormula.ordDict = LMPreparationFormula._getOrdDict(
             self.languageId)
 
-    def setKeepNewWords(self, keepNewWords):
+    def setExpandNumberInWords(self, expandNumberInWords):
         """Keep new words.
         """
-        self.keepNewWords = keepNewWords
+        self.expandNumberInWords = expandNumberInWords
 
     ##################
     # Public interface
@@ -137,7 +137,7 @@ class LMPreparationFormula():
         self._normalizeDates()
         self._expandAbbreviations()
 
-        if self.keepNewWords:
+        if self.expandNumberInWords:
             self._expandNumberInWords()
             # print self.strText
 
@@ -156,7 +156,7 @@ class LMPreparationFormula():
         self._normalizePunctuation(self.ALLPUNCTUATIONSYMBOLS)
         # print self.strText
 
-        if not self.keepNewWords:
+        if not self.expandNumberInWords:
             self._expandAcronyms()
             # print self.strText
 
@@ -313,7 +313,7 @@ class LMPreparationFormula():
                     unicodeList.append(u" ")
                 # Keep some special characters if they appear after a non-space
                 # value
-                elif self.keepNewWords and prevC not in ("", " ") and strC in PUNCTUATIONKEEPINWORD:
+                elif self.expandNumberInWords and prevC not in ("", " ") and strC in PUNCTUATIONKEEPINWORD:
                     unicodeList.append(c)
             elif self.languageId != 0 and strC in PUNCTUATIONMAP:
                 unicodeList.append(

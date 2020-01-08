@@ -74,7 +74,7 @@ if __name__ == "__main__":
     verbalizePunctuation = bool(args.vbpunct)
     rawSeg = bool(args.rawseg)
     lmModeling = bool(args.lm)
-    keepNewWords = bool(not args.trim)
+    expandNumberInWords = bool(not args.trim)
 
     setupLogging(logging.INFO, outputDir + "/data_preparation_log.txt")
 
@@ -87,7 +87,7 @@ if __name__ == "__main__":
     api.setRemovePunctuation(removePunctuation)
     api.setVerbalizePunctuation(verbalizePunctuation)
     api.setSegmentWithNLTK(not rawSeg)
-    api.setKeepNewWords(keepNewWords)
+    api.setExpandNumberInWords(expandNumberInWords)
 
     if language == 0:
         api.trainClassifier()

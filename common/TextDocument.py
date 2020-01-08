@@ -54,7 +54,7 @@ class TextDocument(Document):
     #
     def __init__(self, source, languageId,
                  regexSubstitutionFormula, regex_filter_list,
-                 logDir, segmentWithNLTK, keepNewWords):
+                 logDir, segmentWithNLTK, expandNumberInWords):
         Document.__init__(self, source)
 
         self.languageId = languageId
@@ -63,7 +63,7 @@ class TextDocument(Document):
         self.logDir = logDir
         self.classifier = None
         self.segmentWithNLTK = segmentWithNLTK
-        self.keepNewWords = keepNewWords
+        self.expandNumberInWords = expandNumberInWords
 
     ########################
     #Getter and setters

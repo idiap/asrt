@@ -71,7 +71,7 @@ class TextCluster(Cluster):
 
         # LM normalization
         self.lmPreparationFormula = LMPreparationFormula()
-        self.lmPreparationFormula.setKeepNewWords(document.keepNewWords)
+        self.lmPreparationFormula.setExpandNumberInWords(document.expandNumberInWords)
 
     #####################
     #Getters and setters

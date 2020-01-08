@@ -80,7 +80,7 @@ class TestDataPreparationAPI(unittest.TestCase):
         api = DataPreparationAPI(None, None)
         api.setRegexFile(self.regexFile)
         api.setLMModeling(True)
-        api.setKeepNewWords(True)
+        api.setExpandNumberInWords(True)
         api.setFormattedText(testString)
         api.prepareDocument(2)
         formattedText = api.getCleanedText()

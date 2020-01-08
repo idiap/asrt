@@ -83,7 +83,7 @@ if __name__ == "__main__":
     verbalizePunctuation = bool(args.vbpunct)
     rawSeg = bool(args.rawseg)
     lmModeling = bool(args.lm)
-    keepNewWords = bool(args.split)
+    expandNumberInWords = bool(args.split)
 
     setupLogging(logging.INFO, outputDir + "/task_log.txt")
 
@@ -97,7 +97,7 @@ if __name__ == "__main__":
     api.setVerbalizePunctuation(verbalizePunctuation)
     api.setSegmentWithNLTK(not rawSeg)
 
-    api.setKeepNewWords(keepNewWords)
+    api.setExpandNumberInWords(expandNumberInWords)
 
     if language == 0:
         api.trainClassifier()
