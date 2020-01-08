@@ -163,6 +163,8 @@ class LMPreparationFormula():
         self._normalizeCase()
         # print self.strText
 
+        self._normalizeSpaces()
+
         return self.strText
 
     ##################
@@ -207,8 +209,7 @@ class LMPreparationFormula():
                 self.strText[-2].isdigit():
             self.strText = self.strText.rstrip(self.ALLPUNCTUATIONSYMBOLS)
 
-        self.strText = re.sub(SPACEPATTERN, u" ",
-                              self.strText, flags=re.UNICODE)
+        self._normalizeSpaces()
 
     def _normalizeDates(self):
         """Normalize dates.
@@ -371,6 +372,12 @@ class LMPreparationFormula():
         """Case normalization (change to lower case)
         """
         self.strText = self.strText.lower()
+
+    def _normalizeSpaces(self):
+        """Case normalization (change to lower case)
+        """
+        self.strText = re.sub(SPACEPATTERN, u" ",
+                              self.strText, flags=re.UNICODE)
 
     @staticmethod
     def _getOrdDict(langId):
