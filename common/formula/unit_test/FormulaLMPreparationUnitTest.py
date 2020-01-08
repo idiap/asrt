@@ -21,7 +21,10 @@ __date__ = "Date: 2015/09"
 __copyright__ = "Copyright (c) 2015 Idiap Research Institute"
 __license__ = "BSD 3-Clause"
 
-import unittest, re, string, logging
+import unittest
+import re
+import string
+import logging
 
 from asrt.common.formula.FormulaLMPreparation import LMPreparationFormula
 from asrt.common.AsrtConstants import UTF8MAP, SPACEPATTERN, DOTCOMMAEXCLUDE, PUNCTUATIONEXCLUDE
@@ -29,6 +32,7 @@ from asrt.common.AsrtConstants import ABBREVIATIONS
 from asrt.common.LoggingSetup import setupLogging
 
 setupLogging(logging.INFO, "./output.log")
+
 
 class TestFormulaLMPreparation(unittest.TestCase):
     allPunctList = DOTCOMMAEXCLUDE + PUNCTUATIONEXCLUDE
@@ -40,27 +44,31 @@ class TestFormulaLMPreparation(unittest.TestCase):
             self.assertEquals(gt.encode('utf-8'), f.strText.encode('utf-8'))
 
     ############
-    #Tests
+    # Tests
     #
     def testNormalizeUtf8(self):
         languages = ['0', '1', '2']
         testList = {}
-        for lang in languages: testList[lang] = []
+        for lang in languages:
+            testList[lang] = []
         for match, sub, comment, languageId in UTF8MAP:
             for lang in languages:
-                if (lang == int(languageId)): testList[lang].append(match)
+                if (lang == int(languageId)):
+                    testList[lang].append(match)
 
         gtList = {}
-        for lang in languages: gtList[lang] = []
+        for lang in languages:
+            gtList[lang] = []
         for match, sub, comment, languageId in UTF8MAP:
             for lang in languages:
-                if (lang == int(languageId)): gtList[lang].append(sub)
+                if (lang == int(languageId)):
+                    gtList[lang].append(sub)
 
         for lang in languages:
             strGt = u" ".join(gtList[lang])
             strGt = strGt.rstrip().strip()
             strGt = re.sub(SPACEPATTERN, u" ",
-                            strGt, flags=re.UNICODE)
+                           strGt, flags=re.UNICODE)
 
             f = LMPreparationFormula()
             f.setText(u" ".join(testList[lang]))
@@ -108,7 +116,7 @@ class TestFormulaLMPreparation(unittest.TestCase):
 
     def testIsNoise(self):
         for p in list(string.punctuation):
-            strTest = p*4
+            strTest = p * 4
             self.assertTrue(LMPreparationFormula._isNoise(strTest))
 
     def testFilterNoiseWords(self):
@@ -122,25 +130,25 @@ class TestFormulaLMPreparation(unittest.TestCase):
         self.assertEquals(strGt, strTest)
 
     def testExpandAcronyms(self):
-        testList = [(u"PDCB.",u"p. d. c. b."),
-                    (u"PDC:",u"p. d. c.")]
+        testList = [(u"PDCB.", u"p. d. c. b."),
+                    (u"PDC:", u"p. d. c.")]
 
         f = LMPreparationFormula()
         self.verifyEqual(testList, f, f._expandAcronyms)
 
     def testExpandNumberInWords(self):
-        testList = [(ur"A1", ur"A. 1"),(ur"P3B", ur"P. 3 B."), (ur"P5B4", ur"P. 5 B. 4"),
-                     (ur"PPB5",ur"PPB 5")]
+        testList = [(ur"A1", ur"A. 1"), (ur"P3B", ur"P. 3 B."), (ur"P5B4", ur"P. 5 B. 4"),
+                    (ur"PPB5", ur"PPB 5"), (ur"10jährige", ur"10 jährige")]
 
         f = LMPreparationFormula()
         self.verifyEqual(testList, f, f._expandNumberInWords)
 
         f.setKeepNewWords(False)
-        testList = [(ur"1er",ur"1er")]
+        testList = [(ur"1er", ur"1er")]
         f.setLanguageId(1)
         self.verifyEqual(testList, f, f._expandNumberInWords)
 
-        testList = [(ur"1st",ur"1st")]
+        testList = [(ur"1st", ur"1st")]
         f.setLanguageId(3)
         self.verifyEqual(testList, f, f._expandNumberInWords)
 
@@ -155,11 +163,12 @@ class TestFormulaLMPreparation(unittest.TestCase):
             for abbr, gt in v.items():
                 f.strText = abbr
                 f._expandAbbreviations()
-                self.assertEquals(gt.encode('utf-8'), f.strText.encode('utf-8'))
+                self.assertEquals(gt.encode('utf-8'),
+                                  f.strText.encode('utf-8'))
 
     def testContractionPrefixes(self):
-        testList =[(ur"President' s", ur"president's", 3),
-                   (ur"President' s of", ur"president's of", 3)]
+        testList = [(ur"President' s", ur"president's", 3),
+                    (ur"President' s of", ur"president's of", 3)]
 
         f = LMPreparationFormula()
         f.setKeepNewWords(True)
@@ -171,14 +180,14 @@ class TestFormulaLMPreparation(unittest.TestCase):
             self.assertEquals(gt.encode('utf-8'), r.encode('utf-8'))
 
     def testAll(self):
-        testList =[(u"A dix heures", u"à dix heures", False),
-                   (u"1. Election",u"premièrement election", False),
-                   (u"R1",u"r. un", False), (ur"A1", ur"a. un", False),(ur"P3B", ur"p. trois b.", False),
-                   (ur"P5B4", ur"p. cinq b. quatre", False),
-                   (ur"PPB5",ur"p. p. b.  cinq", False),
-                   (ur"rte",ur"route", False),
-                   (ur"Constantin, p. l. r., président de",ur"constantin p. l. r. président de", False),
-                   (ur"/ HES-SO und AdG/LA - auch im Winter / Sommer -",ur"hes-so und adg/la auch im winter sommer", True)]
+        testList = [(u"A dix heures", u"à dix heures", False),
+                    (u"1. Election", u"premièrement election", False),
+                    (u"R1", u"r. un", False), (ur"A1", ur"a. un", False), (ur"P3B", ur"p. trois b.", False),
+                    (ur"P5B4", ur"p. cinq b. quatre", False),
+                    (ur"PPB5", ur"p. p. b.  cinq", False),
+                    (ur"rte", ur"route", False),
+                    (ur"Constantin, p. l. r., président de", ur"constantin p. l. r. président de", False),
+                    (ur"/ HES-SO und AdG/LA - auch im Winter / Sommer -", ur"hes-so und adg/la auch im winter sommer", True)]
 
         f = LMPreparationFormula()
         f.setLanguageId(1)
@@ -190,16 +199,16 @@ class TestFormulaLMPreparation(unittest.TestCase):
             self.assertEquals(gt.encode('utf-8'), r.encode('utf-8'))
 
     def testFrench(self):
-        testList =[(ur"à plus tard",ur"à plus tard"),
-                   (ur"maîtres",ur"maîtres"),
-                   (ur"maïs",ur"maïs"),
-                   (ur"emmaüs",ur"emmaüs"),
-                   (ur"mäman",ur"mäman"),
-                   (ur"1er", ur"premier"),
-                   (ur"20ème", ur"vingtième"),
-                   (ur"18-age", ur"dix huit age")]
+        testList = [(ur"à plus tard", ur"à plus tard"),
+                    (ur"maîtres", ur"maîtres"),
+                    (ur"maïs", ur"maïs"),
+                    (ur"emmaüs", ur"emmaüs"),
+                    (ur"mäman", ur"mäman"),
+                    (ur"1er", ur"premier"),
+                    (ur"20ème", ur"vingtième"),
+                    (ur"18-age", ur"dix huit age")]
 
-        #No new words are kepts, hyphens are removed
+        # No new words are kepts, hyphens are removed
         f = LMPreparationFormula()
         f.setKeepNewWords(False)
         f.setLanguageId(1)
@@ -212,22 +221,22 @@ class TestFormulaLMPreparation(unittest.TestCase):
         # Keep new words implies keep hyphens in words
         f.setKeepNewWords(True)
 
-        testList =[(ur"18-age", ur"18-age")]
+        testList = [(ur"18-age", ur"18-age")]
         for t, gt in testList:
             f.setText(t)
             r = f.prepareText()
             self.assertEquals(gt.encode('utf-8'), r.encode('utf-8'))
 
     def testGerman(self):
-        testList =[(ur"emmaüs",ur"emmaüs"),
-                   (u"mein àrbeit", u"mein àrbeit"),
-                   (ur"môchten",ur"môchten"),
-                   (ur"mädchen",ur"mädchen"),
-                   (ur"meîn",ur"meîn"),
-                   (ur"meïn",ur"meïn"),
-                   (ur"18-jähriger", ur"achtzehn jähriger")]
+        testList = [(ur"emmaüs", ur"emmaüs"),
+                    (u"mein àrbeit", u"mein àrbeit"),
+                    (ur"môchten", ur"môchten"),
+                    (ur"mädchen", ur"mädchen"),
+                    (ur"meîn", ur"meîn"),
+                    (ur"meïn", ur"meïn"),
+                    (ur"18-jähriger", ur"achtzehn jähriger")]
 
-        #No new words are kepts
+        # No new words are kepts
         f = LMPreparationFormula()
         f.setKeepNewWords(False)
         f.setLanguageId(2)
@@ -237,8 +246,8 @@ class TestFormulaLMPreparation(unittest.TestCase):
             r = f.prepareText()
             self.assertEquals(gt.encode('utf-8'), r.encode('utf-8'))
 
-        #New words are kept
-        testList =[(ur"18-jähriger", ur"18-jähriger")]
+        # New words are kept
+        testList = [(ur"18-jähriger", ur"18-jähriger")]
         f.setKeepNewWords(True)
 
         for t, gt in testList:
@@ -247,8 +256,8 @@ class TestFormulaLMPreparation(unittest.TestCase):
             self.assertEquals(gt.encode('utf-8'), r.encode('utf-8'))
 
     def testEnglish(self):
-        testList =[(ur"object 5",ur"object five"),
-                   (ur"1st", ur"first")]
+        testList = [(ur"object 5", ur"object five"),
+                    (ur"1st", ur"first")]
 
         f = LMPreparationFormula()
         f.setKeepNewWords(False)
@@ -259,12 +268,10 @@ class TestFormulaLMPreparation(unittest.TestCase):
             r = f.prepareText()
             self.assertEquals(gt.encode('utf-8'), r.encode('utf-8'))
 
-
-        testList =[(ur"18-year-old", ur"18-year-old")]
+        testList = [(ur"18-year-old", ur"18-year-old")]
         f.setKeepNewWords(True)
 
         for t, gt in testList:
             f.setText(t)
             r = f.prepareText()
             self.assertEquals(gt.encode('utf-8'), r.encode('utf-8'))
-
