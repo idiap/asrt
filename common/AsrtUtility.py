@@ -21,15 +21,21 @@ __date__ = "Date: 2015/08"
 __copyright__ = "Copyright (c) 2015 Idiap Research Institute"
 __license__ = "BSD 3-Clause"
 
-import os, sys, traceback
-import unittest, logging, re
+import os
+import sys
+import traceback
+import unittest
+import logging
+import re
 from asrt.common.AsrtConstants import SPACEPATTERN
 
-logger  = logging.getLogger("Asrt.AsrtUtility")
+logger = logging.getLogger("Asrt.AsrtUtility")
 
 ##################
-#Debug
+# Debug
 #
+
+
 def getByteString(message):
     """Get a byte encoded exception message.
     """
@@ -37,6 +43,7 @@ def getByteString(message):
         return message.encode('utf-8')
 
     return message
+
 
 def getErrorMessage(e, prefix):
     """Get full error message with stack trace.
@@ -47,13 +54,15 @@ def getErrorMessage(e, prefix):
                    getByteString(traceback.format_exc().rstrip()) + "\n" + \
                    "------------ End stack --------------"
     strError = "%s: %s (line: %d), %s\n%s" % \
-        (prefix, fname, exc_tb.tb_lineno, getByteString(e.message),stackMessage)
+        (prefix, fname, exc_tb.tb_lineno, getByteString(e.message), stackMessage)
 
     return strError
 
 ##################
-#Test
+# Test
 #
+
+
 def getTestSuite(pGetSuite, unitTestList):
     """Given a list of test, return the
        corresponding test suite.
@@ -63,7 +72,7 @@ def getTestSuite(pGetSuite, unitTestList):
     if unitTestList[0] == 'all':
         suiteList = pGetSuite('all')
     else:
-        #Specific unit tests
+        # Specific unit tests
         if unitTestList[0] != 'all':
             suiteList = []
             for m in unitTestList:
@@ -76,8 +85,10 @@ def getTestSuite(pGetSuite, unitTestList):
     return unittest.TestSuite(suiteList)
 
 ##################
-#Number expansion
+# Number expansion
 #
+
+
 def convertNumber(cls, strText):
     """Multilingual algorithm to convert a number
        into a written form.
@@ -90,12 +101,12 @@ def convertNumber(cls, strText):
             newWordsList.append(w)
             continue
         try:
-            #Now check number type
+            # Now check number type
             if cls._isTransitionNumber(w):
                 wNorm = cls._transition2word(w)
             else:
-                #Numbers may contain alphanumeric
-                #characters
+                # Numbers may contain alphanumeric
+                # characters
                 wNorm = cls._normalizeNumber(w)
                 if cls._isCardinalNumber(wNorm):
                     wNorm = cls._cardinal2word(wNorm)
@@ -111,14 +122,15 @@ def convertNumber(cls, strText):
 
         except Exception, e:
             prefix = "Error formatting number (%s): %s" % \
-                        (w.encode('utf-8'), str(e))
+                (w.encode('utf-8'), str(e))
             #errorMessage = getErrorMessage(e, prefix)
             logger.warning(prefix)
 
-            #Keep unformatted word
+            # Keep unformatted word
             newWordsList.append(w)
 
     return u" ".join(newWordsList)
+
 
 def hasNumber(cls, strWord):
     """Check if 'strWord' contains numbers.
@@ -126,5 +138,5 @@ def hasNumber(cls, strWord):
        param strWord: an utf-8 encoded words
        return True or False
     """
-    #Use search instead of match
+    # Use search instead of match
     return cls.HASNUMBERREGEX.search(strWord) != None

@@ -24,6 +24,7 @@ __license__ = "BSD 3-Clause"
 import unittest
 from asrt.common.german.Number import Number
 
+
 class NumberUnitTest(unittest.TestCase):
 
     ###############
@@ -50,8 +51,8 @@ class NumberUnitTest(unittest.TestCase):
 
         for digit, letters in test:
             strLetters = Number.convertNumberIntoLetters(digit)
-            self.assertEquals(letters, strLetters, "Error with: '%s' --> '%s' " %\
-            (letters.encode('utf-8'), strLetters.encode('utf-8')))
+            self.assertEquals(letters, strLetters, "Error with: '%s' --> '%s' " %
+                              (letters.encode('utf-8'), strLetters.encode('utf-8')))
 
     def testOrdinalConvertNumberIntoLetters(self):
         test = [(u'1', u'erste'),
@@ -71,12 +72,13 @@ class NumberUnitTest(unittest.TestCase):
                 (u'1504', u'tausend fünf hundert vierte'),
                 (u'2000', u'zwei tausendste'),
                 (u'134', u'hundert vier und dreissigste'),
-                (u'589217', u'fünf hundert neun und achtzig tausend zwei hundert siebzehnte')]
+                (u'589217', u'fünf hundert neun und achtzig tausend zwei hundert siebzehnte'),
+                (u'017688088605', u'siebzehn billionen sechs hundert acht und achtzig millionen acht und achtzig tausend sechs hundert fünfte')]
 
         for digit, letters in test:
-            strLetters = Number.convertNumberIntoLetters(digit,False, True)
-            self.assertEquals(letters, strLetters, "Error with: '%s' --> '%s' " %\
-            (letters.encode('utf-8'), strLetters.encode('utf-8')))
+            strLetters = Number.convertNumberIntoLetters(digit, False, True)
+            self.assertEquals(letters, strLetters, "Error with: '%s' --> '%s' " %
+                              (letters.encode('utf-8'), strLetters.encode('utf-8')))
 
     def testConvertDecimalNumberIntoLetters(self):
         test = [(u'1,4', u'eins komma vier'),
@@ -85,5 +87,5 @@ class NumberUnitTest(unittest.TestCase):
 
         for digit, letters in test:
             strLetters = Number.convertDecimalNumberIntoLetters(digit)
-            self.assertEquals(letters, strLetters, "Error with: '%s' --> '%s' " %\
-            (letters.encode('utf-8'), strLetters.encode('utf-8')))
+            self.assertEquals(letters, strLetters, "Error with: '%s' --> '%s' " %
+                              (letters.encode('utf-8'), strLetters.encode('utf-8')))

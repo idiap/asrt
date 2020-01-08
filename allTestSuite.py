@@ -21,7 +21,8 @@ __date__ = "Date: 2015/04"
 __copyright__ = "Copyright (c) 2015 Idiap Research Institute"
 __license__ = "BSD 3-Clause"
 
-import os, sys
+import os
+import sys
 import unittest
 
 scriptsDir = os.path.abspath(os.path.dirname(__file__))
@@ -42,17 +43,19 @@ usage = """
     Available unit tests are: %s
 """
 
+
 def getUsage():
     strTests = "%s, %s, %s, %s, %s" % \
-                         (CommonTestSuite.getSuite(), FormulaTestSuite.getSuite(),
-                          FrenchTestSuite.getSuite(), GermanTestSuite.getSuite(),
-                          EnglishTestSuite.getSuite())
+        (CommonTestSuite.getSuite(), FormulaTestSuite.getSuite(),
+         FrenchTestSuite.getSuite(), GermanTestSuite.getSuite(),
+         EnglishTestSuite.getSuite())
     return usage % strTests
 
-def asrtTestSuite(unitTestList = None):
+
+def asrtTestSuite(unitTestList=None):
     """Build test suite for all test sui tes in the script folder
     """
-    #Return test suite objects
+    # Return test suite objects
     commonTestSuite = CommonTestSuite.getCommonTestSuite(unitTestList)
     frenchTestSuite = FrenchTestSuite.getFrenchTestSuite(unitTestList)
     germanTestSuite = GermanTestSuite.getGermanTestSuite(unitTestList)
@@ -84,5 +87,5 @@ if __name__ == "__main__":
 
     MyFile.checkDirExists(TEMPDIRUNITTEST)
 
-    runner = unittest.TextTestRunner(verbosity = 2)
+    runner = unittest.TextTestRunner(verbosity=2)
     runner.run(asrtTestSuite(sys.argv[1:]))

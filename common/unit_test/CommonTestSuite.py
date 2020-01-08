@@ -33,29 +33,35 @@ from asrt.common.unit_test.DataPreparationAPIUnitTest import TestDataPreparation
 from asrt.common.unit_test.TextRepresentationUnitTest import TestTextRepresentation
 from asrt.common.unit_test.ListUnitTest import TestDataList, TestDataMap
 from asrt.common.unit_test.PunctuationUnitTest import PunctuationUnitTest
+from asrt.common.unit_test.IoreadUnitTest import TestIoread
 
-def getSuite(strName = None):
+
+def getSuite(strName=None):
     """Get all available suite for the common package.
     """
     taskInfoSuite = unittest.TestLoader().loadTestsFromTestCase(TestTaskInfo)
     taskSuite = unittest.TestLoader().loadTestsFromTestCase(TestTask)
-    dataPreparationAPISuite = unittest.TestLoader().loadTestsFromTestCase(TestDataPreparationAPI)
+    dataPreparationAPISuite = unittest.TestLoader(
+    ).loadTestsFromTestCase(TestDataPreparationAPI)
     dataListSuite = unittest.TestLoader().loadTestsFromTestCase(TestDataList)
     dataMapSuite = unittest.TestLoader().loadTestsFromTestCase(TestDataMap)
-    textRepresentationSuite = unittest.TestLoader().loadTestsFromTestCase(TestTextRepresentation)
+    textRepresentationSuite = unittest.TestLoader(
+    ).loadTestsFromTestCase(TestTextRepresentation)
     punctuationSuite = unittest.TestLoader().loadTestsFromTestCase(PunctuationUnitTest)
-    
-    testSuiteMap = {'taskInfo': taskInfoSuite, 'task': taskSuite, 'dataPreparationAPI': dataPreparationAPISuite, 
-                    'dataList': dataListSuite, 'dataMap' : dataMapSuite, 
-                    'textRepresentation' : textRepresentationSuite, 'punctuation': punctuationSuite}
+    ioreadSuite = unittest.TestLoader().loadTestsFromTestCase(TestIoread)
+
+    testSuiteMap = {'taskInfo': taskInfoSuite, 'task': taskSuite, 'dataPreparationAPI': dataPreparationAPISuite,
+                    'dataList': dataListSuite, 'dataMap': dataMapSuite,
+                    'textRepresentation': textRepresentationSuite, 'punctuation': punctuationSuite,
+                    'ioread': ioreadSuite}
 
     if strName == None:
         return ", ".join(sorted(testSuiteMap.keys()))
 
-    #All unit tests
+    # All unit tests
     if strName == 'all':
         return [taskInfoSuite, taskSuite, dataPreparationAPISuite, dataListSuite,
-                dataMapSuite, textRepresentationSuite, punctuationSuite]
+                dataMapSuite, textRepresentationSuite, punctuationSuite, ioreadSuite]
 
     if strName not in testSuiteMap:
         return []
