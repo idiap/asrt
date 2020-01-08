@@ -25,11 +25,14 @@ usage = """
     Format the given text using the regular expression file.
 """
 
-import os, sys
-import logging, argparse
+import os
+import sys
+import logging
+import argparse
 
 scriptsDir = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(scriptsDir + "/../../../")
+sys.path.append(scriptsDir + "/../../lib/num2words")
 
 from asrt.common.LoggingSetup import setupLogging
 from asrt.common.formula.FormulaRegularExpression import RegexList, RegularExpressionFormula
@@ -37,23 +40,27 @@ from asrt.common.formula.FormulaRegularExpression import RegexList, RegularExpre
 #######################################
 # main
 #
-if __name__ == "__main__" :
-    #Setup parser
+if __name__ == "__main__":
+    # Setup parser
     parser = argparse.ArgumentParser(description=usage)
-    parser.add_argument("-r", "--regex", help="regex file", nargs=1, dest="regexFile", required=True)
-    parser.add_argument("-i", "--input", help="input text", nargs=1, dest="inputText", default=[""])
-    parser.add_argument("-l", "--language", help="language (0=unk,1=fr,2=ge,3=en,4=it)", nargs=1, dest="language", default=[0])
-    parser.add_argument("-s", "--display", help="display regular expressions", dest="display",action="store_true")
-    parser.add_argument("-d", "--debug", help="enable debug output", dest="debug",action="store_true")
-    
+    parser.add_argument("-r", "--regex", help="regex file",
+                        nargs=1, dest="regexFile", required=True)
+    parser.add_argument("-i", "--input", help="input text",
+                        nargs=1, dest="inputText", default=[""])
+    parser.add_argument("-l", "--language", help="language (0=unk,1=fr,2=ge,3=en,4=it)",
+                        nargs=1, dest="language", default=[0])
+    parser.add_argument("-s", "--display", help="display regular expressions",
+                        dest="display", action="store_true")
+    parser.add_argument(
+        "-d", "--debug", help="enable debug output", dest="debug", action="store_true")
 
-    #Parse arguments
+    # Parse arguments
     args = parser.parse_args()
     regexFile = args.regexFile[0]
     inputText = args.inputText[0]
     languageId = int(args.language[0])
 
-    #Flags
+    # Flags
     display = args.display
     debug = args.debug
 
@@ -67,8 +74,8 @@ if __name__ == "__main__" :
     f = RegularExpressionFormula(None, substitutionPatternList)
 
     if display:
-      f.displayPatterns(languageId)
-    
+        f.displayPatterns(languageId)
+
     result = f.apply(inputText, languageId, debug)
 
-    print "Result --------------\n", result.encode('utf-8'),"\n---------------------"
+    print "Result --------------\n", result.encode('utf-8'), "\n---------------------"

@@ -21,14 +21,16 @@ __date__ = "Date: 2017/09"
 __copyright__ = "Copyright (c) 2017 Idiap Research Institute"
 __license__ = "BSD 3-Clause"
 
-usage="""
+usage = """
     Prepare a given list of documents.
 """
 
-import sys, os
+import sys
+import os
 
 scriptsDir = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(scriptsDir + "/../../../")
+sys.path.append(scriptsDir + "/../../lib/num2words")
 
 import logging
 import argparse
@@ -39,37 +41,47 @@ from asrt.common.ioread import Ioread
 from asrt.common.MyFile import MyFile
 
 ####################
-#Main
+# Main
 #
 if __name__ == "__main__":
-    #Setup parser
+    # Setup parser
     parser = argparse.ArgumentParser(description=usage)
-    parser.add_argument("-i", "--inputlist", help="input list", nargs=1, dest="inputList", required=True)
-    parser.add_argument("-o", "--output", help="output directory", nargs=1, dest="outputDir", required=True)
+    parser.add_argument("-i", "--inputlist", help="input list",
+                        nargs=1, dest="inputList", required=True)
+    parser.add_argument("-o", "--output", help="output directory",
+                        nargs=1, dest="outputDir", required=True)
     parser.add_argument("-l", "--language", help="language (0=unk,1=fr,2=ge,3=en,4=it)", nargs=1,
-                                       dest="language", default=[0])
-    parser.add_argument("-r", "--regex", help="regex file", nargs=1, dest="regexFile", default=[None])
-    parser.add_argument("-f", "--filter", help="filter sentences", dest="filter",action="store_true")
-    parser.add_argument(      "--filter2ndStage", help="enable filter sentence checking for second stage", dest="filter2ndStage", action="store_true")
-    parser.add_argument("-n", "--rmpunct", help="remove punctuation", dest="rmpunct",action="store_true")
-    parser.add_argument("-p", "--vbpunct", help="verbalize punctuation", dest="vbpunct",action="store_true")
-    parser.add_argument("-s", "--rawseg", help="do not segment sentences with NLTK", dest="rawseg",action="store_true")
-    parser.add_argument("-m", "--lm", help="prepare for lm modeling", dest="lm",action="store_true")
-    parser.add_argument("-t", "--trim", help="remove special characters in words", dest="trim",action="store_true")
-    parser.add_argument("-d", "--debug", help="enable debug output", dest="debug",action="store_true")
+                        dest="language", default=[0])
+    parser.add_argument("-r", "--regex", help="regex file",
+                        nargs=1, dest="regexFile", default=[None])
+    parser.add_argument("-f", "--filter", help="filter sentences",
+                        dest="filter", action="store_true")
+    parser.add_argument("--filter2ndStage", help="enable filter sentence checking for second stage",
+                        dest="filter2ndStage", action="store_true")
+    parser.add_argument("-n", "--rmpunct", help="remove punctuation",
+                        dest="rmpunct", action="store_true")
+    parser.add_argument("-p", "--vbpunct", help="verbalize punctuation",
+                        dest="vbpunct", action="store_true")
+    parser.add_argument("-s", "--rawseg", help="do not segment sentences with NLTK",
+                        dest="rawseg", action="store_true")
+    parser.add_argument(
+        "-m", "--lm", help="prepare for lm modeling", dest="lm", action="store_true")
+    parser.add_argument(
+        "-t", "--trim", help="remove special characters in words", dest="trim", action="store_true")
+    parser.add_argument(
+        "-d", "--debug", help="enable debug output", dest="debug", action="store_true")
 
-
-    #Parse arguments
+    # Parse arguments
     args = parser.parse_args()
     inputList = args.inputList[0]
     outputDir = args.outputDir[0]
     language = int(args.language[0])
     regexFile = args.regexFile[0]
 
-    #Flags
+    # Flags
     debug = bool(args.debug)
     filterSentences = bool(args.filter)
-    filterSentences2ndStage  = bool( args.filter2ndStage )
+    filterSentences2ndStage = bool(args.filter2ndStage)
     removePunctuation = bool(args.rmpunct)
     verbalizePunctuation = bool(args.vbpunct)
     rawSeg = bool(args.rawseg)
@@ -78,7 +90,7 @@ if __name__ == "__main__":
 
     setupLogging(logging.INFO, outputDir + "/data_preparation_log.txt")
 
-    #Api setup
+    # Api setup
     api = DataPreparationAPI(None, outputDir)
     api.setRegexFile(regexFile)
     api.setFilterSentences(filterSentences)
@@ -92,7 +104,7 @@ if __name__ == "__main__":
     if language == 0:
         api.trainClassifier()
 
-    #Main processing
+    # Main processing
     MyFile.checkDirExists(outputDir)
 
     io = Ioread()
@@ -103,5 +115,6 @@ if __name__ == "__main__":
         api.prepareDocument(language)
         strUnformatted = api.getCleanedText()
 
-        outputFile = "%s/%s.lab" % (outputDir, os.path.splitext(os.path.basename(f))[0])
+        outputFile = "%s/%s.lab" % (outputDir,
+                                    os.path.splitext(os.path.basename(f))[0])
         io.writeFileContent(outputFile, strUnformatted + u"\n")

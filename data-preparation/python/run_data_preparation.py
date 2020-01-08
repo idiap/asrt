@@ -30,6 +30,7 @@ import os
 
 scriptsDir = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(scriptsDir + "/../../../")
+sys.path.append(scriptsDir + "/../../lib/num2words")
 
 import logging
 import argparse
