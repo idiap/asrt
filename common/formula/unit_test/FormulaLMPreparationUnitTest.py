@@ -80,6 +80,7 @@ class TestFormulaLMPreparation(unittest.TestCase):
     def testNormalizePunctuation(self):
         f = LMPreparationFormula()
         f.setText(u"".join(string.punctuation + u"‰"))
+        f.setExpandNumberInWords(False)
         f._normalizePunctuation(self.allPunctList)
         strResult = f.getText()
 
@@ -95,7 +96,7 @@ class TestFormulaLMPreparation(unittest.TestCase):
 
     def testNormalizePunctuationKeepInWords(self):
         f = LMPreparationFormula()
-        f.setExpandNumberInWords(True)
+        f.setExpandNumberInWords(False)
 
         f.setText(u"".join("/ HES-SO und AdG/LA - auch im Winter / Sommer -"))
         f._normalizePunctuation(self.allPunctList)
@@ -171,7 +172,7 @@ class TestFormulaLMPreparation(unittest.TestCase):
                     (ur"President' s of", ur"president's of", 3)]
 
         f = LMPreparationFormula()
-        f.setExpandNumberInWords(True)
+        f.setExpandNumberInWords(False)
 
         for t, gt, languageId in testList:
             f.setLanguageId(languageId)
@@ -194,7 +195,7 @@ class TestFormulaLMPreparation(unittest.TestCase):
 
         for t, gt, knw in testList:
             f.setText(t)
-            f.setExpandNumberInWords(knw)
+            f.setExpandNumberInWords(not knw)
             r = f.prepareText()
             self.assertEquals(gt.encode('utf-8'), r.encode('utf-8'))
 
@@ -210,7 +211,7 @@ class TestFormulaLMPreparation(unittest.TestCase):
 
         # No new words are kepts, hyphens are removed
         f = LMPreparationFormula()
-        f.setExpandNumberInWords(False)
+        f.setExpandNumberInWords(True)
         f.setLanguageId(1)
 
         for t, gt in testList:
@@ -219,7 +220,7 @@ class TestFormulaLMPreparation(unittest.TestCase):
             self.assertEquals(gt.encode('utf-8'), r.encode('utf-8'))
 
         # Keep new words implies keep hyphens in words
-        f.setExpandNumberInWords(True)
+        f.setExpandNumberInWords(False)
 
         testList = [(ur"18-age", ur"18-age")]
         for t, gt in testList:
@@ -248,7 +249,7 @@ class TestFormulaLMPreparation(unittest.TestCase):
 
         # New words are kept
         testList = [(ur"18-jähriger", ur"18-jähriger")]
-        f.setExpandNumberInWords(True)
+        f.setExpandNumberInWords(False)
 
         for t, gt in testList:
             f.setText(t)
@@ -260,7 +261,7 @@ class TestFormulaLMPreparation(unittest.TestCase):
                     (ur"1st", ur"first")]
 
         f = LMPreparationFormula()
-        f.setExpandNumberInWords(False)
+        f.setExpandNumberInWords(True)
         f.setLanguageId(3)
 
         for t, gt in testList:
@@ -269,7 +270,7 @@ class TestFormulaLMPreparation(unittest.TestCase):
             self.assertEquals(gt.encode('utf-8'), r.encode('utf-8'))
 
         testList = [(ur"18-year-old", ur"18-year-old")]
-        f.setExpandNumberInWords(True)
+        f.setExpandNumberInWords(False)
 
         for t, gt in testList:
             f.setText(t)

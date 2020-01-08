@@ -40,7 +40,8 @@ class FormulaNumberUnitTest(unittest.TestCase):
                          u"am ein und zwanzigsten dezember zwei tausend elf"),
                         (u"das 21.", u"das ein und zwanzigste"), (u"2,", u"zwei"),
                         (u"das 2.,", u"das zweite"), (u"das 2..", u"das zweite"),
-                        (u"2,", u"zwei")]
+                        (u"2,", u"zwei"),
+                        (u"am 2. Dezember", u"am zweiten Dezember")]
                 }
 
     #################

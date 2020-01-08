@@ -156,9 +156,9 @@ class LMPreparationFormula():
         self._normalizePunctuation(self.ALLPUNCTUATIONSYMBOLS)
         # print self.strText
 
-        if not self.expandNumberInWords:
-            self._expandAcronyms()
-            # print self.strText
+        # if not self.expandNumberInWords:
+        self._expandAcronyms()
+        # print self.strText
 
         self._normalizeCase()
         # print self.strText
@@ -234,7 +234,8 @@ class LMPreparationFormula():
         self.strText = u" ".join(newWordsList)
 
     def _expandNumberInWords(self):
-        """If there are numbers in words, split them.
+        """If there are numbers in words, split them except if
+           it is an ordinal number.
 
            i.e. A1   --> A. 1
                 P3B  --> P. 3 B.
@@ -245,6 +246,11 @@ class LMPreparationFormula():
 
         newWordsList = []
         for w in wordsList:
+            if self.isOrdinalNumber(w):
+                self.logger.info("Skipping ordinal number %s" %
+                                 w.encode('utf-8'))
+                newWordsList.append(w)
+                continue
             tokenList = re.split(CAPTURINGDIGITPATTERN, w, flags=re.UNICODE)
             # Numbers need to contain a digit
             # Ordinal numbers are not expanded
@@ -301,6 +307,7 @@ class LMPreparationFormula():
 
             param 'excludeList' : a list of exclude punctuation symbols
         """
+
         unicodeList, prevC, beforePrevC = [], u"", u""
         for i, c in enumerate(self.strText):
             strC = c.encode('utf-8')
@@ -313,7 +320,7 @@ class LMPreparationFormula():
                     unicodeList.append(u" ")
                 # Keep some special characters if they appear after a non-space
                 # value
-                elif self.expandNumberInWords and prevC not in ("", " ") and strC in PUNCTUATIONKEEPINWORD:
+                elif not self.expandNumberInWords and prevC not in ("", " ") and strC in PUNCTUATIONKEEPINWORD:
                     unicodeList.append(c)
             elif self.languageId != 0 and strC in PUNCTUATIONMAP:
                 unicodeList.append(
@@ -416,3 +423,14 @@ class LMPreparationFormula():
         for p, r, t in regexList:
             strText = re.sub(p, r, strText, flags=re.UNICODE)
         return strText
+
+    @staticmethod
+    def isOrdinalNumber(strWord):
+        """Cross language check for ordinal number.
+        """
+        bOrdinal = False
+        if EnglishNumberFormula._isOrdinalNumber(strWord) or \
+                GermanNumberFormula._isOrdinalNumber(strWord) or \
+                FrenchNumberFormula._isOrdinalNumber(strWord):
+            bOrdinal = True
+        return bOrdinal

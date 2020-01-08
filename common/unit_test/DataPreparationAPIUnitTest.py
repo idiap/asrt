@@ -24,19 +24,21 @@ __license__ = "BSD 3-Clause"
 import os
 scriptsDir = os.path.abspath(os.path.dirname(__file__))
 
-import unittest, logging
+import unittest
+import logging
 
 from asrt.common.ioread import Ioread
 from asrt.common.DataPreparationAPI import DataPreparationAPI
 from asrt.config.AsrtConfig import TEMPDIRUNITTEST
 
-class TestDataPreparationAPI(unittest.TestCase):
-    logger  = logging.getLogger("Asrt.TestDataPreparationAPI")
 
-    workingDirectory    = TEMPDIRUNITTEST 
-    targetDir           = scriptsDir + "/resources"
-    targetFolder1       = targetDir + "/target-folder-2"
-    regexFile           = targetDir + "/regexpattern.csv"
+class TestDataPreparationAPI(unittest.TestCase):
+    logger = logging.getLogger("Asrt.TestDataPreparationAPI")
+
+    workingDirectory = TEMPDIRUNITTEST
+    targetDir = scriptsDir + "/resources"
+    targetFolder1 = targetDir + "/target-folder-2"
+    regexFile = targetDir + "/regexpattern.csv"
 
     testFileList = [(1, scriptsDir + "/resources/test-strings-datapreparationapi-french.csv"),
                     (2, scriptsDir + "/resources/test-strings-datapreparationapi-german.csv")]
@@ -51,18 +53,19 @@ class TestDataPreparationAPI(unittest.TestCase):
         return io.readCSV(strFileName, delim='\t')
 
     ############
-    #Tests
+    # Tests
     #
     def testLoadRegexes(self):
-        api = DataPreparationAPI(None,None)
+        api = DataPreparationAPI(None, None)
         api.setRegexFile(self.regexFile)
 
         api.getRegexes()
 
         self.assertTrue(api.substitutionRegexFormula.hasPatterns())
         self.assertTrue(len(api.validationPatternList) > 0)
-        self.assertTrue(len(api.substitutionRegexFormula.substitutionPatternList[0]) > 1)
-    
+        self.assertTrue(
+            len(api.substitutionRegexFormula.substitutionPatternList[0]) > 1)
+
     def testPrepareDocumentSimple(self):
         api = DataPreparationAPI(None, None)
         api.setRegexFile(self.regexFile)
@@ -80,11 +83,12 @@ class TestDataPreparationAPI(unittest.TestCase):
         api = DataPreparationAPI(None, None)
         api.setRegexFile(self.regexFile)
         api.setLMModeling(True)
-        api.setExpandNumberInWords(True)
+        api.setExpandNumberInWords(False)
         api.setFormattedText(testString)
         api.prepareDocument(2)
         formattedText = api.getCleanedText()
-        self.assertEquals(gtString.encode('utf-8'), formattedText.encode('utf-8'))
+        self.assertEquals(gtString.encode('utf-8'),
+                          formattedText.encode('utf-8'))
 
     def testPrepareDocument(self):
         api = DataPreparationAPI(None, None)
@@ -94,12 +98,13 @@ class TestDataPreparationAPI(unittest.TestCase):
             self.logger.info("Testing %s" % strFileName)
             testList = self.getTestList(strFileName)
             for test, gt, bDiscard in testList:
-                if int(bDiscard): 
+                if int(bDiscard):
                     continue
-                #Main call
+                # Main call
                 api.setFormattedText(test)
                 api.prepareDocument(languageId)
+                api.setExpandNumberInWords(True)
                 formattedText = api.getCleanedText()
                 self.assertEquals(formattedText.encode('utf-8'), gt.encode('utf-8'),
-                    "'%s' is not '%s':%s" % (formattedText.encode('utf-8'), 
-                                    gt.encode('utf-8'), strFileName))
+                                  "'%s' is not '%s':%s for '%s'" % (formattedText.encode('utf-8'),
+                                                                    gt.encode('utf-8'), strFileName, test.encode('utf-8')))
