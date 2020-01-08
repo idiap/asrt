@@ -247,7 +247,7 @@ class LMPreparationFormula():
 
         newWordsList = []
         for w in wordsList:
-            if self.isOrdinalNumber(w):
+            if self.isOrdinalNumber(w, self.languageId):
                 self.logger.info("Skipping ordinal number %s" %
                                  w.encode('utf-8'))
                 newWordsList.append(w)
@@ -432,12 +432,21 @@ class LMPreparationFormula():
         return strText
 
     @staticmethod
-    def isOrdinalNumber(strWord):
+    def isOrdinalNumber(strWord, languageId):
         """Cross language check for ordinal number.
         """
         bOrdinal = False
-        if EnglishNumberFormula._isOrdinalNumber(strWord) or \
-                GermanNumberFormula._isOrdinalNumber(strWord) or \
-                FrenchNumberFormula._isOrdinalNumber(strWord):
-            bOrdinal = True
+
+        if languageId == 0:
+            if EnglishNumberFormula._isOrdinalNumber(strWord) or \
+                    GermanNumberFormula._isOrdinalNumber(strWord) or \
+                    FrenchNumberFormula._isOrdinalNumber(strWord):
+                bOrdinal = True
+        else:
+            if languageId == FRENCH:
+                bOrdinal = FrenchNumberFormula._isOrdinalNumber(strWord)
+            elif languageId == GERMAN:
+                bOrdinal = GermanNumberFormula._isOrdinalNumber(strWord)
+            else:
+                bOrdinal = EnglishNumberFormula._isOrdinalNumber(strWord)
         return bOrdinal
