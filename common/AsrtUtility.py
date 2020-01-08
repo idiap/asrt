@@ -126,8 +126,9 @@ def convertNumber(cls, strText):
             #errorMessage = getErrorMessage(e, prefix)
             logger.warning(prefix)
 
-            # Keep unformatted word
-            newWordsList.append(w)
+            # Split into digits
+            for n in list(w):
+                newWordsList.append(cls._cardinal2word(n))
 
     return u" ".join(newWordsList)
 
