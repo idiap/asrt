@@ -99,14 +99,14 @@ class Number():
         if bUndInUnits:
             letters = re.sub("^ *und *", "", letters)
 
-        return letters.decode('utf-8')
+        return letters
 
     @staticmethod
     def applyOrdinalEndings(letters):
         splitLetters = letters.strip().split(' ')
         firstletters = " ".join(splitLetters[:-1])
         lastLetters = splitLetters[-1]
-        if lastLetters.strip() in UNITD2W.values() or lastLetters.strip() == 'eins':
+        if lastLetters.strip() in list(UNITD2W.values()) or lastLetters.strip() == 'eins':
             if lastLetters.strip() == 'ein' or lastLetters.strip() == 'eins':
                 letters = firstletters + ' ' + 'erste'
             elif lastLetters.strip() == 'drei':

@@ -21,29 +21,32 @@ __date__ = "Date: 2015/09"
 __copyright__ = "Copyright (c) 2015 Idiap Research Institute"
 __license__ = "BSD 3-Clause"
 
-import logging, re
+import logging
+import re
 from roman import fromRoman
 from asrt.common.Rule import Rule, Pattern
 from asrt.common.AsrtUtility import convertNumber
 from asrt.common.AsrtConstants import SPACEPATTERN
 from asrt.common.german.Number import Number
 
+
 class NumberFormula():
     """A set of rules to 'unformat' formatted numbers.
     """
 
-    logger                  = logging.getLogger("Asrt.NumberFormula")
+    logger = logging.getLogger("Asrt.NumberFormula")
 
-    THOUSANDSEPARATOR       = u"'"
+    THOUSANDSEPARATOR = "'"
 
-    HASNUMBERREGEX          = re.compile(u"([0-9]|I|V|X|L|C|D|M)+", flags=re.UNICODE)
-    CARDINALNUMBERREGEX     = re.compile(u"[0-9]+$", flags=re.UNICODE)
-    ORDINALNUMBERREGEX      = re.compile(u"([1-9][0-9]*er|[1-9][0-9]*[.]|[IVXLCDM]{2,}[.])$", flags=re.UNICODE)
-    DECIMALNUMBERREGEX      = re.compile(u"[0-9,.]+[0-9,.]*$", flags=re.UNICODE)
-    ROMANNUMBERREGEX        = re.compile(u"[IVXLCDM]{2,}$", flags=re.UNICODE)
+    HASNUMBERREGEX = re.compile("([0-9]|I|V|X|L|C|D|M)+", flags=re.UNICODE)
+    CARDINALNUMBERREGEX = re.compile("[0-9]+$", flags=re.UNICODE)
+    ORDINALNUMBERREGEX = re.compile(
+        "([1-9][0-9]*er|[1-9][0-9]*[.]|[IVXLCDM]{2,}[.])$", flags=re.UNICODE)
+    DECIMALNUMBERREGEX = re.compile("[0-9,.]+[0-9,.]*$", flags=re.UNICODE)
+    ROMANNUMBERREGEX = re.compile("[IVXLCDM]{2,}$", flags=re.UNICODE)
 
     ##################
-    #Public interface
+    # Public interface
     #
     @classmethod
     def apply(cls, strText):
@@ -61,7 +64,7 @@ class NumberFormula():
         return convertNumber(cls, strText)
 
     ##################
-    #Implementation
+    # Implementation
     #
     @staticmethod
     def _normalizeNumber(strWord):
@@ -70,13 +73,13 @@ class NumberFormula():
            param strWord: an utf-8 encoded words
            return an utf-8 encoded string
         """
-        strWord = strWord.replace(NumberFormula.THOUSANDSEPARATOR, u"")
+        strWord = strWord.replace(NumberFormula.THOUSANDSEPARATOR, "")
 
-        #Case when there are two full stops, or one comma
-        #after a number
-        if strWord.endswith(("..",",")):
+        # Case when there are two full stops, or one comma
+        # after a number
+        if strWord.endswith(("..", ",")):
             strWord = strWord[:-1]
-    
+
         return strWord
 
     @staticmethod
@@ -101,32 +104,34 @@ class NumberFormula():
         """
         strNumber = NumberFormula._normalizeNumber(wordsList[indice])
 
-        #Update with correct form
+        # Update with correct form
         wordsList[indice] = strNumber
 
-        #Check for specific ordinal ending with dates
+        # Check for specific ordinal ending with dates
         ending = NumberFormula._getOrdinalEnding(strNumber, wordsList, indice)
         bOrdinal = len(ending) > 0
 
         #ending = u""
-        strNewNumber = re.sub(u"([.]|er)", "", strNumber)
+        strNewNumber = re.sub("([.]|er)", "", strNumber)
 
         if NumberFormula._isCardinalNumber(strNewNumber):
-            strNewNumber =  Number.convertNumberIntoLetters(strNewNumber, ordinal=bOrdinal)
+            strNewNumber = Number.convertNumberIntoLetters(
+                strNewNumber, ordinal=bOrdinal)
         elif NumberFormula._isRomanNumber(strNewNumber):
-            #Roman to cardinal
-            strNewNumber = strNewNumber.encode('utf-8')
+            # Roman to cardinal
+            strNewNumber = strNewNumber
             cardinalNumber = fromRoman(strNewNumber)
-            #Digits to ordinal
-            strNewNumber =  Number.convertNumberIntoLetters(cardinalNumber, ordinal=bOrdinal)
+            # Digits to ordinal
+            strNewNumber = Number.convertNumberIntoLetters(
+                cardinalNumber, ordinal=bOrdinal)
         else:
-            #Original word is kept
+            # Original word is kept
             strNewNumber = strNumber
-            ending = u""
+            ending = ""
 
-        #Already included in convertNumberIntLetters        
-        if ending == u"e":
-          ending = u""
+        # Already included in convertNumberIntLetters
+        if ending == "e":
+            ending = ""
 
         return strNewNumber + ending
 
@@ -140,26 +145,26 @@ class NumberFormula():
            i.e. das zeite Dezember
                 am zweiten Dezember
         """
-        #Default to nothing
-        ending = u""
+        # Default to nothing
+        ending = ""
 
-        #Check for am 2. December
-        enRule = Rule(Pattern(NumberFormula.ORDINALNUMBERREGEX.pattern, 
-                       u"(an|am|im|de[nmrs]|vo[nm]|ein[nmrs]|jede[nmrs]"+\
-                       u"|solche[nmrs]|jene[nmrs]|welche[nmrs])", None,-1,1))
+        # Check for am 2. December
+        enRule = Rule(Pattern(NumberFormula.ORDINALNUMBERREGEX.pattern,
+                              "(an|am|im|de[nmrs]|vo[nm]|ein[nmrs]|jede[nmrs]" +
+                              "|solche[nmrs]|jene[nmrs]|welche[nmrs])", None, -1, 1))
 
         if enRule.doesApply(wordsList, indice) and \
-            enRule.match(wordsList, indice):
-            ending = u"n"
+                enRule.match(wordsList, indice):
+            ending = "n"
 
-        #Check for am 2. December
-        eRule = Rule(Pattern(NumberFormula.ORDINALNUMBERREGEX.pattern, 
-                       u"(der|die|das|jede"+\
-                       u"|solche|jene|welche)", None,-1,1))
+        # Check for am 2. December
+        eRule = Rule(Pattern(NumberFormula.ORDINALNUMBERREGEX.pattern,
+                             "(der|die|das|jede" +
+                             "|solche|jene|welche)", None, -1, 1))
 
         if eRule.doesApply(wordsList, indice) and \
-            eRule.match(wordsList, indice):
-            ending = u"e"
+                eRule.match(wordsList, indice):
+            ending = "e"
 
         return ending
 
@@ -171,8 +176,8 @@ class NumberFormula():
            param strNumber: an utf-8 decimal number
            return a 'written' decimal number
         """
-        strNumber = u" komma ".join(re.split("[,]",strNumber))
-        strNumber = u" punkt ".join(re.split("[.]",strNumber))
+        strNumber = " komma ".join(re.split("[,]", strNumber))
+        strNumber = " punkt ".join(re.split("[.]", strNumber))
 
         tokenList = []
         for w in re.split(SPACEPATTERN, strNumber):
@@ -181,7 +186,7 @@ class NumberFormula():
                 w = NumberFormula._cardinal2word(w)
             tokenList.append(w)
 
-        return u" ".join(tokenList)
+        return " ".join(tokenList)
 
     @staticmethod
     def _roman2word(strNumber):
@@ -191,7 +196,7 @@ class NumberFormula():
            param strNumber: an utf-8 roman number
            return a 'written' roman number
         """
-        strNumber = strNumber.encode('utf-8')
+        strNumber = strNumber
         cardinalNumber = fromRoman(strNumber)
         return NumberFormula._cardinal2word(cardinalNumber)
 
