@@ -21,8 +21,11 @@ __date__ = "Date: 2015/09"
 __copyright__ = "Copyright (c) 2015 Idiap Research Institute"
 __license__ = "BSD 3-Clause"
 
-import sys, logging, re
+import sys
+import logging
+import re
 from asrt.common.RegularExpressionList import RegexList
+
 
 class RegexType():
     """A namespace for known types of regular
@@ -34,12 +37,14 @@ class RegexType():
          Type 4: ([.,;:()”?!-]) before and same after
          Type 5: ([0-9] +) and nothing specified after
     """
-    TYPE1 = [(None,None)]
-    TYPE2 = [('( |^)','( |$)')]                      # Before converting punctuation
-    TYPE3 = [('([.,;:()”?!-])','([.,;:()”?!-])')]    # After converting punctuation
-    TYPE4 = [('([0-9] +|[a-z] +|[A-Z] +)','( |$)')]
-    TYPE5 = [('([0-9] +)','( |$)')]
-    TYPE6 = [('([ \"\']|^)','([ \"\',\.\?\!;:]|$)')]
+    TYPE1 = [(None, None)]
+    # Before converting punctuation
+    TYPE2 = [('( |^)', '( |$)')]
+    # After converting punctuation
+    TYPE3 = [('([.,;:()”?!-])', '([.,;:()”?!-])')]
+    TYPE4 = [('([0-9] +|[a-z] +|[A-Z] +)', '( |$)')]
+    TYPE5 = [('([0-9] +)', '( |$)')]
+    TYPE6 = [('([ \"\']|^)', '([ \"\',\.\?\!;:]|$)')]
 
     ###############################
     # Static methods
@@ -70,25 +75,25 @@ class RegexType():
 
         typeRegexList = []
 
-        #Before parsing text, spaces are converted to double
-        #spaces. We need to match that in the regular
-        #expressions
+        # Before parsing text, spaces are converted to double
+        # spaces. We need to match that in the regular
+        # expressions
         matchingRegex = \
-                RegularExpressionFormula.normalizeSpaces(matchingRegex, True) 
+            RegularExpressionFormula.normalizeSpaces(matchingRegex, True)
         nbGroups = RegexType.getNumGroups(matchingRegex)
 
-        #Context is a tuple with the before and after
-        #context. A type can have multiple context
+        # Context is a tuple with the before and after
+        # context. A type can have multiple context
         for context in contextsList:
             strMatch = matchingRegex
-            #Left context
+            # Left context
             if context[0] is not None:
                 strMatch = context[0] + strMatch
                 subPattern = "\g<1>" + subPattern
                 nbGroups += 1
-            #Right context
+            # Right context
             if context[1] is not None:
-                strMatch =  strMatch + context[1]
+                strMatch = strMatch + context[1]
                 subPattern = subPattern + "\g<%d>" % (nbGroups + 1)
 
             typeRegexList.append((strMatch, subPattern))
@@ -99,10 +104,11 @@ class RegexType():
     def getNumGroups(regex):
         return re.compile(regex).groups
 
+
 class RegularExpressionFormula():
     """Formula that applies regular expressions.
     """
-    logger        = logging.getLogger("Asrt.RegexFormula")
+    logger = logging.getLogger("Asrt.RegexFormula")
 
     def __init__(self, rulesFile=None, substitutionPatternList=[]):
         self.rulesFile = rulesFile
@@ -127,7 +133,7 @@ class RegularExpressionFormula():
         return self.substitutionPatternList
 
     ####################
-    #Public methods
+    # Public methods
     #
     def apply(self, strText, languageId, debug=False):
         """Apply regular expressions to 'strText'.
@@ -138,12 +144,13 @@ class RegularExpressionFormula():
             if self.rulesFile == None:
                 return strText
             else:
-                self.logger.info("Loading regexes from %s" % str(self.rulesFile))
+                self.logger.info("Loading regexes from %s" %
+                                 str(self.rulesFile))
                 self.substitutionPatternList = \
                     RegexList.loadFromFile(self.rulesFile)
-        
+
         return RegularExpressionFormula.applyRegularExpressions(strText,
-                        self.substitutionPatternList, languageId, debug)
+                                                                self.substitutionPatternList, languageId, debug)
 
     def hasPatterns(self):
         return len(self.substitutionPatternList) != 0
@@ -154,16 +161,18 @@ class RegularExpressionFormula():
         if len(self.substitutionPatternList) == 0:
             return
         for regex, alternate, regexType, regexLanguageId in self.substitutionPatternList:
-            #Does it match the text language
+            # Does it match the text language
             if int(regexLanguageId) != languageId:
                 continue
 
             regexListForType = \
-                RegexType.typeToRegularExpressions(regex, alternate, int(regexType))
+                RegexType.typeToRegularExpressions(
+                    regex, alternate, int(regexType))
             for regexForType in regexListForType:
-                regexPattern = regexForType[0]       #What to match
-                regexSubstitution = regexForType[1]  #What to substitute
-                print(("'" + regexPattern + "'", "-->", "'" + regexSubstitution + "'"))
+                regexPattern = regexForType[0]  # What to match
+                regexSubstitution = regexForType[1]  # What to substitute
+                print(("'" + regexPattern + "'", "-->",
+                       "'" + regexSubstitution + "'"))
         print("\n")
 
     @staticmethod
@@ -173,58 +182,66 @@ class RegularExpressionFormula():
 
              The order of application is the file order.
         """
-        #print substitutionPatternList
+        # print substitutionPatternList
         if debug:
-            RegularExpressionFormula.logger.info("Applying regular expressions to transcript ...")
+            RegularExpressionFormula.logger.info(
+                "Applying regular expressions to transcript ...")
 
-        #For successive regular expressions
+        # For successive regular expressions
         strText = RegularExpressionFormula.normalizeSpaces(strText, True)
-        
-        if debug:
-            RegularExpressionFormula.logger.info("Initial transcript: " + strText.encode('utf-8'))
 
-        #For each known regular expression
+        if debug:
+            RegularExpressionFormula.logger.info(
+                "Initial transcript: " + strText)
+
+        # For each known regular expression
         for regex, alternate, regexType, regexLanguageId in substitutionPatternList:
             regexLanguageId = int(regexLanguageId)
 
-            #Does it match the text language
+            # Does it match the text language
             if regexLanguageId != languageId and \
                regexLanguageId != 0:
                 continue
 
-            #Convert from type
+            # Convert from type
             regexListForType = \
-                RegexType.typeToRegularExpressions(regex, alternate, int(regexType))
-            
-            #Get regular expressions for the given type
-            for regexForType in regexListForType:
-                regexPattern = regexForType[0]       #What to match
-                regexSubstitution = regexForType[1]  #What to substitute
-                
-                strLineOriginal = strText        
+                RegexType.typeToRegularExpressions(
+                    regex, alternate, int(regexType))
 
-                #Is it some python code
+            # Get regular expressions for the given type
+            for regexForType in regexListForType:
+                regexPattern = regexForType[0]  # What to match
+                regexSubstitution = regexForType[1]  # What to substitute
+
+                strLineOriginal = strText
+
+                # Is it some python code
                 if alternate.startswith("lambda"):
-                    #Use alternate version
-                    strText = re.sub(regexPattern, eval(alternate), strText, flags=re.UNICODE | re.MULTILINE)
+                    # Use alternate version
+                    strText = re.sub(regexPattern, eval(
+                        alternate), strText, flags=re.UNICODE | re.MULTILINE)
                 else:
-                    #print regexPattern, regexSubstitution
-                    #No ignore case available
-                    #print regexPattern, " --> ", strText.encode('utf-8')
-                    strText = re.sub(regexPattern, regexSubstitution, strText, flags=re.UNICODE | re.MULTILINE)
+                    # print regexPattern, regexSubstitution
+                    # No ignore case available
+                    # print regexPattern, " --> ", strText
+                    strText = re.sub(regexPattern, regexSubstitution,
+                                     strText, flags=re.UNICODE | re.MULTILINE)
 
                 if debug:
                     if strText.encode('utf-8') != strLineOriginal.encode('utf-8'):
-                        sys.stdout.write("  --> Original string: >" + strLineOriginal.encode('utf-8')+"<\n")
-                        sys.stdout.write("      Match pattern: >" + regexPattern.encode('utf-8') + "<"\
-                                                     "\n      Substitution: >" + regexSubstitution.encode('utf-8') + "<")
-                        sys.stdout.write("\n      >" + strText.encode('utf-8') + "<\n")
+                        sys.stdout.write(
+                            "  --> Original string: >" + strLineOriginal.encode('utf-8') + "<\n")
+                        sys.stdout.write("      Match pattern: >" + regexPattern.encode('utf-8') + "<"
+                                         "\n      Substitution: >" + regexSubstitution.encode('utf-8') + "<")
+                        sys.stdout.write(
+                            "\n      >" + strText.encode('utf-8') + "<\n")
 
         strText = RegularExpressionFormula.normalizeSpaces(strText)
 
         if debug:
-                sys.stdout.flush()
-                RegularExpressionFormula.logger.info("Final transcript: " + strText.encode('utf-8') + "\n")
+            sys.stdout.flush()
+            RegularExpressionFormula.logger.info(
+                "Final transcript: " + strText + "\n")
 
         return strText
 
@@ -235,11 +252,11 @@ class RegularExpressionFormula():
              'strText' is assumed to be in utf-8 format.
         """
         if bDouble:
-            strText = re.sub(r"[ ]+", r"  ", strText, flags = re.UNICODE)
-            #Remove double spaces from groups
+            strText = re.sub(r"[ ]+", r"  ", strText, flags=re.UNICODE)
+            # Remove double spaces from groups
             return re.sub(r"([(|])  ([|)])", r"\g<1> \g<2>", strText, flags=re.UNICODE)
 
-        return re.sub(r"[ ]+", r" ", strText, flags = re.UNICODE)
+        return re.sub(r"[ ]+", r" ", strText, flags=re.UNICODE)
 
     @staticmethod
     def normalizeApostrophe(strText, oneSpace=False):
@@ -248,6 +265,6 @@ class RegularExpressionFormula():
              'strText' is assumed to be in utf-8 format.
         """
         if oneSpace:
-            return re.sub(r"'", r"' ", strText, flags = re.UNICODE) 
+            return re.sub(r"'", r"' ", strText, flags=re.UNICODE)
 
-        return re.sub(r"'[ ]+", r"'", strText, flags = re.UNICODE)
+        return re.sub(r"'[ ]+", r"'", strText, flags=re.UNICODE)

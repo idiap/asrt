@@ -67,14 +67,14 @@ def applyRegexes(inputFile, outputFile, regularFile):
         
         count += 1
         if count % 50000 == 0:
-            print "Processed %d values" % count
+            print(("Processed %d values" % count))
 
         #Read next line
         l = fd.readline()
 
     io.closeFile(fd)
 
-    strContent = u"\n".join(linesList)
+    strContent = "\n".join(linesList)
     io.writeFileContent(outputFile, strContent)
 
 ################
