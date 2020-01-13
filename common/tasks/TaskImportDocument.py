@@ -101,7 +101,7 @@ class ImportDocumentTask(Task):
             textDocumentsList = []
             dictMap = self.mapLists[0].getDictionaryMap()
 
-            totalCount = len(dictMap.keys())
+            totalCount = len(list(dictMap.keys()))
             count = 0
 
             self._log(logging.INFO, "Temp dir is: %s" % self.getTempDirectory())
@@ -122,7 +122,7 @@ class ImportDocumentTask(Task):
             api.trainClassifier()
 
             #Loop trough map file
-            for documentName in dictMap.keys():
+            for documentName in list(dictMap.keys()):
                 for language in dictMap[documentName]:
                     documentUrl = self.inputList.getPath(documentName)
 
@@ -142,7 +142,7 @@ class ImportDocumentTask(Task):
             #Outcome of the work to be saved
             self.setResult(False, "Success importing sentences from %s" % self.mapLists[0].getDataMapFile())
 
-        except Exception, e:
+        except Exception as e:
             errorMessage = "An error as occurred when importing sentences from %s" % documentUrl
             self._log(logging.CRITICAL, getErrorMessage(e, errorMessage))
             raise e

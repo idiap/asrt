@@ -23,7 +23,7 @@ __license__ = "BSD 3-Clause"
 
 import os 
 import pprint, logging
-import csv, StringIO
+import csv, io
 import unicodecsv
 
 class DataList(object):
@@ -67,7 +67,7 @@ class DataList(object):
 
             for row in dataListReader:
                 if row[0] in self.dataDictionary:
-                    raise Exception(row[0] + u" is not a unique name!")
+                    raise Exception(row[0] + " is not a unique name!")
 
                 self.dataDictionary[row[0]] = row[1]
 
@@ -75,7 +75,7 @@ class DataList(object):
         """Output the data list to a file.
         """
         dataList = []
-        for key, value in self.dataDictionary.items():
+        for key, value in list(self.dataDictionary.items()):
                 dataList.append([key, value])
 
         dataList = sorted(dataList,key= lambda l: "%s %s" % ([0], l[1]))
@@ -109,12 +109,12 @@ class DataList(object):
     def getCount(self):
         """Number of input data.
         """
-        return len(self.dataDictionary.keys())
+        return len(list(self.dataDictionary.keys()))
 
     ########################
     # Implementation
     #
     def __str__(self):
-        rep = StringIO.StringIO()
+        rep = io.StringIO()
         pprint(self.dataDictionary, rep)
         return rep.getvalue().rstrip()

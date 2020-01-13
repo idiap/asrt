@@ -44,7 +44,7 @@ class TestDataPreparationAPI(unittest.TestCase):
                     (2, scriptsDir + "/resources/test-strings-datapreparationapi-german.csv")]
 
     def setUp(self):
-        print ""
+        print("")
 
     def getTestList(self, strFileName):
         """Get CSV content of 'strFileName'.
@@ -71,14 +71,14 @@ class TestDataPreparationAPI(unittest.TestCase):
         api.setRegexFile(self.regexFile)
         api.setLMModeling(True)
         try:
-            api.setFormattedText(u'"')
+            api.setFormattedText('"')
             api.prepareDocument(1)
         except Exception:
             self.fail("Should not raise an exception")
 
     def testPrepareDocumentBasic(self):
-        testString = ur"/ HES-SO und AdG/LA - auch im Winter / Sommer -"
-        gtString = ur"hes-so und adg/la auch im winter sommer"
+        testString = r"/ HES-SO und AdG/LA - auch im Winter / Sommer -"
+        gtString = r"hes-so und adg/la auch im winter sommer"
 
         api = DataPreparationAPI(None, None)
         api.setRegexFile(self.regexFile)
@@ -87,7 +87,7 @@ class TestDataPreparationAPI(unittest.TestCase):
         api.setFormattedText(testString)
         api.prepareDocument(2)
         formattedText = api.getCleanedText()
-        self.assertEquals(gtString.encode('utf-8'),
+        self.assertEqual(gtString.encode('utf-8'),
                           formattedText.encode('utf-8'))
 
     def testPrepareDocument(self):
@@ -105,6 +105,6 @@ class TestDataPreparationAPI(unittest.TestCase):
                 api.prepareDocument(languageId)
                 api.setExpandNumberInWords(True)
                 formattedText = api.getCleanedText()
-                self.assertEquals(formattedText.encode('utf-8'), gt.encode('utf-8'),
+                self.assertEqual(formattedText.encode('utf-8'), gt.encode('utf-8'),
                                   "'%s' is not '%s':%s for '%s'" % (formattedText.encode('utf-8'),
                                                                     gt.encode('utf-8'), strFileName, test.encode('utf-8')))

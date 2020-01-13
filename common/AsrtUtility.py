@@ -39,7 +39,7 @@ logger = logging.getLogger("Asrt.AsrtUtility")
 def getByteString(message):
     """Get a byte encoded exception message.
     """
-    if type(message) == unicode:
+    if type(message) == str:
         return message.encode('utf-8')
 
     return message
@@ -120,7 +120,7 @@ def convertNumber(cls, strText):
                     wNorm = w
             newWordsList.append(wNorm)
 
-        except Exception, e:
+        except Exception as e:
             prefix = "Error formatting number (%s): %s" % \
                 (w.encode('utf-8'), str(e))
             #errorMessage = getErrorMessage(e, prefix)
@@ -130,7 +130,7 @@ def convertNumber(cls, strText):
             for n in list(w):
                 newWordsList.append(cls._cardinal2word(n))
 
-    return u" ".join(newWordsList)
+    return " ".join(newWordsList)
 
 
 def hasNumber(cls, strWord):

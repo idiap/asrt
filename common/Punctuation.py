@@ -15,7 +15,7 @@
 # You should have received a copy of the BSD 3-Clause License
 # along with asrt. If not, see <http://opensource.org/licenses/>.
 
-from __future__ import print_function
+
 
 __author__      = "Frédéric Dubouchet, Alexandre Nanchen"
 __version__     = "Revision: 1.0"
@@ -42,57 +42,57 @@ class Punctuation(object):
     logger = logging.getLogger("Asrt.Punctuation")
 
     default_puncutation = [
-        (ur"\." , SIMPLE_t, u"point"),
-        (ur"\," , SIMPLE_t, u"virgule"),
-        (ur"\;" , SIMPLE_t, u"point virgule"),
-        (ur"\:" , SIMPLE_t, u"deux points"),
-        (ur"\n" , SIMPLE_t, u"à la ligne"),
-        (ur"\r\n" , SIMPLE_t, u"à la ligne"),
-        (ur"\((\S+)\)" , PREFIX_t, u"entre parenthèses"),
-        (ur"\"(\S+)\"" , PREFIX_t, u"entre guillemets"),
-        (ur"\?" , SIMPLE_t, u"point d'interrogation"),
-        (ur"\!" , SIMPLE_t, u"point d'exclamation"),
-        (ur"\((\S+)\s" , PREFIX_t, u"ouvrez la parenthèse"),
-        (ur"\"(\S+)\s" , PREFIX_t, u"ouvrez les guillemets"),
-        (ur"\s(\S+)\)" , POSTFIX_t, u"fermez la parenthèse"),
-        (ur"\s(\S+)\"" , POSTFIX_t, u"fermez les guillemets"),
-        (ur"(?:\s|^)-(?:\s|)" , SIMPLE_t, u"tiret") ]
+        (r"\." , SIMPLE_t, "point"),
+        (r"\," , SIMPLE_t, "virgule"),
+        (r"\;" , SIMPLE_t, "point virgule"),
+        (r"\:" , SIMPLE_t, "deux points"),
+        (r"\n" , SIMPLE_t, "à la ligne"),
+        (r"\r\n" , SIMPLE_t, "à la ligne"),
+        (r"\((\S+)\)" , PREFIX_t, "entre parenthèses"),
+        (r"\"(\S+)\"" , PREFIX_t, "entre guillemets"),
+        (r"\?" , SIMPLE_t, "point d'interrogation"),
+        (r"\!" , SIMPLE_t, "point d'exclamation"),
+        (r"\((\S+)\s" , PREFIX_t, "ouvrez la parenthèse"),
+        (r"\"(\S+)\s" , PREFIX_t, "ouvrez les guillemets"),
+        (r"\s(\S+)\)" , POSTFIX_t, "fermez la parenthèse"),
+        (r"\s(\S+)\"" , POSTFIX_t, "fermez les guillemets"),
+        (r"(?:\s|^)-(?:\s|)" , SIMPLE_t, "tiret") ]
 
     default_reverse = [
-        (ur"(?:\s|^)point\svirgule(?:\s|)" , SIMPLE_t, u";"),
-        (ur"(?:\s|^)deux\spoints(?:\s|)" , SIMPLE_t, u":"),
-        (ur"(?:\s|^)double\spoints(?:\s|)", SIMPLE_t, u":"),
-        (ur"(?:\s|^)retour\sà\sla\sligne(?:\s|)", SIMPLE_t, u"\n"),
-        (ur"(?:\s|^)à\sla\sligne(?:\s|)" , SIMPLE_t, u"\n"),
-        (ur"(?:\s|^)entre\sparenthèses\s(\S+)(?:\s|)" , MIDDLE_t, u"()"),
-        (ur"(?:\s|^)entre\sguillemets\s(\S+)(?:\s|)" , MIDDLE_t, u"\"\""),
-        (ur"(?:\s|^)point\sd'interrogation(?:\s|)" , SIMPLE_t, u"?"),
-        (ur"(?:\s|^)point\sd'exclamation(?:\s|)" , SIMPLE_t, u"!"),
-        (ur"(?:\s|^)ouvrez\sla\sparenthèse(?:\s|)" , SIMPLE_NSR_t, u"("),
-        (ur"(?:\s|^)ouvrez\sles\sguillemets(?:\s|)" , SIMPLE_NSR_t, u"\""),
-        (ur"(?:\s|^)fermez\sla\sparenthèse(?:\s|)" , SIMPLE_NSL_t, u")"),
-        (ur"(?:\s|^)fermez\sles\sguillemets(?:\s|)" , SIMPLE_NSL_t, u"\""),
-        (ur"(?:\s|^)point(?:\s|)" , SIMPLE_t, u"."),
-        (ur"(?:\s|^)virgule(?:\s|)" , SIMPLE_t, u","),
-        (ur"(?:\s|^)tiret(?:\s|)" , SIMPLE_t, u"-") ]
+        (r"(?:\s|^)point\svirgule(?:\s|)" , SIMPLE_t, ";"),
+        (r"(?:\s|^)deux\spoints(?:\s|)" , SIMPLE_t, ":"),
+        (r"(?:\s|^)double\spoints(?:\s|)", SIMPLE_t, ":"),
+        (r"(?:\s|^)retour\sà\sla\sligne(?:\s|)", SIMPLE_t, "\n"),
+        (r"(?:\s|^)à\sla\sligne(?:\s|)" , SIMPLE_t, "\n"),
+        (r"(?:\s|^)entre\sparenthèses\s(\S+)(?:\s|)" , MIDDLE_t, "()"),
+        (r"(?:\s|^)entre\sguillemets\s(\S+)(?:\s|)" , MIDDLE_t, "\"\""),
+        (r"(?:\s|^)point\sd'interrogation(?:\s|)" , SIMPLE_t, "?"),
+        (r"(?:\s|^)point\sd'exclamation(?:\s|)" , SIMPLE_t, "!"),
+        (r"(?:\s|^)ouvrez\sla\sparenthèse(?:\s|)" , SIMPLE_NSR_t, "("),
+        (r"(?:\s|^)ouvrez\sles\sguillemets(?:\s|)" , SIMPLE_NSR_t, "\""),
+        (r"(?:\s|^)fermez\sla\sparenthèse(?:\s|)" , SIMPLE_NSL_t, ")"),
+        (r"(?:\s|^)fermez\sles\sguillemets(?:\s|)" , SIMPLE_NSL_t, "\""),
+        (r"(?:\s|^)point(?:\s|)" , SIMPLE_t, "."),
+        (r"(?:\s|^)virgule(?:\s|)" , SIMPLE_t, ","),
+        (r"(?:\s|^)tiret(?:\s|)" , SIMPLE_t, "-") ]
 
     default_remove = [
-        (ur"(?:\s|^)point\svirgule(?:\s|)" , SIMPLE_t, u" "),
-        (ur"(?:\s|^)deux\spoints(?:\s|)" , SIMPLE_t, u" "),
-        (ur"(?:\s|^)double\spoints(?:\s|)", SIMPLE_t, u" "),
-        (ur"(?:\s|^)retour\sà\sla\sligne(?:\s|)", SIMPLE_t, u" "),
-        (ur"(?:\s|^)à\sla\sligne(?:\s|)" , SIMPLE_t, u" "),
-        (ur"(?:\s|^)entre\sparenthèses\s(\S+)(?:\s|)" , MIDDLE_t, u"  "),
-        (ur"(?:\s|^)entre\sguillemets\s(\S+)(?:\s|)" , MIDDLE_t, u"  "),
-        (ur"(?:\s|^)point\sd'interrogation(?:\s|)" , SIMPLE_t, u" "),
-        (ur"(?:\s|^)point\sd'exclamation(?:\s|)" , SIMPLE_t, u" "),
-        (ur"(?:\s|^)ouvrez\sla\sparenthèse(?:\s|)" , SIMPLE_NSR_t, u" "),
-        (ur"(?:\s|^)ouvrez\sles\sguillemets(?:\s|)" , SIMPLE_NSR_t, u" "),
-        (ur"(?:\s|^)fermez\sla\sparenthèse(?:\s|)" , SIMPLE_NSL_t, u" "),
-        (ur"(?:\s|^)fermez\sles\sguillemets(?:\s|)" , SIMPLE_NSL_t, u" "),
-        (ur"(?:\s|^)point(?:\s|)" , SIMPLE_t, u" "),
-        (ur"(?:\s|^)virgule(?:\s|)" , SIMPLE_t, u" "),
-        (ur"(?:\s|^)tiret(?:\s|)" , SIMPLE_t, u" ") ]
+        (r"(?:\s|^)point\svirgule(?:\s|)" , SIMPLE_t, " "),
+        (r"(?:\s|^)deux\spoints(?:\s|)" , SIMPLE_t, " "),
+        (r"(?:\s|^)double\spoints(?:\s|)", SIMPLE_t, " "),
+        (r"(?:\s|^)retour\sà\sla\sligne(?:\s|)", SIMPLE_t, " "),
+        (r"(?:\s|^)à\sla\sligne(?:\s|)" , SIMPLE_t, " "),
+        (r"(?:\s|^)entre\sparenthèses\s(\S+)(?:\s|)" , MIDDLE_t, "  "),
+        (r"(?:\s|^)entre\sguillemets\s(\S+)(?:\s|)" , MIDDLE_t, "  "),
+        (r"(?:\s|^)point\sd'interrogation(?:\s|)" , SIMPLE_t, " "),
+        (r"(?:\s|^)point\sd'exclamation(?:\s|)" , SIMPLE_t, " "),
+        (r"(?:\s|^)ouvrez\sla\sparenthèse(?:\s|)" , SIMPLE_NSR_t, " "),
+        (r"(?:\s|^)ouvrez\sles\sguillemets(?:\s|)" , SIMPLE_NSR_t, " "),
+        (r"(?:\s|^)fermez\sla\sparenthèse(?:\s|)" , SIMPLE_NSL_t, " "),
+        (r"(?:\s|^)fermez\sles\sguillemets(?:\s|)" , SIMPLE_NSL_t, " "),
+        (r"(?:\s|^)point(?:\s|)" , SIMPLE_t, " "),
+        (r"(?:\s|^)virgule(?:\s|)" , SIMPLE_t, " "),
+        (r"(?:\s|^)tiret(?:\s|)" , SIMPLE_t, " ") ]
 
     def __init__(self, punctuation_model = None, reverse_model = None):
         """Constructor
@@ -115,7 +115,7 @@ class Punctuation(object):
     def __simpleRepl(self, match):
         """ just replace with the text no word associated with it
         """
-        return u' ' + self.replace_temp + u' '
+        return ' ' + self.replace_temp + ' '
 
     def __simpleNSRepl(self, match):
         """ replace with the text and remove all space
@@ -125,27 +125,27 @@ class Punctuation(object):
     def __simpleNSRRepl(self, match):
         """ replace with no space on the right
         """
-        return u' ' + self.replace_temp
+        return ' ' + self.replace_temp
 
     def __simpleNSLRepl(self, match):
         """ replace with no space on the left
         """
-        return self.replace_temp + u' '
+        return self.replace_temp + ' '
 
     def __prefixRepl(self, match):
         """ replace a value prefixed with some text
         """
-        return u' ' + self.replace_temp + u' ' + match.group(1) + u' '
+        return ' ' + self.replace_temp + ' ' + match.group(1) + ' '
 
     def __postfixRepl(self, match):
         """ replace a valus postfixed with some text
         """
-        return u' ' + match.group(1) + u' ' + self.replace_temp + u' '
+        return ' ' + match.group(1) + ' ' + self.replace_temp + ' '
 
     def __middleRepl(self, match):
         """ replace a value in the middle of a text
         """
-        return u' ' + self.replace_temp[0] + match.group(1).strip() + self.replace_temp[1] + u' '
+        return ' ' + self.replace_temp[0] + match.group(1).strip() + self.replace_temp[1] + ' '
 
     def __replaceList(self, list_word, input_text):
         """ replace a list of word by another using regexp
@@ -201,8 +201,8 @@ class Punctuation(object):
             io = Ioread()
             file_content = io.readFileContent(input_file)
             return self.countPresenceText(file_content)
-        except Exception, e :
-            print("exception<" + input_file + "> : " + str(e), file=sys.stderr)
+        except Exception as e :
+            print(("exception<" + input_file + "> : " + str(e)))
             return {}
 
     def symbolText(self, input_text):
@@ -225,7 +225,7 @@ class Punctuation(object):
            return the text without punctuation
         """
         output_text = self.__replaceList(self.default_remove, input_text)
-        return u" ".join(output_text.split())
+        return " ".join(output_text.split())
 
     def replaceFile(self, input_file, output_file = None):
         """Replace the punctuation in the file named [input_file] and return the
@@ -245,8 +245,8 @@ class Punctuation(object):
                 return True
             else:
                 return self.replaceText(input_text)
-        except Exception, e :
-            print("exception<" + input_file + "> : " + str(e), file=sys.stderr)
+        except Exception as e :
+            print(("exception<" + input_file + "> : " + str(e)))
             if output_file :
                 return False
             else :

@@ -54,8 +54,8 @@ class Document:
         """Output the file content in a tabular format.
         """
         strContent = self._getStrContent(self.listContent) 
-        utf8 = unicode(strContent, "utf-8")
-        print utf8
+        utf8 = str(strContent, "utf-8")
+        print(utf8)
 
     def writeToFile(self, fullFileName, lineSeparator = " "):
         """Write the given string to the given file name.
@@ -63,7 +63,7 @@ class Document:
         strContent = self._getStrContent(self.listContent, lineSeparator) 
 
         resultFile = codecs.open(fullFileName,'w', 'utf-8')
-        resultFile.write(unicode(strContent, "utf-8"))
+        resultFile.write(str(strContent, "utf-8"))
         resultFile.close
 
     def reset(self):
@@ -146,7 +146,7 @@ class Document:
             strLine = str(line)
 
             #Line is a list
-            if isinstance(line, types.ListType):
+            if isinstance(line, list):
                 strLine = ""       
                 #Convert to strings
                 for i in range(0, len(line)):

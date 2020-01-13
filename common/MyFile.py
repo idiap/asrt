@@ -111,7 +111,7 @@ class MyFile:
                     os.rmdir(filePath)
                 else:
                     os.remove(filePath)
-            except Exception, e:
+            except Exception as e:
                 MyFile.logger.info("Could not remove file: " + str(filePath) + " " + str(e))
             
     @staticmethod

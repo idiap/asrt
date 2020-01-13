@@ -35,7 +35,7 @@ class TestDataList(unittest.TestCase):
 	OUTPUTDIR = TEMPDIRUNITTEST + "/target-folder-1"
 	
 	def compareDict(self, dict1, dict2):
-		for key,value in dict1.items():
+		for key,value in list(dict1.items()):
 			self.assertTrue(key in dict2)
 			self.assertEqual(value, dict2[key])
 
@@ -72,15 +72,15 @@ class TestDataMap(unittest.TestCase):
 	OUTPUTDIR = TEMPDIRUNITTEST + "/target-folder-1"
 	
 	def compareDict(self, dict1, dict2):
-		for key,value in dict1.items():
+		for key,value in list(dict1.items()):
 			self.assertTrue(key in dict2)
 			self.assertEqual(value, dict2[key])
 
-			for key1,value1 in value.items():
+			for key1,value1 in list(value.items()):
 				self.assertTrue(key1 in dict2[key])
 				self.assertEqual(value1, dict2[key][key1])
 
-				for key2,value2 in value1.items():
+				for key2,value2 in list(value1.items()):
 					self.assertTrue(key2 in dict2[key][key1])
 					self.assertEqual(value2, dict2[key][key1][key2])
 

@@ -145,7 +145,7 @@ class Task(object):
             #Output data
             self.prepareOutputData()
 
-        except Exception, e:
+        except Exception as e:
             errorMessage = "An error has occured"
             self._log(logging.CRITICAL, getErrorMessage(e, errorMessage))
             self.setResult(True, errorMessage)
@@ -156,12 +156,12 @@ class Task(object):
            Overridden by implementation.
         """
         for param in Task.COMMON_PARAMETERS:
-            if param not in self.taskParameters.keys():
+            if param not in list(self.taskParameters.keys()):
                 raise Exception("Task parameter missing: '%s'!" % param)        
                                             
         #Task specific parameters
         for param in parameters:            
-            if param not in self.taskParameters.keys():
+            if param not in list(self.taskParameters.keys()):
                 raise Exception("Task parameter missing: '%s'!" % param)        
 
     def setParameters(self):
@@ -271,7 +271,7 @@ class Task(object):
         self._log(logging.INFO, "Task parameters: '%s'" %\
                   self.getTaskInfo().getParametersString())        
                 
-        for key, value in self.taskInfo.getParametersDict().items():                 
+        for key, value in list(self.taskInfo.getParametersDict().items()):                 
             #Basic check
             if key == None or len(key) == 0:
                 raise TaskException("Attribute None or of zero length")

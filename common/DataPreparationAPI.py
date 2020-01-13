@@ -147,7 +147,7 @@ class DataPreparationAPI():
         """
         validationList = []
         for pattern, regexType in self.validationPatternList:
-            validationList.append([pattern, u"",regexType, u"0"])
+            validationList.append([pattern, "",regexType, "0"])
 
         return validationList
 
@@ -321,7 +321,7 @@ class DataPreparationAPI():
                     self.logger.info("Filtering data - 2nd stage (remove web address and check German orthograph)")
                     self.doc.filterTextSentences2ndStage()
 
-        except Exception, e:
+        except Exception as e:
             errorMessage = "An error has occurred when importing sentences: %s\n%s" % \
                              (getByteString(e.message), self.inputFile)
             errorMessage = getErrorMessage(e, errorMessage)
@@ -374,7 +374,7 @@ class DataPreparationAPI():
         """
         io = Ioread()
         #Finally output to disk
-        for resultLanguage, results in sentencesDict.items():
+        for resultLanguage, results in list(sentencesDict.items()):
             if len(results) > 0:
                 DataPreparationAPI.logger.info("%d sentences found for: %s" % (len(results), resultLanguage))
                 strContent = "\n".join(results)

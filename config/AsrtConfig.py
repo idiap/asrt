@@ -36,11 +36,11 @@ ITALIAN_PICKLE_FOLDER   = "file:%s/tokenizers/punkt/italian.pickle" % NLTK_DATA
 
 # print( NLTK_DATA + "/corpora/europarl_raw" );   quit();
 if not os.path.exists(NLTK_DATA + "/corpora/europarl_raw"):
-    print "No europarl_raw corpora found!"
+    print("No europarl_raw corpora found!")
     sys.exit(1)
 
 if not os.path.exists(FRENCH_PICKLE_FOLDER.split(':')[1]):
-    print "Could not find %s !" % FRENCH_PICKLE_FOLDER.split(':')[1]
+    print(("Could not find %s !" % FRENCH_PICKLE_FOLDER.split(':')[1]))
     sys.exit(1)
 
 #Language

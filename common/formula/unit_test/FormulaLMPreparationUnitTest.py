@@ -41,7 +41,7 @@ class TestFormulaLMPreparation(unittest.TestCase):
         for t, gt in testList:
             f.strText = t
             callback()
-            self.assertEquals(gt.encode('utf-8'), f.strText.encode('utf-8'))
+            self.assertEqual(gt.encode('utf-8'), f.strText.encode('utf-8'))
 
     ############
     # Tests
@@ -65,55 +65,55 @@ class TestFormulaLMPreparation(unittest.TestCase):
                     gtList[lang].append(sub)
 
         for lang in languages:
-            strGt = u" ".join(gtList[lang])
+            strGt = " ".join(gtList[lang])
             strGt = strGt.rstrip().strip()
-            strGt = re.sub(SPACEPATTERN, u" ",
+            strGt = re.sub(SPACEPATTERN, " ",
                            strGt, flags=re.UNICODE)
 
             f = LMPreparationFormula()
-            f.setText(u" ".join(testList[lang]))
+            f.setText(" ".join(testList[lang]))
             f._normalizeUtf8()
             strResult = f.getText()
 
-            self.assertEquals(strGt.encode('utf-8'), strResult.encode('utf-8'))
+            self.assertEqual(strGt.encode('utf-8'), strResult.encode('utf-8'))
 
     def testNormalizePunctuation(self):
         f = LMPreparationFormula()
-        f.setText(u"".join(string.punctuation + u"‰"))
+        f.setText("".join(string.punctuation + "‰"))
         f.setExpandNumberInWords(False)
         f._normalizePunctuation(self.allPunctList)
         strResult = f.getText()
 
-        gt = u"$%&'-/@\u2030"
-        self.assertEquals(gt, strResult)
+        gt = "$%&'-/@‰"
+        self.assertEqual(gt, strResult)
 
         f.setLanguageId(1)
         f._normalizePunctuation(self.allPunctList)
         strResult = f.getText()
 
         gt = "dollars pourcent et '-/ at pour mille"
-        self.assertEquals(gt, strResult)
+        self.assertEqual(gt, strResult)
 
     def testNormalizePunctuationKeepInWords(self):
         f = LMPreparationFormula()
         f.setExpandNumberInWords(False)
 
-        f.setText(u"".join("/ HES-SO und AdG/LA - auch im Winter / Sommer -"))
+        f.setText("".join("/ HES-SO und AdG/LA - auch im Winter / Sommer -"))
         f._normalizePunctuation(self.allPunctList)
         strResult = f.getText()
 
         gt = "HES-SO und AdG/LA auch im Winter Sommer"
-        self.assertEquals(gt, strResult)
+        self.assertEqual(gt, strResult)
 
     def testNormalizeCharacters(self):
-        strTest = ur"a b c \uff1b , % œ"
-        strGt = ur"a b c % oe"
+        strTest = r"a b c ； , % œ"
+        strGt = r"a b c % oe"
 
         f = LMPreparationFormula()
         f.setText(strTest)
         f._normalizeUtf8()
         f._normalizePunctuation(self.allPunctList)
-        self.assertEquals(strGt, f.getText())
+        self.assertEqual(strGt, f.getText())
 
     def testIsNoise(self):
         for p in list(string.punctuation):
@@ -121,55 +121,55 @@ class TestFormulaLMPreparation(unittest.TestCase):
             self.assertTrue(LMPreparationFormula._isNoise(strTest))
 
     def testFilterNoiseWords(self):
-        strTest = u"!-?- hello how !!!! are you *-+$"
-        strGt = u"hello how are you"
+        strTest = "!-?- hello how !!!! are you *-+$"
+        strGt = "hello how are you"
 
         f = LMPreparationFormula()
         f.setText(strTest)
         strTest = f._filterNoiseWords()
 
-        self.assertEquals(strGt, strTest)
+        self.assertEqual(strGt, strTest)
 
     def testExpandAcronyms(self):
-        testList = [(u"PDCB.", u"p. d. c. b."),
-                    (u"PDC:", u"p. d. c.")]
+        testList = [("PDCB.", "p. d. c. b."),
+                    ("PDC:", "p. d. c.")]
 
         f = LMPreparationFormula()
         self.verifyEqual(testList, f, f._expandAcronyms)
 
     def testExpandNumberInWords(self):
-        testList = [(ur"A1", ur"A. 1"), (ur"P3B", ur"P. 3 B."), (ur"P5B4", ur"P. 5 B. 4"),
-                    (ur"PPB5", ur"PPB 5"), (ur"10jährige", ur"10 jährige")]
+        testList = [(r"A1", r"A. 1"), (r"P3B", r"P. 3 B."), (r"P5B4", r"P. 5 B. 4"),
+                    (r"PPB5", r"PPB 5"), (r"10jährige", r"10 jährige")]
 
         f = LMPreparationFormula()
         self.verifyEqual(testList, f, f._expandNumberInWords)
 
         f.setExpandNumberInWords(False)
-        testList = [(ur"1er", ur"1er")]
+        testList = [(r"1er", r"1er")]
         f.setLanguageId(1)
         self.verifyEqual(testList, f, f._expandNumberInWords)
 
-        testList = [(ur"1st", ur"1st")]
+        testList = [(r"1st", r"1st")]
         f.setLanguageId(3)
         self.verifyEqual(testList, f, f._expandNumberInWords)
 
-        testList = [(ur"18-jähriger", ur"18 -jähriger")]
+        testList = [(r"18-jähriger", r"18 -jähriger")]
         f.setLanguageId(2)
         self.verifyEqual(testList, f, f._expandNumberInWords)
 
     def testExpandAbbreviations(self):
         f = LMPreparationFormula()
-        for languageId, v in ABBREVIATIONS.items():
+        for languageId, v in list(ABBREVIATIONS.items()):
             f.setLanguageId(languageId)
-            for abbr, gt in v.items():
+            for abbr, gt in list(v.items()):
                 f.strText = abbr
                 f._expandAbbreviations()
-                self.assertEquals(gt.encode('utf-8'),
-                                  f.strText.encode('utf-8'))
+                self.assertEqual(gt.encode('utf-8'),
+                                 f.strText.encode('utf-8'))
 
     def testContractionPrefixes(self):
-        testList = [(ur"President' s", ur"president's", 3),
-                    (ur"President' s of", ur"president's of", 3)]
+        testList = [(r"President' s", r"president's", 3),
+                    (r"President' s of", r"president's of", 3)]
 
         f = LMPreparationFormula()
         f.setExpandNumberInWords(False)
@@ -178,17 +178,19 @@ class TestFormulaLMPreparation(unittest.TestCase):
             f.setLanguageId(languageId)
             f.setText(t)
             r = f.prepareText()
-            self.assertEquals(gt.encode('utf-8'), r.encode('utf-8'))
+            self.assertEqual(gt.encode('utf-8'), r.encode('utf-8'))
 
     def testAll(self):
-        testList = [(u"A dix heures", u"à dix heures", False),
-                    (u"1. Election", u"premièrement election", False),
-                    (u"R1", u"r. un", False), (ur"A1", ur"a. un", False), (ur"P3B", ur"p. trois b.", False),
-                    (ur"P5B4", ur"p. cinq b. quatre", False),
-                    (ur"PPB5", ur"p. p. b.  cinq", False),
-                    (ur"rte", ur"route", False),
-                    (ur"Constantin, p. l. r., président de", ur"constantin p. l. r. président de", False),
-                    (ur"/ HES-SO und AdG/LA - auch im Winter / Sommer -", ur"hes-so und adg/la auch im winter sommer", True)]
+        testList = [("A dix heures", "à dix heures", False),
+                    ("1. Election", "premièrement election", False),
+                    ("R1", "r. un", False), (r"A1", r"a. un",
+                                             False), (r"P3B", r"p. trois b.", False),
+                    (r"P5B4", r"p. cinq b. quatre", False),
+                    (r"PPB5", r"p. p. b. cinq", False),
+                    (r"rte", r"route", False),
+                    (r"Constantin, p. l. r., président de",
+                     r"constantin p. l. r. président de", False),
+                    (r"/ HES-SO und AdG/LA - auch im Winter / Sommer -", r"hes-so und adg/la auch im winter sommer", True)]
 
         f = LMPreparationFormula()
         f.setLanguageId(1)
@@ -197,17 +199,17 @@ class TestFormulaLMPreparation(unittest.TestCase):
             f.setText(t)
             f.setExpandNumberInWords(not knw)
             r = f.prepareText()
-            self.assertEquals(gt.encode('utf-8'), r.encode('utf-8'))
+            self.assertEqual(gt, r)
 
     def testFrench(self):
-        testList = [(ur"à plus tard", ur"à plus tard"),
-                    (ur"maîtres", ur"maîtres"),
-                    (ur"maïs", ur"maïs"),
-                    (ur"emmaüs", ur"emmaüs"),
-                    (ur"mäman", ur"mäman"),
-                    (ur"1er", ur"premier"),
-                    (ur"20ème", ur"vingtième"),
-                    (ur"18-age", ur"dix huit age")]
+        testList = [(r"à plus tard", r"à plus tard"),
+                    (r"maîtres", r"maîtres"),
+                    (r"maïs", r"maïs"),
+                    (r"emmaüs", r"emmaüs"),
+                    (r"mäman", r"mäman"),
+                    (r"1er", r"premier"),
+                    (r"20ème", r"vingtième"),
+                    (r"18-age", r"dix huit age")]
 
         # No new words are kepts, hyphens are removed
         f = LMPreparationFormula()
@@ -217,25 +219,25 @@ class TestFormulaLMPreparation(unittest.TestCase):
         for t, gt in testList:
             f.setText(t)
             r = f.prepareText()
-            self.assertEquals(gt.encode('utf-8'), r.encode('utf-8'))
+            self.assertEqual(gt.encode('utf-8'), r.encode('utf-8'))
 
         # Keep new words implies keep hyphens in words
         f.setExpandNumberInWords(False)
 
-        testList = [(ur"18-age", ur"18-age")]
+        testList = [(r"18-age", r"18-age")]
         for t, gt in testList:
             f.setText(t)
             r = f.prepareText()
-            self.assertEquals(gt.encode('utf-8'), r.encode('utf-8'))
+            self.assertEqual(gt.encode('utf-8'), r.encode('utf-8'))
 
     def testGerman(self):
-        testList = [(ur"emmaüs", ur"emmaüs"),
-                    (u"mein àrbeit", u"mein àrbeit"),
-                    (ur"môchten", ur"môchten"),
-                    (ur"mädchen", ur"mädchen"),
-                    (ur"meîn", ur"meîn"),
-                    (ur"meïn", ur"meïn"),
-                    (ur"18-jähriger", ur"achtzehn jähriger")]
+        testList = [(r"emmaüs", r"emmaüs"),
+                    ("mein àrbeit", "mein àrbeit"),
+                    (r"môchten", r"môchten"),
+                    (r"mädchen", r"mädchen"),
+                    (r"meîn", r"meîn"),
+                    (r"meïn", r"meïn"),
+                    (r"18-jähriger", r"achtzehn jähriger")]
 
         # No new words are kepts
         f = LMPreparationFormula()
@@ -245,20 +247,20 @@ class TestFormulaLMPreparation(unittest.TestCase):
         for t, gt in testList:
             f.setText(t)
             r = f.prepareText()
-            self.assertEquals(gt.encode('utf-8'), r.encode('utf-8'))
+            self.assertEqual(gt.encode('utf-8'), r.encode('utf-8'))
 
         # New words are kept
-        testList = [(ur"18-jähriger", ur"18-jähriger")]
+        testList = [(r"18-jähriger", r"18-jähriger")]
         f.setExpandNumberInWords(False)
 
         for t, gt in testList:
             f.setText(t)
             r = f.prepareText()
-            self.assertEquals(gt.encode('utf-8'), r.encode('utf-8'))
+            self.assertEqual(gt.encode('utf-8'), r.encode('utf-8'))
 
     def testEnglish(self):
-        testList = [(ur"object 5", ur"object five"),
-                    (ur"1st", ur"first")]
+        testList = [(r"object 5", r"object five"),
+                    (r"1st", r"first")]
 
         f = LMPreparationFormula()
         f.setExpandNumberInWords(True)
@@ -267,12 +269,12 @@ class TestFormulaLMPreparation(unittest.TestCase):
         for t, gt in testList:
             f.setText(t)
             r = f.prepareText()
-            self.assertEquals(gt.encode('utf-8'), r.encode('utf-8'))
+            self.assertEqual(gt.encode('utf-8'), r.encode('utf-8'))
 
-        testList = [(ur"18-year-old", ur"18-year-old")]
+        testList = [(r"18-year-old", r"18-year-old")]
         f.setExpandNumberInWords(False)
 
         for t, gt in testList:
             f.setText(t)
             r = f.prepareText()
-            self.assertEquals(gt.encode('utf-8'), r.encode('utf-8'))
+            self.assertEqual(gt.encode('utf-8'), r.encode('utf-8'))

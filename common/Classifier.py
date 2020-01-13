@@ -245,7 +245,7 @@ class LanguageClassifier():
         decodedString = ""
         try:
             decodedString = strText.decode('utf-8')
-        except Exception, e:
+        except Exception as e:
             LanguageClassifier.logger.critical("Decoding error: " + strText + context + str(e))
             raise e
         return decodedString
@@ -255,7 +255,7 @@ class LanguageClassifier():
         encodedString = ""
         try:
             encodedString = strText.encode('utf-8')
-        except Exception, e:
+        except Exception as e:
             LanguageClassifier.logger.critical("Encoding error: " + context)
             raise e
 

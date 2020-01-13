@@ -35,11 +35,11 @@ class RegexType():
          Type 5: ([0-9] +) and nothing specified after
     """
     TYPE1 = [(None,None)]
-    TYPE2 = [(u'( |^)',u'( |$)')]                      # Before converting punctuation
-    TYPE3 = [(u'([.,;:()”?!-])',u'([.,;:()”?!-])')]    # After converting punctuation
-    TYPE4 = [(u'([0-9] +|[a-z] +|[A-Z] +)',u'( |$)')]
-    TYPE5 = [(u'([0-9] +)',u'( |$)')]
-    TYPE6 = [(u'([ \"\']|^)',u'([ \"\',\.\?\!;:]|$)')]
+    TYPE2 = [('( |^)','( |$)')]                      # Before converting punctuation
+    TYPE3 = [('([.,;:()”?!-])','([.,;:()”?!-])')]    # After converting punctuation
+    TYPE4 = [('([0-9] +|[a-z] +|[A-Z] +)','( |$)')]
+    TYPE5 = [('([0-9] +)','( |$)')]
+    TYPE6 = [('([ \"\']|^)','([ \"\',\.\?\!;:]|$)')]
 
     ###############################
     # Static methods
@@ -163,8 +163,8 @@ class RegularExpressionFormula():
             for regexForType in regexListForType:
                 regexPattern = regexForType[0]       #What to match
                 regexSubstitution = regexForType[1]  #What to substitute
-                print "'" + regexPattern + "'", "-->", "'" + regexSubstitution + "'"
-        print "\n"
+                print(("'" + regexPattern + "'", "-->", "'" + regexSubstitution + "'"))
+        print("\n")
 
     @staticmethod
     def applyRegularExpressions(strText, substitutionPatternList, languageId, debug=False):
@@ -235,11 +235,11 @@ class RegularExpressionFormula():
              'strText' is assumed to be in utf-8 format.
         """
         if bDouble:
-            strText = re.sub(ur"[ ]+", ur"  ", strText, flags = re.UNICODE)
+            strText = re.sub(r"[ ]+", r"  ", strText, flags = re.UNICODE)
             #Remove double spaces from groups
-            return re.sub(ur"([(|])  ([|)])", ur"\g<1> \g<2>", strText, flags=re.UNICODE)
+            return re.sub(r"([(|])  ([|)])", r"\g<1> \g<2>", strText, flags=re.UNICODE)
 
-        return re.sub(ur"[ ]+", ur" ", strText, flags = re.UNICODE)
+        return re.sub(r"[ ]+", r" ", strText, flags = re.UNICODE)
 
     @staticmethod
     def normalizeApostrophe(strText, oneSpace=False):
@@ -248,6 +248,6 @@ class RegularExpressionFormula():
              'strText' is assumed to be in utf-8 format.
         """
         if oneSpace:
-            return re.sub(ur"'", ur"' ", strText, flags = re.UNICODE) 
+            return re.sub(r"'", r"' ", strText, flags = re.UNICODE) 
 
-        return re.sub(ur"'[ ]+", ur"'", strText, flags = re.UNICODE)
+        return re.sub(r"'[ ]+", r"'", strText, flags = re.UNICODE)

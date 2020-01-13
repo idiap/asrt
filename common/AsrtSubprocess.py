@@ -51,13 +51,13 @@ class AsrtSubprocess():
             #Run the subprocess
             stdout, stderr = p.communicate()
             retCode = p.poll()
-        except Exception, e:
+        except Exception as e:
             AsrtSubprocess.logger.critical("Subprocess error: %s" % str(e))
             errorMessage = str(commandList) + "\n" + \
                            "------------ Begin stack ------------\n" + \
                            traceback.format_exc().rstrip() + "\n" + \
                            "------------ End stack --------------"
-            print errorMessage
+            print(errorMessage)
             
             #Make sure the trace is logged
             if stderr is None: 
@@ -73,9 +73,9 @@ class AsrtSubprocess():
         io = Ioread()
 
         if stdout != None and len(stdout) > 0 and outFileName != None:
-            io.writeFileContent("%s/%s" % (logPath, outFileName), unicode(stdout,'utf-8'))
+            io.writeFileContent("%s/%s" % (logPath, outFileName), str(stdout,'utf-8'))
         
         if stderr != None and len(stderr) > 0 and errFileName != None:
-            io.writeFileContent("%s/%s" % (logPath, errFileName), unicode(stderr,'utf-8'))
+            io.writeFileContent("%s/%s" % (logPath, errFileName), str(stderr,'utf-8'))
 
         return retCode, stdout, stderr

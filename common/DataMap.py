@@ -23,7 +23,7 @@ __license__ = "BSD 3-Clause"
 
 import os 
 import logging
-import csv, copy, StringIO
+import csv, copy, io
 from pprint import pprint
 import unicodecsv
 
@@ -110,7 +110,7 @@ class DataMap(object):
     def getCount(self):
         """Number of input data.
         """
-        return len(self.dataMap.keys())
+        return len(list(self.dataMap.keys()))
 
     def setDictionaryMap(self, dataMap):
         """Set the new structure of data and
@@ -153,10 +153,10 @@ class DataMap(object):
 
              The result is stored in 'dataList'
         """
-        for key, value in dataDict.items():
+        for key, value in list(dataDict.items()):
             rowList.append(key)
             #Stop condition
-            if len(value.keys()) == 0:
+            if len(list(value.keys())) == 0:
                 dataList.append(copy.deepcopy(rowList))
             else:
                 #Recursive call
@@ -165,6 +165,6 @@ class DataMap(object):
             rowList.pop()
 
     def __str__(self):
-        rep = StringIO.StringIO()
+        rep = io.StringIO()
         pprint(self.dataMap,rep)
         return rep.getvalue().rstrip()

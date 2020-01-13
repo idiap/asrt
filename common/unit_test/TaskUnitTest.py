@@ -69,7 +69,7 @@ class TestTask(unittest.TestCase):
 	dataList = "resources/target-folder/data.ilist"
 
 	def setUp(self):
-		print ""
+		print("")
 
 	############
 	#Tests
@@ -130,8 +130,8 @@ class TestTask(unittest.TestCase):
 		self.assertTrue(MyFile.checkFileExists(dataMap1Path))
 		self.assertTrue(MyFile.checkFileExists(dataMap2Path))
 
-		self.assertEquals(15,task1.inputList.getCount())
-		self.assertEquals(2,len(task1.mapLists))
+		self.assertEqual(15,task1.inputList.getCount())
+		self.assertEqual(2,len(task1.mapLists))
 
 		for dataMap in task1.mapLists:
 			self.assertTrue(dataMap.getCount() in [2,1])
@@ -171,7 +171,7 @@ class TestTask(unittest.TestCase):
 
 		paramDict = task1.getTaskInfo().getParametersDict()
 
-		self.assertEquals(0, len(paramDict))
+		self.assertEqual(0, len(paramDict))
 
 	def testExecute(self):
 		task1 = Task(TaskInfo("",TestTask.workingDirectory,

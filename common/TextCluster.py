@@ -83,7 +83,7 @@ class TextCluster(Cluster):
             return ""
 
         if debug:
-            return u"---\n%s\n" % u"\n".join(reversed(self.elementList))
+            return "---\n%s\n" % "\n".join(reversed(self.elementList))
 
         return self.elementList[0]
 
@@ -239,7 +239,7 @@ class TextCluster(Cluster):
         # pattern   = u"^[a-zA-ZäöüÄÖÜ0-9.,?\"'\-]+$"   # All allowed chars
         # pattern   = u"^[a-zA-ZäöüÄÖÜß]+[.|']?$"       # common char of
         # [a-zäöü] with an optional trailing dot or apostrophe '
-        pattern = u"^[a-zA-ZäöüÄÖÜß.']+$"
+        pattern = "^[a-zA-ZäöüÄÖÜß.']+$"
         # print( pattern.encode( "utf-8" ) )
 
         recmped = re.compile(pattern.encode("utf-8"))   # re compiled

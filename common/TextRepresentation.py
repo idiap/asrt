@@ -89,7 +89,7 @@ class TextRepresentation(object):
         """
         for i, strText in enumerate(self.sentencesList):
             #For all punctuation marks
-            for regex, value in TextRepresentation.PUNCTUATION.items():
+            for regex, value in list(TextRepresentation.PUNCTUATION.items()):
                 strText = re.sub(regex, value, strText)
                 self.sentencesList[i] = strText                        
     
@@ -111,7 +111,7 @@ class TextRepresentation(object):
         fileName, fileExtension = os.path.splitext(self.sourceFileName)
         documentType = None
 
-        for knownType in TextRepresentation.KNOWNTYPES.keys():
+        for knownType in list(TextRepresentation.KNOWNTYPES.keys()):
             if knownType == fileExtension[1:]:
                 documentType = knownType
 

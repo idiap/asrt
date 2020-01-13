@@ -182,7 +182,7 @@ class LMPreparationFormula():
             if not LMPreparationFormula._isNoise(w):
                 newWordsList.append(w)
 
-        self.strText = u" ".join(newWordsList)
+        self.strText = " ".join(newWordsList)
         return self.strText
 
     def _normalizeUtf8(self):
@@ -202,7 +202,7 @@ class LMPreparationFormula():
             else:
                 utf8List.append(c)
 
-        self.strText = u"".join(utf8List).rstrip().strip()
+        self.strText = "".join(utf8List).rstrip().strip()
 
         if len(self.strText) > 1 and \
                 self.strText[-1] in self.ALLPUNCTUATIONSYMBOLS and \
@@ -232,7 +232,7 @@ class LMPreparationFormula():
             else:
                 newWordsList.append(w)
 
-        self.strText = u" ".join(newWordsList)
+        self.strText = " ".join(newWordsList)
 
     def _expandNumberInWords(self):
         """If there are numbers in words, split them except if
@@ -255,8 +255,8 @@ class LMPreparationFormula():
             tokenList = re.split(CAPTURINGDIGITPATTERN, w, flags=re.UNICODE)
             # Numbers need to contain a digit
             # Ordinal numbers are not expanded
-            if not re.search(u"[0-9]", w) or (self.languageId in EXPANDEXCEPTIONS and
-                                              re.search(EXPANDEXCEPTIONS[self.languageId], w, flags=re.UNICODE)):
+            if not re.search("[0-9]", w) or (self.languageId in EXPANDEXCEPTIONS and
+                                             re.search(EXPANDEXCEPTIONS[self.languageId], w, flags=re.UNICODE)):
                 newWordsList.append(w)
             # We have a match
             elif len(tokenList) > 1:
@@ -264,15 +264,15 @@ class LMPreparationFormula():
                 for i, t in enumerate(tokenList):
                     # Digit return false
                     if len(t) == 1 and t.isupper():
-                        tokenList[i] = tokenList[i] + u"."
-                newWord = u" ".join(tokenList).strip()
+                        tokenList[i] = tokenList[i] + "."
+                newWord = " ".join(tokenList).strip()
                 # Group P . 5 into P. 5
-                newWord = re.sub(GROUPINGDOTCOMMAPATTERN, u"\g<2> ", newWord)
+                newWord = re.sub(GROUPINGDOTCOMMAPATTERN, "\g<2> ", newWord)
                 newWordsList.append(newWord)
             else:
                 newWordsList.append(w)
 
-        self.strText = u" ".join(newWordsList)
+        self.strText = " ".join(newWordsList)
 
     def _expandAcronyms(self):
         """Acronyms are splitted.
@@ -280,7 +280,7 @@ class LMPreparationFormula():
            i.e. PDC --> p. d. c.
         """
         self.strText = self.acronymFormula.apply(self.strText, self.languageId)
-        self.strText = re.sub(ACRONYMDELIMITER, u"",
+        self.strText = re.sub(ACRONYMDELIMITER, "",
                               self.strText, flags=re.UNICODE)
 
     def _normalizePunctuation(self, excludeList):
@@ -309,34 +309,34 @@ class LMPreparationFormula():
             param 'excludeList' : a list of exclude punctuation symbols
         """
 
-        unicodeList, prevC, beforePrevC = [], u"", u""
+        unicodeList, prevC, beforePrevC = [], "", ""
         for i, c in enumerate(self.strText):
-            strC = c.encode('utf-8')
+            strC = c
             # For date format, i.e. 21-Jul
             if strC in excludeList:
                 # Keep dots after uppercase letters
                 if beforePrevC in ("", " ") and not prevC.isdigit() \
                         and strC == ".":
                     unicodeList.append(c)
-                    unicodeList.append(u" ")
+                    unicodeList.append(" ")
                 # Keep some special characters if they appear after a non-space
                 # value
                 elif not self.expandNumberInWords and prevC not in ("", " ") and strC in PUNCTUATIONKEEPINWORD:
                     unicodeList.append(c)
             elif self.languageId != 0 and strC in PUNCTUATIONMAP:
                 unicodeList.append(
-                    u" " + PUNCTUATIONMAP[strC][self.languageId] + u" ")
+                    " " + PUNCTUATIONMAP[strC][self.languageId] + " ")
             else:
                 unicodeList.append(c)
             beforePrevC = prevC
             prevC = strC
 
-        self.strText = u"".join(unicodeList).rstrip().strip()
-        self.strText = re.sub(u"(^- *| - |-$)", u"",
-                              self.strText, flags=re.UNICODE)
-        self.strText = re.sub(u"(- )", u" ", self.strText, flags=re.UNICODE)
-        self.strText = re.sub(SPACEPATTERN, u" ",
-                              self.strText, flags=re.UNICODE)
+        self.strText = "".join(unicodeList).rstrip().strip()
+        self.strText = re.sub("(^- *| - |-$)", "",
+                              self.strText)
+        self.strText = re.sub("(- )", " ", self.strText)
+        self.strText = re.sub(SPACEPATTERN, " ",
+                              self.strText)
 
     def _normalizeWords(self):
         """Word base normalization.
@@ -376,7 +376,7 @@ class LMPreparationFormula():
     def _normalizeSpaces(self):
         """Case normalization (change to lower case)
         """
-        self.strText = re.sub(SPACEPATTERN, u" ",
+        self.strText = re.sub(SPACEPATTERN, " ",
                               self.strText, flags=re.UNICODE)
 
     @staticmethod
@@ -384,15 +384,19 @@ class LMPreparationFormula():
         """Utf-8 characters mapping in the form of a
            code point dictionary.
         """
-        if len(LMPreparationFormula.ordDict.keys()) > 0:
+        if len(list(LMPreparationFormula.ordDict.keys())) > 0:
             return LMPreparationFormula.ordDict
 
         # Substitution dictionary, assume one character only
         ordDict = {}
         for match, sub, comment, languageId in UTF8MAP:
-            if ord(match) in ordDict:
-                raise Exception("Already in dictionary '%s' '%s'!" % (unichr(ord(match)),
-                                                                      comment.encode('utf8')))
+            try:
+                if ord(match) in ordDict:
+                    raise Exception("Already in dictionary '%s' '%s'!" % (chr(ord(match)),
+                                                                          comment.encode('utf8')))
+            except:
+                print("Exception ---->", match)
+
             if (langId == int(languageId) or int(languageId) == 0):
                 ordDict[ord(match)] = sub
 
@@ -404,14 +408,14 @@ class LMPreparationFormula():
         """Get the abbreviations dictionary with keys
            encoded in byte string for comparison.
         """
-        if len(LMPreparationFormula.abbreviationsDict.keys()) > 0:
+        if len(list(LMPreparationFormula.abbreviationsDict.keys())) > 0:
             return LMPreparationFormula.abbreviationsDict
 
         aDict = {}
-        for lang in ABBREVIATIONS.keys():
+        for lang in list(ABBREVIATIONS.keys()):
             if lang not in aDict:
                 aDict[lang] = {}
-            for k, v in ABBREVIATIONS[lang].items():
+            for k, v in list(ABBREVIATIONS[lang].items()):
                 aDict[lang][k.encode('utf-8')] = v
 
         LMPreparationFormula.abbreviationsDict = aDict

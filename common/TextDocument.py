@@ -41,13 +41,13 @@ class TextDocument(Document):
 
     CONVERT_COMMAND     = ['pdftotext', '-raw', '-layout', '-enc', 'UTF-8', '-eol', 'unix', '-nopgbrk']
 
-    MERGECLUSTERSEP     = u"\n"
-    DIGITANDDOTREGEX    = u"( |^)([0-9]{1,2})[.]( |$)"
-    DIGITANDDOTSUB      = u"\g<1>\g<2>.\g<3>"
+    MERGECLUSTERSEP     = "\n"
+    DIGITANDDOTREGEX    = "( |^)([0-9]{1,2})[.]( |$)"
+    DIGITANDDOTSUB      = "\g<1>\g<2>.\g<3>"
     #Do not put a ; for character entity, otherwise
     #sentence segmentation is ocurring
-    DIGITANDENTITYREGEX = u"( |^)([0-9]{1,2})&#46( |$)"
-    DIGITANDENTITYSUB   = u"\g<1>\g<2>&#46\g<3>"
+    DIGITANDENTITYREGEX = "( |^)([0-9]{1,2})&#46( |$)"
+    DIGITANDENTITYSUB   = "\g<1>\g<2>&#46\g<3>"
     
     ########################
     # Default constructor
@@ -134,7 +134,7 @@ class TextDocument(Document):
         
         #One string per language
         resultDict = {}
-        for k, textList in textDict.items():
+        for k, textList in list(textDict.items()):
             resultDict[k] = self.MERGECLUSTERSEP.join(textList)
         return resultDict
 
@@ -157,7 +157,7 @@ class TextDocument(Document):
         bEmpty = True
 
         #Normalize text per language
-        for languageId, clusterList in lang2clusterDict.items():
+        for languageId, clusterList in list(lang2clusterDict.items()):
             #Read all cluster texts
             textList = []
             for textCluster in clusterList:
@@ -236,7 +236,7 @@ class TextDocument(Document):
         """Display document content.
         """
         for textCluster in self.listContent:
-            print textCluster
+            print(textCluster)
 
     ########################
     #Implementation
@@ -286,7 +286,7 @@ class TextDocument(Document):
                 sentences[i] = self._replaceProblematicPeriods(s, forward=False)
         else:
             TextDocument.logger.info("Segment with new lines")
-            sentences = strText.split(u"\n")
+            sentences = strText.split("\n")
 
         #Make text clusters with unknown language id
         self._addSentences(sentences)
@@ -308,9 +308,9 @@ class TextDocument(Document):
            param data: an utf-8 encoded string
         """
         #Last sentence word splited into two
-        data = re.sub(ur"-\n", u"", data, flags=re.UNICODE)
+        data = re.sub(r"-\n", "", data, flags=re.UNICODE)
         
-        return re.sub(ur"\n", u" ", data, flags=re.UNICODE)
+        return re.sub(r"\n", " ", data, flags=re.UNICODE)
 
     def _replaceProblematicPeriods(self, data, forward=True):
         """Convert dots preceded from a number and followed
@@ -345,7 +345,7 @@ class TextDocument(Document):
             #The actual job
             sentences = tokenizer.tokenize(data)
 
-        except Exception, e:
+        except Exception as e:
             TextDocument.logger.critical("Tokenizer error: " + str(e))
             raise Exception("Tokenizer error: " + self.tokenizer_path)
 
@@ -365,7 +365,7 @@ class TextDocument(Document):
         for line in sentencesList:
             if self.segmentWithNLTK:
                 #Further sentence split to avoid long paragraphes
-                for utterance in re.split(ur"\t|;|:|!|\?", line, flags=re.UNICODE):
+                for utterance in re.split(r"\t|;|:|!|\?", line, flags=re.UNICODE):
                     self._addClusterText(utterance, languageId)
             else:
                 self._addClusterText(line, languageId)
