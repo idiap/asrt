@@ -27,25 +27,25 @@ from asrt.common.AsrtUtility import hasNumber
 
 class FormulaNumberUnitTest(unittest.TestCase):
 
-    testDict = { "cardinal"   : [(u"10",u"dix"),(u"25",u"vingt cinq"),(u"1416000",u"un million quatre cent seize mille")],
-                 "transition" : [(u"1.",u"premièrement"),(u"10.",u"dixièmement")],
-                 "ordinal"    : [(u"1er",u"premier"),(u"1ère",u"première"),(u"2ème",u"deuxième"),
-                                 (u"80ème",u"quatre-vingtième"),(u"400ème",u"quatre centième"),
-                                 (u"380ème",u"trois cent quatre-vingtième"),(u"4000000ème",u"quatre millionième"),
-                                 (u"XXVème",u"vingt-cinquième"), (u"XXème",u"vingtième"),
-                                 (u"XXIIIe",u"vingt-troisième")],
-                 "decimal"    : [(u"2,5",u"deux virgule cinq"), (u"2.5,3",u"deux point cinq virgule trois")],
-                 "roman"      : [(u"XXIII",u"vingt trois"), (u"XX",u"vingt")],
-                 "all"        : [(u"1ab",u"1ab"),(u"ab",u"ab"),
-                                 (u"le 25 mars 2015 2.5 XXème",u"le vingt cinq mars deux mille quinze deux point cinq vingtième"),
-                                 (u"le 25.",u"le vingt cinq"),
-                                 (u"le 25.5.",u"le vingt cinq point cinq"),
-                                 (u"14 alinéa 1, some text",u"quatorze alinéa un some text"),
-                                 (u"l'article 12,",u"l'article douze"),
-                                 (u"dans le XXIIIe siècle", u"dans le vingt-troisième siècle"),
-                                 (u"Ce matin", u"Ce matin"),
-                                 (u"1'416'000",u"un million quatre cent seize mille"),
-                                 (u"Le matin", u"Le matin")]
+    testDict = { "cardinal"   : [("10","dix"),("25","vingt cinq"),("1416000","un million quatre cent seize mille")],
+                 "transition" : [("1.","premièrement"),("10.","dixièmement")],
+                 "ordinal"    : [("1er","premier"),("1ère","première"),("2ème","deuxième"),
+                                 ("80ème","quatre-vingtième"),("400ème","quatre centième"),
+                                 ("380ème","trois cent quatre-vingtième"),("4000000ème","quatre millionième"),
+                                 ("XXVème","vingt-cinquième"), ("XXème","vingtième"),
+                                 ("XXIIIe","vingt-troisième")],
+                 "decimal"    : [("2,5","deux virgule cinq"), ("2.5,3","deux point cinq virgule trois")],
+                 "roman"      : [("XXIII","vingt trois"), ("XX","vingt")],
+                 "all"        : [("1ab","1ab"),("ab","ab"),
+                                 ("le 25 mars 2015 2.5 XXème","le vingt cinq mars deux mille quinze deux point cinq vingtième"),
+                                 ("le 25.","le vingt cinq"),
+                                 ("le 25.5.","le vingt cinq point cinq"),
+                                 ("14 alinéa 1, some text","quatorze alinéa un some text"),
+                                 ("l'article 12,","l'article douze"),
+                                 ("dans le XXIIIe siècle", "dans le vingt-troisième siècle"),
+                                 ("Ce matin", "Ce matin"),
+                                 ("1'416'000","un million quatre cent seize mille"),
+                                 ("Le matin", "Le matin")]
     }
 
     #################
@@ -54,51 +54,51 @@ class FormulaNumberUnitTest(unittest.TestCase):
     def evaluateListValues(self, testList, callback):
         for t, gt in testList:
             r = callback(t).encode('utf-8')
-            self.assertEquals(gt.encode('utf-8'), r)
+            self.assertEqual(gt.encode('utf-8'), r)
 
     #################
     # Unit tests
     #
     def test_isCardinal(self):
-        testList = [(u"2",True),(u"123",True), (u"123.",False)]
+        testList = [("2",True),("123",True), ("123.",False)]
 
         for t, gt in testList:
-        	self.assertEquals(NumberFormula._isCardinalNumber(t), gt, t.encode('utf-8'))
+        	self.assertEqual(NumberFormula._isCardinalNumber(t), gt, t.encode('utf-8'))
 
     def test_isTransition(self):
-        testList = [(u"1.",True),(u"10.",True), (u"11.",False)]
+        testList = [("1.",True),("10.",True), ("11.",False)]
 
         for t, gt in testList:
-          self.assertEquals(NumberFormula._isTransitionNumber(t), gt, t.encode('utf-8'))
+          self.assertEqual(NumberFormula._isTransitionNumber(t), gt, t.encode('utf-8'))
     
     def test_isOrdinal(self):
-        testList = [(u"1er",True), (u"1re",True), (u"1ère",True), (u"2e",True), (u"2ème",True), 
-                    (u"Ier",True), (u"XIIème",True)]
+        testList = [("1er",True), ("1re",True), ("1ère",True), ("2e",True), ("2ème",True), 
+                    ("Ier",True), ("XIIème",True)]
 
         for t, gt in testList:
-        	self.assertEquals(NumberFormula._isOrdinalNumber(t), gt, t.encode('utf-8'))
+        	self.assertEqual(NumberFormula._isOrdinalNumber(t), gt, t.encode('utf-8'))
  
     def test_isDecimal(self):
-        testList = [(u"2.5",True), (u"2,5",True),(u"2,5,3",True), (u"2-5",False)]
+        testList = [("2.5",True), ("2,5",True),("2,5,3",True), ("2-5",False)]
 
         for t, gt in testList:
-        	self.assertEquals(NumberFormula._isDecimalNumber(t), gt, t.encode('utf-8'))
+        	self.assertEqual(NumberFormula._isDecimalNumber(t), gt, t.encode('utf-8'))
 
     def test_isRoman(self):
-    	testList = [(u"V",False), (u"XII",True), (u"La", False)]
+    	testList = [("V",False), ("XII",True), ("La", False)]
 
     	for t, gt in testList:
-        	self.assertEquals(NumberFormula._isRomanNumber(t), gt, t.encode('utf-8'))
+        	self.assertEqual(NumberFormula._isRomanNumber(t), gt, t.encode('utf-8'))
 
     def test_hasNumber(self):
-        testList = [(u"12",True), (u"1ab",True),(u"ab22",True), (u"Xab",True),
-                    (u"xab",False), (u"a1ab",True), (u"il a 1'416'000 francs",True)]
+        testList = [("12",True), ("1ab",True),("ab22",True), ("Xab",True),
+                    ("xab",False), ("a1ab",True), ("il a 1'416'000 francs",True)]
 
         for t, gt in testList:
-            self.assertEquals(hasNumber(NumberFormula,t), gt, t.encode('utf-8'))
+            self.assertEqual(hasNumber(NumberFormula,t), gt, t.encode('utf-8'))
 
     def test_normalizeNumber(self):
-        testList = [(u"50'000",u"50000"),(u"550'000'000",u"550000000"),(u"1'416'000",u"1416000")]
+        testList = [("50'000","50000"),("550'000'000","550000000"),("1'416'000","1416000")]
         self.evaluateListValues(testList, NumberFormula._normalizeNumber)
         
     def test_cardinal2word(self):
@@ -113,7 +113,7 @@ class FormulaNumberUnitTest(unittest.TestCase):
         testList = self.testDict["ordinal"]
         for i, (t, gt) in enumerate(testList):
             r = NumberFormula._ordinal2word([t], 0)
-            self.assertEquals(gt.encode('utf-8'), r.encode('utf-8'), 
+            self.assertEqual(gt.encode('utf-8'), r.encode('utf-8'), 
                               "%s is not %s" % (r.encode('utf-8'), gt.encode('utf-8')))
 
     def test_decimal2word(self):
@@ -127,7 +127,7 @@ class FormulaNumberUnitTest(unittest.TestCase):
     def test_apply(self):
         f = NumberFormula()
 
-        for k in self.testDict.keys():
+        for k in list(self.testDict.keys()):
             #print "Testing %s " % k
             testList = self.testDict[k]
             self.evaluateListValues(testList, f.apply)

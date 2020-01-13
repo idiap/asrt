@@ -21,48 +21,51 @@ __date__ = "Date: 2015/09"
 __copyright__ = "Copyright (c) 2015 Idiap Research Institute"
 __license__ = "BSD 3-Clause"
 
-import logging, re
+import logging
+import re
 from num2words import num2words
 from roman import fromRoman
 from asrt.common.AsrtUtility import convertNumber
 from asrt.common.AsrtConstants import SPACEPATTERN, TRANSITIONNUMBERS
 from asrt.config.AsrtConfig import FRENCH
 
+
 class NumberFormula():
     """A set of rules to 'unformat' formatted numbers.
     """
-    
-    logger                  = logging.getLogger("Asrt.NumberFormula")
 
-    THOUSANDSEPARATOR       = u"'"
-   
-    HASNUMBERREGEX          = re.compile(u"([0-9]|I|V|X|L|C|D|M)+", flags=re.UNICODE)
-    CARDINALNUMBERREGEX     = re.compile(u"[0-9]+$", flags=re.UNICODE)
-    TRANSITIONNUMBERREGEX   = re.compile(u"([1-9]|10)[.]( |$)", flags=re.UNICODE)
-    ORDINALNUMBERREGEX      = re.compile(u"(1er|1re|1ère|[0-9]+e|[0-9]+ème|Ier|Ire|Ière|[IVXLCDM]+ème|[IVXLCDM]{2,}e)$", flags=re.UNICODE)
-    DECIMALNUMBERREGEX      = re.compile(u"[0-9,.]+[0-9,.]*$", flags=re.UNICODE)
-    ROMANNUMBERREGEX        = re.compile(u"[IVXLCDM]{2,}$", flags=re.UNICODE)
+    logger = logging.getLogger("Asrt.NumberFormula")
+
+    THOUSANDSEPARATOR = "'"
+
+    HASNUMBERREGEX = re.compile("([0-9]|I|V|X|L|C|D|M)+", flags=re.UNICODE)
+    CARDINALNUMBERREGEX = re.compile("[0-9]+$", flags=re.UNICODE)
+    TRANSITIONNUMBERREGEX = re.compile("([1-9]|10)[.]( |$)", flags=re.UNICODE)
+    ORDINALNUMBERREGEX = re.compile(
+        "(1er|1re|1ère|[0-9]+e|[0-9]+ème|Ier|Ire|Ière|[IVXLCDM]+ème|[IVXLCDM]{2,}e)$", flags=re.UNICODE)
+    DECIMALNUMBERREGEX = re.compile("[0-9,.]+[0-9,.]*$", flags=re.UNICODE)
+    ROMANNUMBERREGEX = re.compile("[IVXLCDM]{2,}$", flags=re.UNICODE)
 
     ##################
-    #Public interface
+    # Public interface
     #
     @classmethod
     def apply(cls, strText):
         """Apply formula to numbers.
-           
+
            Numbers cateories are:
              - Decimal numbers
-             - Ordinal numbers 
+             - Ordinal numbers
              - Cardinal numbers
              - Roman numbers
 
            param strText: an utf-8 encoded string
-           return an utf-8 encoded string 
+           return an utf-8 encoded string
         """
         return convertNumber(cls, strText)
 
     ##################
-    #Implementation
+    # Implementation
     #
     @staticmethod
     def _normalizeNumber(strWord):
@@ -71,13 +74,13 @@ class NumberFormula():
            param strWord: an utf-8 encoded words
            return an utf-8 encoded string
         """
-        strWord = strWord.replace(NumberFormula.THOUSANDSEPARATOR, u"")
-        
-        #Case when there is a full stop, comma
-        #after a number
-        if strWord.endswith((".",",")):
+        strWord = strWord.replace(NumberFormula.THOUSANDSEPARATOR, "")
+
+        # Case when there is a full stop, comma
+        # after a number
+        if strWord.endswith((".", ",")):
             strWord = strWord[:-1]
-    
+
         return strWord
 
     @staticmethod
@@ -89,7 +92,7 @@ class NumberFormula():
            return a 'written' cardinal number
         """
         strNumber = num2words(int(strNumber), lang='fr')
-        return strNumber.replace(u"-", u" ")
+        return strNumber.replace("-", " ")
 
     @staticmethod
     def _transition2word(strNumber):
@@ -99,8 +102,8 @@ class NumberFormula():
            param strNumber: an utf-8 transition number
            return a 'written' transition number
         """
-        #Only number from 1-10
-        if strNumber.encode('utf-8') not in TRANSITIONNUMBERS[FRENCH]:
+        # Only number from 1-10
+        if strNumber not in TRANSITIONNUMBERS[FRENCH]:
             return strNumber
 
         return TRANSITIONNUMBERS[FRENCH][strNumber]
@@ -116,28 +119,29 @@ class NumberFormula():
            return a 'written' ordinal number
         """
         strNumber = NumberFormula._normalizeNumber(wordsList[indice])
-        if strNumber.encode('utf-8') == u"1ère".encode('utf-8'):
-            return u"première"
+        if strNumber.encode('utf-8') == "1ère".encode('utf-8'):
+            return "première"
 
-        strNewNumber = re.sub(u"[erèm]", "", strNumber)
+        strNewNumber = re.sub("[erèm]", "", strNumber)
         if NumberFormula._isCardinalNumber(strNewNumber):
-            strNewNumber = num2words(int(strNewNumber), ordinal=True, lang='fr')
+            strNewNumber = num2words(
+                int(strNewNumber), ordinal=True, lang='fr')
         elif NumberFormula._isRomanNumber(strNewNumber):
-            #Roman to cardinal
-            strNewNumber = strNewNumber.encode('utf-8')
+            # Roman to cardinal
+            strNewNumber = strNewNumber
             cardinalNumber = fromRoman(strNewNumber)
-            #Digits to ordinal
+            # Digits to ordinal
             strNewNumber = num2words(cardinalNumber, ordinal=True, lang='fr')
         else:
             strNewNumber = strNumber
 
-        strNewNumber = re.sub(r'vingtsi','vingti',strNewNumber)
-        strNewNumber = re.sub(r'centsi','centi',strNewNumber)
-        strNewNumber = re.sub(r'millionsi','millioni',strNewNumber)
-        strNewNumber = re.sub(r'milliardsi','milliardi',strNewNumber)
-        
+        strNewNumber = re.sub(r'vingtsi', 'vingti', strNewNumber)
+        strNewNumber = re.sub(r'centsi', 'centi', strNewNumber)
+        strNewNumber = re.sub(r'millionsi', 'millioni', strNewNumber)
+        strNewNumber = re.sub(r'milliardsi', 'milliardi', strNewNumber)
+
         return strNewNumber
-            
+
     @staticmethod
     def _decimal2word(strNumber):
         """Convert a decimal number to a written
@@ -146,8 +150,8 @@ class NumberFormula():
            param strNumber: an utf-8 decimal number
            return a 'written' decimal number
         """
-        strNumber = u" virgule ".join(re.split("[,]",strNumber))
-        strNumber = u" point ".join(re.split("[.]",strNumber))
+        strNumber = " virgule ".join(re.split("[,]", strNumber))
+        strNumber = " point ".join(re.split("[.]", strNumber))
 
         tokenList = []
         for w in re.split(SPACEPATTERN, strNumber):
@@ -156,7 +160,7 @@ class NumberFormula():
                 w = NumberFormula._cardinal2word(w)
             tokenList.append(w)
 
-        return u" ".join(tokenList)
+        return " ".join(tokenList)
 
     @staticmethod
     def _roman2word(strNumber):
@@ -166,10 +170,10 @@ class NumberFormula():
            param strNumber: an utf-8 roman number
            return a 'written' roman number
         """
-        strNumber = strNumber.encode('utf-8')
+        strNumber = strNumber
         cardinalNumber = fromRoman(strNumber)
         return NumberFormula._cardinal2word(cardinalNumber)
-        
+
     @staticmethod
     def _isCardinalNumber(strWord):
         """Check if 'strWord' is a cardinal number.
