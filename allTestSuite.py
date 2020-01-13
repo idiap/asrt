@@ -80,9 +80,9 @@ def asrtTestSuite(unitTestList=None):
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print getUsage()
-        print "    usage: %s 'unit test name 1 or all' 'unit test name 2' " % sys.argv[0]
-        print ""
+        print((getUsage()))
+        print(("    usage: %s 'unit test name 1 or all' 'unit test name 2' " % sys.argv[0]))
+        print("")
         sys.exit(0)
 
     MyFile.checkDirExists(TEMPDIRUNITTEST)
