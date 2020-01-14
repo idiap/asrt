@@ -122,7 +122,7 @@ def convertNumber(cls, strText):
 
         except Exception as e:
             prefix = "Error formatting number (%s): %s" % \
-                (w.encode('utf-8'), str(e))
+                (w, str(e))
             #errorMessage = getErrorMessage(e, prefix)
             logger.warning(prefix)
 

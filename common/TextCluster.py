@@ -71,7 +71,8 @@ class TextCluster(Cluster):
 
         # LM normalization
         self.lmPreparationFormula = LMPreparationFormula()
-        self.lmPreparationFormula.setExpandNumberInWords(document.expandNumberInWords)
+        self.lmPreparationFormula.setExpandNumberInWords(
+            document.expandNumberInWords)
 
     #####################
     #Getters and setters
@@ -190,25 +191,25 @@ class TextCluster(Cluster):
         # Nb characters
         if len(strText) > MAX_SENTENCE_LENGTH or\
            len(strText) < MIN_SENTENCE_LENGTH:
-            # print strText.encode('utf-8')
+            # print strText
             TextCluster.logger.info("Discard sentence: inappropriate length: %d! '%s'" % (
-                len(strText), strText.encode("utf-8")))
+                len(strText)))
             return False
 
         # Nb words
         nbWords = len(strText.split(' '))
         if nbWords < MIN_WORDS_COUNT or \
            nbWords > MAX_WORDS_COUNT:
-            # print strText.encode('utf-8')
+            # print strText
             TextCluster.logger.info("Discard sentence, not enough or to many words, wordsNum = %d! '%s'" % (
-                nbWords, strText.encode("utf-8")))
+                nbWords, strText))
             return False
 
         # Nb digit groups
         if len(re.split("\d+", strText)) > MAX_DIGITS_GROUPS:
-            # print strText.encode('utf-8')
+            # print strText
             TextCluster.logger.info(
-                "Discard sentence, to many groups of digits! '%s'" % strText.encode("utf-8"))
+                "Discard sentence, to many groups of digits! '%s'" % strText)
             return False
 
         # Try decode
@@ -232,7 +233,7 @@ class TextCluster(Cluster):
                 or strText.find( "html" ) >= 0 \
                 or strText.find("URL") >= 0:
             TextCluster.logger.info(
-                "Discard sentence, web address! '%s'" % strText.encode("utf-8"))
+                "Discard sentence, web address! '%s'" % strText)
             return False
 
         # regular expression verification by German orthography:    https://en.wikipedia.org/wiki/German_orthography
@@ -240,27 +241,27 @@ class TextCluster(Cluster):
         # pattern   = u"^[a-zA-ZäöüÄÖÜß]+[.|']?$"       # common char of
         # [a-zäöü] with an optional trailing dot or apostrophe '
         pattern = "^[a-zA-ZäöüÄÖÜß.']+$"
-        # print( pattern.encode( "utf-8" ) )
+        # print( pattern )
 
-        recmped = re.compile(pattern.encode("utf-8"))   # re compiled
+        recmped = re.compile(pattern)   # re compiled
         words = strText.split()
         for word in words:
             # German orthography check
-            result = recmped.match(word.encode("utf-8"))
+            result = recmped.match(word)
             if result is None:
                 TextCluster.logger.info("Discard sentence, disobey German orthography rule (%s)! '%s' in '%s'"
-                                        % (pattern.encode("utf-8"), word.encode("utf-8"), strText.encode("utf-8")))
+                                        % (pattern, word, strText))
                 return False
 
             # Check for too long word
-            if len(word.encode("utf-8")) > MAX_WORD_LENGTH:
+            if len(word) > MAX_WORD_LENGTH:
                 TextCluster.logger.info("Discard sentence, too long word '%s' of length '%d'! In '%s'"
-                                        % (word.encode("utf-8"), len(word.encode("utf-8")), strText.encode("utf-8")))
+                                        % (word, len(word), strText))
 
                 # For temporary debugging: Output all long words for analysis
                 if False:
                     cmd = 'echo "' + \
-                        word.encode("utf-8") + '" >> long_words.txt'
+                        word + '" >> long_words.txt'
                     print(cmd)
                     os.system(cmd)
 
@@ -319,7 +320,7 @@ class TextCluster(Cluster):
             # if re.search(regex, strText, re.IGNORECASE) != None:
             if re.search(regex, strText, flags=re.UNICODE) != None:
                 TextCluster.logger.info("Discard:%s\n%s" % (
-                    regex.encode("utf-8"), strText.encode("utf-8")))
+                    regex, strText))
                 return False
 
         return True
@@ -328,7 +329,7 @@ class TextCluster(Cluster):
         """Override built in method.
         """
         key = self.getClusterInfo()
-        return str(key.encode('utf-8'))
+        return key
 
     ########################
     # Implementation

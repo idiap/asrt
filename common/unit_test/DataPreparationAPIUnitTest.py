@@ -87,8 +87,8 @@ class TestDataPreparationAPI(unittest.TestCase):
         api.setFormattedText(testString)
         api.prepareDocument(2)
         formattedText = api.getCleanedText()
-        self.assertEqual(gtString.encode('utf-8'),
-                          formattedText.encode('utf-8'))
+        self.assertEqual(gtString,
+                         formattedText)
 
     def testPrepareDocument(self):
         api = DataPreparationAPI(None, None)
@@ -105,6 +105,6 @@ class TestDataPreparationAPI(unittest.TestCase):
                 api.prepareDocument(languageId)
                 api.setExpandNumberInWords(True)
                 formattedText = api.getCleanedText()
-                self.assertEqual(formattedText.encode('utf-8'), gt.encode('utf-8'),
-                                  "'%s' is not '%s':%s for '%s'" % (formattedText.encode('utf-8'),
-                                                                    gt.encode('utf-8'), strFileName, test.encode('utf-8')))
+                self.assertEqual(formattedText, gt,
+                                 "'%s' is not '%s':%s for '%s'" % (formattedText,
+                                                                   gt, strFileName, test))

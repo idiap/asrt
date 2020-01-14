@@ -79,8 +79,8 @@ class Pattern():
         strCurrent = Pattern.getWord(wordsList, indice)
 
         # The center context does not apply
-        if not re.match(self.getCenter(), strCurrent, flags=re.UNICODE):
-            raise RuleException('Bad center %s, should be %s' % (strCurrent.encode('utf-8'),
+        if not re.match(self.getCenter(), strCurrent):
+            raise RuleException('Bad center %s, should be %s' % (strCurrent,
                                                                  self.getCenter()))
 
         # Get contexts
@@ -91,8 +91,7 @@ class Pattern():
 
         # Previous context need checking
         if self.prevContext != None:
-            matchPrevious = bool(re.match(self.prevContext, strPrevious,
-                                          flags=re.UNICODE))
+            matchPrevious = bool(re.match(self.prevContext, strPrevious))
             if debug:
                 print(("  >", matchPrevious, self.prevContext, strPrevious))
             if self.matchNegative:
@@ -100,8 +99,7 @@ class Pattern():
 
         # Next context need checking
         if self.nextContext != None:
-            matchNext = bool(re.match(self.nextContext, strNext,
-                                      flags=re.UNICODE))
+            matchNext = bool(re.match(self.nextContext, strNext))
             if debug:
                 print(("  >", matchNext, self.nextContext, strNext))
             if self.matchNegative:
@@ -113,7 +111,7 @@ class Pattern():
         """Check validity of the rule given
              the 'testCenter'.
         """
-        if not re.match(self.getCenter(), testCenter, flags=re.UNICODE):
+        if not re.match(self.getCenter(), testCenter):
             raise RuleException('Non matching center %s, should be %s!' % (
                 testCenter, self.getCenter()))
         if self.getPrevContext() == None or self.getNextContext() == None:
@@ -224,8 +222,7 @@ class Rule():
         # Get the test pattern
         strCurrent = Pattern.getWord(wordsList, indice)
 
-        return re.match(self.getCenter(), strCurrent,
-                        flags=re.UNICODE)
+        return re.match(self.getCenter(), strCurrent)
 
     def validate(self):
         """Check that all context's centers are the
@@ -315,7 +312,7 @@ class Rule():
 
             if debug:
                 print(("\nApplying set of rules for %s --------------\n" %
-                       wordsList[indice].encode('utf-8')))
+                       wordsList[indice]))
             # Word at 'indice' matches rule center
             retValue = r.match(wordsList, indice, debug)
 
@@ -353,12 +350,12 @@ class Rule():
         """Display the content of a list.
         """
         if indice != -1:
-            return Pattern.getWord(wordsList, indice).encode('utf-8')
+            return Pattern.getWord(wordsList, indice)
 
         strList = "["
         for indice in range(len(wordsList)):
             strList += Pattern.getWord(wordsList,
-                                       indice).encode('utf-8') + ", "
+                                       indice) + ", "
         strList += "]"
 
         return strList

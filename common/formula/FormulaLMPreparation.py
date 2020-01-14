@@ -248,8 +248,7 @@ class LMPreparationFormula():
         newWordsList = []
         for w in wordsList:
             if self.isOrdinalNumber(w, self.languageId):
-                self.logger.info("Skipping ordinal number %s" %
-                                 w.encode('utf-8'))
+                self.logger.info("Skipping ordinal number %s" % w)
                 newWordsList.append(w)
                 continue
             tokenList = re.split(CAPTURINGDIGITPATTERN, w, flags=re.UNICODE)

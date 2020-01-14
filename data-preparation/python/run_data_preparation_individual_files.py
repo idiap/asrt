@@ -117,4 +117,4 @@ if __name__ == "__main__":
 
         outputFile = "%s/%s.lab" % (outputDir,
                                     os.path.splitext(os.path.basename(f))[0])
-        io.writeFileContent(outputFile, strUnformatted + u"\n")
+        io.writeFileContent(outputFile, strUnformatted + "\n")

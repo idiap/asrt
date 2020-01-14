@@ -78,4 +78,4 @@ if __name__ == "__main__":
 
     result = f.apply(inputText, languageId, debug)
 
-    print "Result --------------\n", result.encode('utf-8'), "\n---------------------"
+    print(("Result --------------\n", result.encode('utf-8'), "\n---------------------"))

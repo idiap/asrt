@@ -49,9 +49,9 @@ class FormulaNumberUnitTest(unittest.TestCase):
     #
     def evaluateListValues(self, testList, callback):
         for t, gt in testList:
-            r = callback(t).encode('utf-8')
-            self.assertEqual(gt.encode('utf-8'), r,
-                              "%s is not %s" % (r, gt.encode('utf-8')))
+            r = callback(t)
+            self.assertEqual(gt, r,
+                             "%s is not %s" % (r, gt))
 
     #################
     # Unit tests
@@ -61,7 +61,7 @@ class FormulaNumberUnitTest(unittest.TestCase):
 
         for t, gt in testList:
             self.assertEqual(NumberFormula._isCardinalNumber(
-                t), gt, t.encode('utf-8'))
+                t), gt, t)
 
     def test_isOrdinal(self):
         testList = [("1.", True), ("3.", True), ("8.", True), ("2.", True), ("10.", True),
@@ -69,7 +69,7 @@ class FormulaNumberUnitTest(unittest.TestCase):
 
         for t, gt in testList:
             self.assertEqual(NumberFormula._isOrdinalNumber(
-                t), gt, t.encode('utf-8'))
+                t), gt, t)
 
     def test_isDecimal(self):
         testList = [("2.5", True), ("2,5", True),
@@ -77,14 +77,14 @@ class FormulaNumberUnitTest(unittest.TestCase):
 
         for t, gt in testList:
             self.assertEqual(NumberFormula._isDecimalNumber(
-                t), gt, t.encode('utf-8'))
+                t), gt, t)
 
     def test_isRoman(self):
         testList = [("V", False), ("XII", True)]
 
         for t, gt in testList:
             self.assertEqual(NumberFormula._isRomanNumber(t),
-                              gt, t.encode('utf-8'))
+                             gt, t)
 
     def test_hasNumber(self):
         testList = [("12", True), ("1ab", True), ("ab22", True), ("Xab", True),
@@ -92,7 +92,7 @@ class FormulaNumberUnitTest(unittest.TestCase):
 
         for t, gt in testList:
             self.assertEqual(hasNumber(NumberFormula, t),
-                              gt, t.encode('utf-8'))
+                             gt, t)
 
     def test_normalizeNumber(self):
         testList = [("50'000", "50000"), ("550'000'000", "550000000")]
@@ -108,8 +108,8 @@ class FormulaNumberUnitTest(unittest.TestCase):
             tList = t.split(" ")
             gt = " ".join(gt.split(" ")[1:])
             r = NumberFormula._ordinal2word(tList, 1)
-            self.assertEqual(gt.encode('utf-8'), r.encode('utf-8'),
-                              "%s is not %s" % (r.encode('utf-8'), gt.encode('utf-8')))
+            self.assertEqual(gt, r,
+                             "%s is not %s" % (r, gt))
 
     def test_decimal2word(self):
         testList = self.testDict["decimal"]
