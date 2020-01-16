@@ -1,9 +1,0 @@
-[submodule "lib/unicodecsv"]
-	path = lib/unicodecsv
-	url = https://github.com/jdunck/python-unicodecsv.git
-[submodule "lib/nltk"]
-	path = lib/nltk
-	url = https://github.com/nltk/nltk.git
-[submodule "lib/num2words"]
-	path = lib/num2words
-	url = https://github.com/savoirfairelinux/num2words.git
