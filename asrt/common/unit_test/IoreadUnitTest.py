@@ -28,7 +28,7 @@ import unittest
 import logging
 
 from asrt.common.ioread import Ioread
-
+from asrt.config.AsrtConfig import TEMPDIRUNITTEST
 
 class TestIoread(unittest.TestCase):
     logger = logging.getLogger("Asrt.TestIoread")
@@ -71,7 +71,7 @@ class TestIoread(unittest.TestCase):
 
     def testWriteFileContent(self):
         strContent = self.testsString[0]
-        self.ioread.writeFileContent("test.txt", strContent)
+        self.ioread.writeFileContent(TEMPDIRUNITTEST + "/test.txt", strContent)
 
         readStrContent = self.ioread.readFileContent(self.testFile)
         self.assertEquals(strContent, readStrContent)

@@ -30,8 +30,9 @@ from asrt.common.formula.FormulaLMPreparation import LMPreparationFormula
 from asrt.common.AsrtConstants import UTF8MAP, SPACEPATTERN, DOTCOMMAEXCLUDE, PUNCTUATIONEXCLUDE
 from asrt.common.AsrtConstants import ABBREVIATIONS
 from asrt.common.LoggingSetup import setupLogging
+from asrt.config.AsrtConfig import TEMPDIRUNITTEST
 
-setupLogging(logging.INFO, "./output.log")
+setupLogging(logging.INFO, TEMPDIRUNITTEST + "/output.log")
 
 
 class TestFormulaLMPreparation(unittest.TestCase):
