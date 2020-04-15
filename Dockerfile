@@ -20,6 +20,7 @@ WORKDIR /usr/local
 RUN git clone https://github.com/idiap/asrt.git
 
 WORKDIR /usr/local/asrt
+RUN pip3 install --upgrade pip
 RUN python3 -m pip install .
 
 ENV NLTK_DATA=/usr/local/asrt/nltk_data
@@ -31,7 +32,9 @@ ENV LANG=1
 ENV REGEX=examples/resources/regex.csv
 
 ENTRYPOINT ["asrt/data-preparation/python/run_data_preparation.py", \
-    "-l", "0", \
-    "-r", "asrt/examples/resources/regex.csv", "-s", "-m"]
+               "-l", "0", \
+               "-r", "asrt/examples/resources/regex.csv",
+               "-s",
+               "-m"]
 
 # requires -i inputfile -o outputfolder and mounting volume
