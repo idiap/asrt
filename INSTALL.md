@@ -25,18 +25,24 @@ sudo apt-get install pdftotext
 - model  : punkt
 
 ```
-# In a python terminal
-import nltk
-nltk.download()
+# In a bash terminal
+NLTK_DATA = '/path to data dir/nltk_data'
 
-# Then find the corpora and model and download them
+mkdir -p $NLTK_DATA
+python -m nltk.downloader punkt -d $NLTK_DATA
+python -m nltk.downloader europarl_raw -d $NLTK_DATA
 ```
 
-#### Setup environment variable
+#### Setup environment variable in you .bashrc
 
 ```
 # Set to dowloaded location
-export NLTK_DATA=$HOME/nltk_data
+export NLTK_DATA=/path to the NLTK data folder
+```
+
+#### Test the library
+```
+bash  /library path/examples/bash/run_data_preparation.sh
 ```
 
 ## Docker
