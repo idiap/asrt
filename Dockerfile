@@ -6,10 +6,11 @@ RUN apt-get update && \
     git \
     libpoppler-cpp-dev \
     pkg-config  \
-    python2.7 \
-    python-dev \
-    python-pip \
-    python-roman \
+    python3 \
+    python3-dev \
+    python3-pip \
+    python3-roman \
+    python3-pip \
     poppler-utils \
     vim
 
@@ -18,23 +19,19 @@ WORKDIR /usr/local
 
 RUN git clone https://github.com/idiap/asrt.git
 
-ADD requirements.txt /usr/local/asrt
-
 WORKDIR /usr/local/asrt
-RUN pip install -r requirements.txt
+RUN python3 -m pip install .
 
-WORKDIR /usr/local/asrt
 ENV NLTK_DATA=/usr/local/asrt/nltk_data
-
 RUN mkdir -p NLTK_DATA && \
-    python -m nltk.downloader punkt -d $NLTK_DATA && \
-    python -m nltk.downloader europarl_raw -d $NLTK_DATA
+    python3 -m nltk.downloader punkt -d $NLTK_DATA && \
+    python3 -m nltk.downloader europarl_raw -d $NLTK_DATA
 
 ENV LANG=1
 ENV REGEX=examples/resources/regex.csv
 
-ENTRYPOINT ["data-preparation/python/run_data_preparation.py", \
+ENTRYPOINT ["asrt/data-preparation/python/run_data_preparation.py", \
     "-l", "0", \
-    "-r", "examples/resources/regex.csv", "-s", "-m"]
+    "-r", "asrt/examples/resources/regex.csv", "-s", "-m"]
 
 # requires -i inputfile -o outputfolder and mounting volume

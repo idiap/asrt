@@ -17,7 +17,7 @@ Perform the following additional steps to complete the installation.
 pip install poppler
 
 # On Linux
-sudo apt-get install pdftotext
+sudo apt-get install poppler-utils
 ```
 
 #### Dowload nltk data and model
