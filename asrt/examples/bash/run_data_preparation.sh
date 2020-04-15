@@ -53,7 +53,7 @@ source $scriptDir/../../config/AsrtConfig.sh
 TEMPDIR=$cwd/temp
 [ -d $TEMPDIR ] || mkdir $TEMPDIR
 
-PDF=$(readlink -m "$scriptDir/../resources/Research.pdf")
+PDF="$scriptDir/../resources/Research.pdf"
 OUTPUTFOLDER=$TEMPDIR/output-research
 REGEXFILE=$scriptDir/../resources/regex.csv
 
@@ -63,7 +63,7 @@ REGEXFILE=$scriptDir/../resources/regex.csv
 [ -d $OUTPUTFOLDER ] || mkdir $OUTPUTFOLDER
 
 echo "Extracting sentences from $(basename $PDF)"
-eval "$RUNDOCUMENTSCRIPT -i $PDF -o $OUTPUTFOLDER -r $REGEXFILE -l 0" || die "An error has occurred!"
+eval "$RUNDOCUMENTSCRIPT -i $PDF -o $OUTPUTFOLDER -r $REGEXFILE -l 0 -m" || die "An error has occurred!"
 
 echo "Results files are into $OUTPUTFOLDER"
 pushd $OUTPUTFOLDER &>/dev/null
