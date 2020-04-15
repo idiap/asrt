@@ -1,4 +1,0 @@
-roman
--e git+git://github.com/savoirfairelinux/num2words.git@e06493cedab4e090d7bd2e9cde10b5f2c6891971#egg=num2words
--e git+git://github.com/jdunck/python-unicodecsv.git@de3b59bb18032aa75681dc4068b92b4023e9d56d#egg=unicodecsv
--e git+git://github.com/nltk/nltk@3.4.5#egg=nltk
