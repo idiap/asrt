@@ -14,7 +14,7 @@ setuptools.setup(
     url="https://github.com/idiap/asrt",
     keywords="Text, unformatting, processing",
     license="BSD 3-Clause License",
-    packages=["asrt"],
+    packages=setuptools.find_packages(),
     zip_safe = False,
     include_package_data = True,
     classifiers=[

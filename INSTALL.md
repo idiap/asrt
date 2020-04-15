@@ -1,51 +1,58 @@
-INSTALL
-=======
-This install manual is for Debian based systems.
+# Installation instruction
 
-1. Get the libraries:
+## Library installation
+You can install the library with pip. It will install Python
+dependencies and the library itself.
 
-   `git submodule update --init lib/nltk`
+```
+pip install .
+```
 
-   `git submodule update --init lib/unicodecsv`
+## Additional steps
+Perform the following additional steps to complete the installation.
 
-   `git submodule update --init lib/num2words`
+#### Install **pdftotext**
+```
+# On Mac Osx
+pip install poppler
 
-2. Install the three libraries using the *setup.py* scripts.
+# On Linux
+sudo apt-get install pdftotext
+```
 
-   ```bash
-    for ll in nltk unicodecsv num2words;
-    do 
-      (
-        cd lib/$ll
-        setup.py install --prefix=/path/to/local/install/$ll`
-      )
-    done
-    ```
+#### Dowload nltk data and model
+- copora : europarl_raw
+- model  : punkt
 
-3. Setup nltk data location with environment variable `NLTK_DATA` (see: http://www.nltk.org/data.html)
+```
+# In a python terminal
+import nltk
+nltk.download()
 
-4. Get nltk_data. In a python terminal:
-    - `import nltk`
-    - `nltk.download()`
-      - copora : europarl_raw
-      - model  : punkt
+# Then find the corpora and model and download them
+```
 
-(5. Install the num2words library: https://pypi.python.org/pypi/num2words
-already installed above)
+#### Setup environment variable
 
-6. Install the python-roman library: 
-    ```bash
-    # on debian / ubuntu
-    sudo apt-get install python-roman
-    ```
+```
+# Set to dowloaded location
+export NLTK_DATA=$HOME/nltk_data
+```
 
-7. Build the debian package
-    - Change directory into scripts
-    - Run the command `debuild` (debian build)
+## Docker
+To build a docker image of asrt:
 
-8. Install the library
-    - In the scripts directory, run `sudo dpkg -i ../asrt_1.0.0RC1_all.deb`
+```bash
+docker build -t asrt .
+```
 
-9. Run the examples to test your installation
-    - `/usr/share/asrt/examples/bash/run_data_preparation.sh`
-    - `/usr/share/asrt/examples/bash/run_data_preparation_task.sh`
+To run `run_data_preparation.py` using docker image, where your test file is
+`docker-example/research.txt`:
+
+```bash
+docker run -d -v $PWD/docker-example:/usr/local/asrt/data asrt -i data/research.txt -o /usr/local/asrt/data
+# Or with the same pdf as above example:
+docker run -d -v $PWD/docker-example:/usr/local/asrt/data asrt -i data/Research.pdf -o /usr/local/asrt/data
+```
+
+The output will then be in `docker-example/sentences_*.txt`
