@@ -1,4 +1,5 @@
 FROM ubuntu:18.04
+MAINTAINER alexandre.nanchen@idiap.ch
 
 RUN apt-get update && \
     apt-get install -y \
